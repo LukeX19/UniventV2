@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Univent.Infrastructure\Univent.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

@@ -9,6 +9,6 @@ namespace Univent.Domain.Models.Associations
         public Event Event { get; set; }
         public Guid UserId { get; set; }
         public AppUser User { get; set; }
-        public bool FeedbackCompleted { get; set; }
+        public bool HasCompletedFeedback { get; set; }
     }
 }

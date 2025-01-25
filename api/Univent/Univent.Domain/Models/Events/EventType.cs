@@ -1,7 +1,10 @@
-﻿namespace Univent.Domain.Models.Events
+﻿using Univent.Domain.Models.BasicEntities;
+
+namespace Univent.Domain.Models.Events
 {
-    public class EventType
+    public class EventType : BaseEntity
     {
         public string Name { get; set; }
+        public ICollection<Event> Events { get; set; }
     }
 }

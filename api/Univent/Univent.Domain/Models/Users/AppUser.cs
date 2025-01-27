@@ -1,11 +1,12 @@
-﻿using Univent.Domain.Enums;
+﻿using Microsoft.AspNetCore.Identity;
+using Univent.Domain.Enums;
 using Univent.Domain.Models.Associations;
 using Univent.Domain.Models.Events;
 using Univent.Domain.Models.Universities;
 
 namespace Univent.Domain.Models.Users
 {
-    public class AppUser
+    public class AppUser : IdentityUser<Guid>
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

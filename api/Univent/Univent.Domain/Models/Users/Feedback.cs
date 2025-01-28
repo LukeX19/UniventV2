@@ -6,5 +6,6 @@ namespace Univent.Domain.Models.Users
     {
         public double Score { get; set; }
         public Guid UserId { get; set; }
+        public AppUser User { get; set; }
     }
 }

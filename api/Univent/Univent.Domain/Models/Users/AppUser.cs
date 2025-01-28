@@ -12,10 +12,10 @@ namespace Univent.Domain.Models.Users
         public string LastName { get; set; }
         public DateTime Birthday { get; set; }
         public string PictureUrl { get; set; }
-        public bool IsAccountConfirmed { get; set; }
         public AppRole Role { get; set; }
         public UniversityYear Year { get; set; }
-        public Guid UniversityId { get; set; }
+        public bool IsAccountConfirmed { get; set; }
+        public Guid? UniversityId { get; set; }
         public University University { get; set; }
         public ICollection<Event> CreatedEvents { get; set; }
         public ICollection<EventParticipant> EnrolledEvents { get; set; }

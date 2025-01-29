@@ -2,7 +2,7 @@
 {
     public class EntityNotFoundException : Exception
     {
-        private const string MessageTemplate = "The {0} with id {1} was not found.";
+        private const string MessageTemplate = "The {0} with the id '{1}' was not found.";
 
         public EntityNotFoundException()
             : base() { }

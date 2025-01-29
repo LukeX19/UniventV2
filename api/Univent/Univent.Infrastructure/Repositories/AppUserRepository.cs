@@ -2,7 +2,7 @@
 
 namespace Univent.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class AppUserRepository : IAppUserRepository
     {
     }
 }

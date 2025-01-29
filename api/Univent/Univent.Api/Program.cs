@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Univent.Api.Extensions;
+using Univent.Api.Middlewares;
 using Univent.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthorization();
 

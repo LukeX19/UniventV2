@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Univent.App.Universities.Commands;
 using Univent.App.Universities.Dtos;
@@ -18,6 +19,7 @@ namespace Univent.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "0")]
         public async Task<IActionResult> CreateUniversity(UniversityRequestDto universityDto)
         {
             var command = new CreateUniversityCommand(universityDto);
@@ -37,6 +39,7 @@ namespace Univent.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "0")]
         public async Task<IActionResult> UpdateUniversity(Guid id, UniversityRequestDto universityDto)
         {
             var command = new UpdateUniversityCommand(id, universityDto);
@@ -47,6 +50,7 @@ namespace Univent.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "0")]
         public async Task<IActionResult> DeleteUniversity(Guid id)
         {
             var command = new DeleteUniversityCommand(id);

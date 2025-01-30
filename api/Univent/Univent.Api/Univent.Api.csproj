@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,10 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Univent.App\Univent.App.csproj" />
     <ProjectReference Include="..\Univent.Infrastructure\Univent.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

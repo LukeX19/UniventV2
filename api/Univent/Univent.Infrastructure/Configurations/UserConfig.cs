@@ -4,7 +4,7 @@ using Univent.Domain.Models.Users;
 
 namespace Univent.Infrastructure.Configurations
 {
-    public class AppUserConfig : IEntityTypeConfiguration<AppUser>
+    public class UserConfig : IEntityTypeConfiguration<AppUser>
     {
         public void Configure(EntityTypeBuilder<AppUser> builder)
         {

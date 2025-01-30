@@ -2,7 +2,7 @@
 {
     public class EntityAlreadyExistsException : Exception
     {
-        private const string MessageTemplate = "The {0} with id {1} already exists.";
+        private const string MessageTemplate = "A {0} with the id '{1}' already exists.";
 
         public EntityAlreadyExistsException()
             : base() { }

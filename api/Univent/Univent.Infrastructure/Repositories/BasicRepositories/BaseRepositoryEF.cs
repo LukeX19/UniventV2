@@ -14,7 +14,7 @@ namespace Univent.Infrastructure.Repositories.BasicRepositories
             _context = context;
         }
 
-        public async Task<T> CreateAsync(T entity, CancellationToken ct = default)
+        public async Task<Guid> CreateAsync(T entity, CancellationToken ct = default)
         {
             if (_context.Set<T>().Contains(entity))
             {
@@ -23,7 +23,7 @@ namespace Univent.Infrastructure.Repositories.BasicRepositories
 
             _context.Set<T>().Add(entity);
             await _context.SaveChangesAsync(ct);
-            return entity;
+            return entity.Id;
         }
 
         public async Task<ICollection<T>> GetAllAsync(CancellationToken ct = default)

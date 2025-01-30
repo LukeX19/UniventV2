@@ -24,7 +24,8 @@ namespace Univent.Infrastructure
         {
             base.OnModelCreating(builder);
 
-            builder.ApplyConfiguration(new AppUserConfig());
+            builder.ApplyConfiguration(new UniversityConfig());
+            builder.ApplyConfiguration(new UserConfig());
             builder.ApplyConfiguration(new EventConfig());
             builder.ApplyConfiguration(new EventParticipantConfig());
             builder.ApplyConfiguration(new FeedbackConfig());

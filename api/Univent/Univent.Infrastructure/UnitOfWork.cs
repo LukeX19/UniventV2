@@ -6,18 +6,18 @@ namespace Univent.Infrastructure
     {
         private readonly AppDbContext _context;
         public IUniversityRepository UniversityRepository { get; private set; }
-        public IAppUserRepository AppUserRepository { get; private set; }
+        public IUserRepository UserRepository { get; private set; }
         public IEventTypeRepository EventTypeRepository { get; private set; }
         public IEventRepository EventRepository { get; private set; }
         public IFeedbackRepository FeedbackRepository { get; private set; }
 
         public UnitOfWork(AppDbContext context, IUniversityRepository universityRepository,
-            IAppUserRepository appUserRepository, IEventTypeRepository eventTypeRepository,
+            IUserRepository userRepository, IEventTypeRepository eventTypeRepository,
             IEventRepository eventRepository, IFeedbackRepository feedbackRepository)
         {
             _context = context;
             UniversityRepository = universityRepository;
-            AppUserRepository = appUserRepository;
+            UserRepository = userRepository;
             EventTypeRepository = eventTypeRepository;
             EventRepository = eventRepository;
             FeedbackRepository = feedbackRepository;

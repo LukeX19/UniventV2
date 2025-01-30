@@ -1,5 +1,7 @@
 ﻿using Univent.App.Interfaces;
+using Univent.Infrastructure;
 using Univent.Infrastructure.Repositories;
+using Univent.Infrastructure.Services;
 
 namespace Univent.Api.Extensions
 {
@@ -8,10 +10,27 @@ namespace Univent.Api.Extensions
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUniversityRepository, UniversityRepository>();
-            services.AddScoped<IAppUserRepository, AppUserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IEventTypeRepository, EventTypeRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+
+        public static void AddBusinessServices(this IServiceCollection services)
+        {
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+        }
+
+        public static void AddMediatR(this IServiceCollection services)
+        {
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IUniversityRepository).Assembly));
+        }
+
+        public static void AddAutoMapper(this IServiceCollection services)
+        {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
     }
 }

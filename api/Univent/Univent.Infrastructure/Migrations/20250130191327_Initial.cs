@@ -43,7 +43,7 @@ namespace Univent.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -338,6 +338,12 @@ namespace Univent.Infrastructure.Migrations
                 name: "IX_Feedbacks_UserId",
                 table: "Feedbacks",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Universities_Name",
+                table: "Universities",
+                column: "Name",
+                unique: true);
         }
 
         /// <inheritdoc />

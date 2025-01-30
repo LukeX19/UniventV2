@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Univent.App.ValidationAttributes;
 using Univent.Domain.Enums;
 
 namespace Univent.App.Authentication.Dtos
@@ -26,12 +27,13 @@ namespace Univent.App.Authentication.Dtos
         [Required]
         public string Password { get; set; }
 
-        [Range(0, 1, ErrorMessage = "Invalid role!")]
+        [Range(0, 1, ErrorMessage = "Invalid role.")]
         public AppRole Role { get; set; }
 
-        [Range(0, 8, ErrorMessage = "Invalid university year option!")]
+        [Range(0, 8, ErrorMessage = "Invalid university year option.")]
         public UniversityYear Year { get; set; }
 
-        public Guid UniversityId { get; set; }
+        [UniversityRequiredForStudents]
+        public Guid? UniversityId { get; set; }
     }
 }

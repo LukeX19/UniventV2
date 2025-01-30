@@ -12,7 +12,7 @@ using Univent.Infrastructure;
 namespace Univent.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250128213834_Initial")]
+    [Migration("20250130191327_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -257,9 +257,12 @@ namespace Univent.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Universities");
                 });

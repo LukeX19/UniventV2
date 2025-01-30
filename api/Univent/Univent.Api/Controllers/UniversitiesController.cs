@@ -8,11 +8,11 @@ namespace Univent.Api.Controllers
 {
     [ApiController]
     [Route("api/universities")]
-    public class UniversityController : ControllerBase
+    public class UniversitiesController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public UniversityController(IMediator mediator)
+        public UniversitiesController(IMediator mediator)
         {
             _mediator = mediator;
         }

@@ -25,9 +25,13 @@ namespace Univent.Api.Middlewares
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.NotFound);
             }
-            catch (Exception ex) when (ex is EntityAlreadyExistsException || ex is NameConflictException)
+            catch (Exception ex) when (ex is EntityAlreadyExistsException || ex is NameConflictException || ex is AccountAlreadyExistsException)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Conflict);
+            }
+            catch (InvalidCredentialsException ex)
+            {
+                await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Unauthorized);
             }
             catch (Exception ex)
             {

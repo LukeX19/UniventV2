@@ -9,7 +9,7 @@ namespace Univent.Api.Extensions
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUniversityRepository, UniversityRepository>();
-            services.AddScoped<IAppUserRepository, AppUserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IEventTypeRepository, EventTypeRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();

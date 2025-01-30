@@ -3,7 +3,7 @@
     public interface IUnitOfWork : IDisposable
     {
         IUniversityRepository UniversityRepository { get; }
-        IAppUserRepository AppUserRepository { get; }
+        IUserRepository UserRepository { get; }
         IEventTypeRepository EventTypeRepository { get; }
         IEventRepository EventRepository { get; }
         IFeedbackRepository FeedbackRepository { get; }

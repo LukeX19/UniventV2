@@ -65,6 +65,17 @@ namespace Univent.Api.Extensions
             return builder;
         }
 
+        public static WebApplicationBuilder RegisterAWSS3Storage(this WebApplicationBuilder builder)
+        {
+            var awss3Settings = new AWSS3StorageSettings();
+            builder.Configuration.Bind(nameof(AWSS3StorageSettings), awss3Settings);
+
+            var s3Section = builder.Configuration.GetSection(nameof(AWSS3StorageSettings));
+            builder.Services.Configure<AWSS3StorageSettings>(s3Section);
+
+            return builder;
+        }
+
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>

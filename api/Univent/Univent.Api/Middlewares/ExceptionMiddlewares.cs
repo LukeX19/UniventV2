@@ -21,7 +21,7 @@ namespace Univent.Api.Middlewares
             {
                 await _next(context);
             }
-            catch (EntityNotFoundException ex)
+            catch (Exception ex) when (ex is EntityNotFoundException || ex is AWSFileNotFoundException)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.NotFound);
             }
@@ -32,6 +32,10 @@ namespace Univent.Api.Middlewares
             catch (InvalidCredentialsException ex)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Unauthorized);
+            }
+            catch (InvalidFileFormatException ex)
+            {
+                await HandleCustomExceptionAsync(context, ex, HttpStatusCode.BadRequest);
             }
             catch (Exception ex)
             {

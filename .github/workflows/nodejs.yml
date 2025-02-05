@@ -1,4 +1,4 @@
-name: Angular 18 Build with Node.js 22
+name: Angular 18 Front-End Build (with Node.js 22)
 
 on:
   push:

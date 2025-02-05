@@ -1,0 +1,33 @@
+name: Angular 18 Build with Node.js 22
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      Project_Directory: client/Univent
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm install
+      working-directory: ${{ env.Project_Directory }}
+
+    - name: Build Angular project
+      run: npm run build
+      working-directory: ${{ env.Project_Directory }}

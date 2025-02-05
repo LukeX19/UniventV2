@@ -24,6 +24,13 @@ jobs:
         node-version: 22
         cache: 'npm'
         cache-dependency-path: ${{ env.Project_Directory }}/package-lock.json
+
+    - name: Create environment files
+      run: |
+        mkdir -p ${{ env.Project_Directory }}/src/environments
+        echo "${{ secrets.ENVIRONMENT_TS }}" > ${{ env.Project_Directory }}/src/environments/environment.ts
+        echo "${{ secrets.ENVIRONMENT_PROD_TS }}" > ${{ env.Project_Directory }}/src/environments/environment.prod.ts
+      shell: bash
         
     - name: Install dependencies
       run: npm install

@@ -1,4 +1,4 @@
-name: .NET 8 Back-End Build
+name: Back-End Build
 
 on:
   push:

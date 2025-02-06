@@ -1,0 +1,115 @@
+<div class="flex justify-center items-center h-screen bg-gray-100">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+    <h2 class="text-2xl font-semibold text-center mb-6">Create an Account</h2>
+
+    <mat-stepper linear class labelPosition="bottom">
+      <mat-step [stepControl]="step1Form" label="Basic Info">
+        <form [formGroup]="step1Form">
+          <mat-form-field appearance="outline" class="w-full mt-4 mb-2">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" required />
+            <mat-error *ngIf="step1Form.get('firstName')?.errors as errors">
+              {{ getErrorMessage('firstName', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-2">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" required />
+            <mat-error *ngIf="step1Form.get('lastName')?.errors as errors">
+              {{ getErrorMessage('lastName', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-2">
+            <mat-label>Birthday</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="birthday" required />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="step1Form.get('birthday')?.errors as errors">
+              {{ getErrorMessage('birthday', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-2">
+            <mat-label>University</mat-label>
+            <input type="text" matInput formControlName="university" [matAutocomplete]="auto" />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let uni of filteredUniversities | async" [value]="uni">
+                {{ uni }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="step1Form.get('university')?.errors as errors">
+              {{ getErrorMessage('university', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-4">
+            <mat-label>University Year</mat-label>
+            <mat-select formControlName="year">
+              <mat-option *ngFor="let year of ['I', 'II', 'III', 'IV', 'V', 'VI', 'Master I', 'Master II']" [value]="year">
+                {{ year }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="step1Form.get('year')?.errors as errors">
+              {{ getErrorMessage('year', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="flex justify-end mt-4">
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step [stepControl]="step2Form" label="Account Details">
+        <form [formGroup]="step2Form">
+          <mat-form-field appearance="outline" class="w-full mt-4 mb-2">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required />
+            <mat-error *ngIf="step2Form.get('email')?.errors as errors">
+              {{ getErrorMessage('email', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-4">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required />
+            <mat-error *ngIf="step2Form.get('password')?.errors as errors">
+              {{ getErrorMessage('password', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-4">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" required />
+            <mat-error *ngIf="step2Form.get('confirmPassword')?.errors as errors">
+              {{ getErrorMessage('confirmPassword', errors) }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="flex justify-between mt-4">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step label="Profile Picture">
+        <h3>Upload Profile Picture</h3>
+
+        <div class="flex justify-center items-center">
+          <label class="relative cursor-pointer">
+            <img [src]="selectedImage || 'assets/default-avatar.png'" class="rounded-full w-24 h-24 object-cover" />
+            <input type="file" (change)="onFileSelected($event)" class="hidden" />
+          </label>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button color="primary" (click)="onSubmit()">Submit</button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+</div>

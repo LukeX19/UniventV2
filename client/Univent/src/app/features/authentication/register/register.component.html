@@ -33,7 +33,7 @@
 
           <mat-form-field appearance="outline" class="w-full mb-2">
             <mat-label>University</mat-label>
-            <input type="text" matInput formControlName="university" [matAutocomplete]="auto" />
+            <input type="text" matInput formControlName="university" [matAutocomplete]="auto" (blur)="onUniversityBlur()" />
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUniversitySelected($event.option.value)">
               <mat-option *ngFor="let uni of universities$ | async" [value]="uni">
                 {{ uni.name }}

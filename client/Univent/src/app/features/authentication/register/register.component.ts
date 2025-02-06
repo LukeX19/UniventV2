@@ -11,7 +11,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CommonModule } from '@angular/common';
 import { Observable, of } from 'rxjs';
-import { startWith, map, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import dayjs from 'dayjs';
 import { UniversityService } from '../../../core/services/university.service';
 import { UniversityResponse } from '../../../shared/models/universityModel';
@@ -41,6 +41,7 @@ export class RegisterComponent {
 
   universities$: Observable<UniversityResponse[]> = of([]);
   selectedUniversityId: string | null = null;
+  selectedUniversityName: string | null = null;
 
   step1Form: FormGroup = this.fb.group({
     firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), this.nameValidator]],
@@ -64,7 +65,21 @@ export class RegisterComponent {
 
   onUniversitySelected(selectedUniversity: UniversityResponse) {
     this.selectedUniversityId = selectedUniversity.id;
-    this.step1Form.get('university')!.setValue(selectedUniversity.name);
+    this.selectedUniversityName = selectedUniversity.name;
+
+    this.step1Form.patchValue({
+      university: selectedUniversity.name
+    });
+  }
+
+  onUniversityBlur() {
+    const currentInput = this.step1Form.get('university')!.value;
+
+    if (!this.selectedUniversityName || currentInput !== this.selectedUniversityName) {
+      this.step1Form.patchValue({ university: '' });
+      this.selectedUniversityId = null;
+      this.selectedUniversityName = null;
+    }
   }
 
   step2Form: FormGroup = this.fb.group({
@@ -179,5 +194,4 @@ export class RegisterComponent {
   
     return 'Invalid input';
   }
-  
 }

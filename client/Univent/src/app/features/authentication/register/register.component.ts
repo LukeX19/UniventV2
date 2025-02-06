@@ -10,9 +10,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { startWith, map, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import dayjs from 'dayjs';
+import { UniversityService } from '../../../core/services/university.service';
+import { UniversityResponse } from '../../../shared/models/universityModel';
 
 @Component({
   selector: 'app-register',
@@ -35,9 +37,10 @@ import dayjs from 'dayjs';
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
+  private universityService = inject(UniversityService);
 
-  universities: string[] = ['University of Bucharest', 'Politehnica University of Bucharest', 'Cluj University', 'Iasi University'];
-  filteredUniversities!: Observable<string[]>;
+  universities$: Observable<UniversityResponse[]> = of([]);
+  selectedUniversityId: string | null = null;
 
   step1Form: FormGroup = this.fb.group({
     firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), this.nameValidator]],
@@ -46,6 +49,23 @@ export class RegisterComponent {
     university: ['', Validators.required],
     year: ['', Validators.required],
   });
+
+  constructor() {
+    this.setupUniversitySearch();
+  }
+
+  private setupUniversitySearch() {
+    this.universities$ = this.step1Form.get('university')!.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(value => value ? this.universityService.searchUniversity(value) : of([]))
+    );
+  }
+
+  onUniversitySelected(selectedUniversity: UniversityResponse) {
+    this.selectedUniversityId = selectedUniversity.id;
+    this.step1Form.get('university')!.setValue(selectedUniversity.name);
+  }
 
   step2Form: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -60,18 +80,6 @@ export class RegisterComponent {
   hidePassword = true;
   hideConfirmPassword = true;
   selectedImage: string | ArrayBuffer | null = null;
-
-  constructor() {
-    this.filteredUniversities = this.step1Form.get('university')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this.filterUniversities(value || ''))
-    );
-  }
-
-  filterUniversities(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.universities.filter(uni => uni.toLowerCase().includes(filterValue));
-  }
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -105,7 +113,7 @@ export class RegisterComponent {
     return { invalidName: 'Name must contain only letters, spaces, and - , . \'' };
   }
 
-  // Custom validator to check if user is at least 14 years old
+  // Custom validator to check if user is at least 18 years old
   ageValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
     
@@ -151,6 +159,11 @@ export class RegisterComponent {
   
       case 'year':
         if (errors['required']) return `University Year is required`;
+        break;
+      
+      case 'email':
+        if (errors['required']) return `Email is required`;
+        if (errors['email']) return 'Email must have a valid format';
         break;
   
       case 'password':

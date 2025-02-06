@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private apiUrl = `${environment.apiUrl}`;
   private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}`;
 
   login(LoginInfo: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/authentication/login`, LoginInfo);

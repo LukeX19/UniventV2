@@ -34,9 +34,9 @@
           <mat-form-field appearance="outline" class="w-full mb-2">
             <mat-label>University</mat-label>
             <input type="text" matInput formControlName="university" [matAutocomplete]="auto" />
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let uni of filteredUniversities | async" [value]="uni">
-                {{ uni }}
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUniversitySelected($event.option.value)">
+              <mat-option *ngFor="let uni of universities$ | async" [value]="uni">
+                {{ uni.name }}
               </mat-option>
             </mat-autocomplete>
             <mat-error *ngIf="step1Form.get('university')?.errors as errors">
@@ -72,7 +72,7 @@
             </mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full mb-4">
+          <mat-form-field appearance="outline" class="w-full mb-2">
             <mat-label>Password</mat-label>
             <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required />
             <mat-error *ngIf="step2Form.get('password')?.errors as errors">

@@ -42,6 +42,7 @@ export class RegisterComponent {
   universities$: Observable<UniversityResponse[]> = of([]);
   selectedUniversityId: string | null = null;
   selectedUniversityName: string | null = null;
+  today: Date = new Date();
 
   step1Form: FormGroup = this.fb.group({
     firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), this.nameValidator]],
@@ -96,6 +97,14 @@ export class RegisterComponent {
   hideConfirmPassword = true;
   selectedImage: string | ArrayBuffer | null = null;
 
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.hideConfirmPassword = !this.hideConfirmPassword;
+  }
+
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -104,6 +113,11 @@ export class RegisterComponent {
       reader.readAsDataURL(file);
       this.step3Form.patchValue({ profilePicture: file });
     }
+  }
+
+  removeImage(): void {
+    this.selectedImage = null;
+    this.step3Form.patchValue({ profilePicture: null });
   }
 
   onSubmit(): void {
@@ -140,9 +154,22 @@ export class RegisterComponent {
 
   // Custom validator to check if password and confirm password match
   passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
-    const password = group.get('password')?.value;
-    const confirmPassword = group.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { passwordsNotMatch: 'Passwords must match' };
+    const passwordControl = group.get('password');
+    const confirmPasswordControl = group.get('confirmPassword');
+  
+    if (!passwordControl || !confirmPasswordControl) return null;
+  
+    if (confirmPasswordControl.errors && !confirmPasswordControl.errors['passwordsNotMatch']) {
+      return null;
+    }
+  
+    if (passwordControl.value !== confirmPasswordControl.value) {
+      confirmPasswordControl.setErrors({ passwordsNotMatch: true });
+    } else {
+      confirmPasswordControl.setErrors(null);
+    }
+  
+    return null;
   }
 
   getErrorMessage(field: string, errors: any): string {

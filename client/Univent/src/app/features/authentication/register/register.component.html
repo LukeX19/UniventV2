@@ -109,13 +109,15 @@
 
         <div class="flex justify-center items-center relative">
           <!-- Avatar -->
-          <div class="relative w-36 h-36 rounded-full shadow-md flex items-center justify-center bg-gray-300">
+          <div class="relative w-36 h-36 rounded-full shadow-md flex items-center justify-center bg-gray-500">
             <img *ngIf="selectedImage" [src]="selectedImage" class="w-full h-full rounded-full object-cover" />
-            <mat-icon *ngIf="!selectedImage" class="text-gray-500" style="font-size: 170px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">account_circle</mat-icon>
+            <mat-icon *ngIf="!selectedImage" class="text-gray-300" style="font-size: 160px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+              account_circle
+            </mat-icon>
           </div>
       
           <!-- Upload button -->
-          <label class="absolute bottom-1 right-1 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md cursor-pointer">
+          <label *ngIf="!selectedImage" class="absolute bottom-1 right-1 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md cursor-pointer">
             <mat-icon class="text-blue-500">add</mat-icon>
             <input type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden" />
           </label>
@@ -133,5 +135,10 @@
         </div>
       </mat-step>
     </mat-stepper>
+
+    <div class="text-center mt-8 text-sm">
+      Already a member?
+      <a routerLink="/login" class="text-blue-500 font-medium hover:underline">Log in now!</a>
+    </div>
   </div>
 </div>

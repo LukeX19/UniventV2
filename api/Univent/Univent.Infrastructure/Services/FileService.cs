@@ -14,7 +14,10 @@ namespace Univent.Infrastructure.Services
     {
         private readonly AWSS3StorageSettings _settings;
         private readonly AmazonS3Client _s3Client;
-        private readonly List<string> _supportedFormats = new() { "png", "jpg", "jpeg" };
+        private readonly HashSet<string> _allowedMimeTypes = new()
+        {
+            "image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp", "image/bmp", "image/tiff", "image/svg+xml"
+        };
 
         public FileService(IOptions<AWSS3StorageSettings> settings)
         {
@@ -22,51 +25,48 @@ namespace Univent.Infrastructure.Services
             _s3Client = new AmazonS3Client(_settings.AccessKey, _settings.SecretKey, RegionEndpoint.GetBySystemName(_settings.Region));
         }
 
-        public async Task<string> UploadAsync(Stream stream, string fileName, CancellationToken ct = default)
+        public async Task<string> UploadAsync(Stream stream, string fileName, string contentType, CancellationToken ct = default)
         {
-            var fileExtension = Path.GetExtension(fileName).TrimStart('.').ToLower();
-            if (!_supportedFormats.Contains(fileExtension))
+            // Ensure file's MIME type is a valid image type
+            if (string.IsNullOrEmpty(contentType) || !_allowedMimeTypes.Contains(contentType.ToLower()))
             {
-                throw new InvalidFileFormatException();
+                throw new InvalidFileFormatException(contentType);
             }
+
+            var fileExtension = Path.GetExtension(fileName).TrimStart('.').ToLower();
 
             var uploadRequest = new TransferUtilityUploadRequest
             {
                 InputStream = stream,
                 Key = fileName,
                 BucketName = _settings.BucketName,
-                ContentType = $"image/{fileExtension}"
+                ContentType = contentType
             };
 
             using var transferUtility = new TransferUtility(_s3Client);
             await transferUtility.UploadAsync(uploadRequest, ct);
 
-            return GetFileUrl(fileName);
+            return $"{_settings.S3BaseUrl}/{fileName}";
         }
 
-        public async Task DeleteAsync(string fileName, CancellationToken ct = default)
+        public async Task DeleteAsync(string fileUrl, CancellationToken ct = default)
         {
             try
             {
-                await _s3Client.GetObjectMetadataAsync(_settings.BucketName, fileName, ct);
+                await _s3Client.GetObjectMetadataAsync(_settings.BucketName, fileUrl, ct);
             }
             catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
-                throw new AWSFileNotFoundException(fileName);
+                throw new AWSFileNotFoundException(fileUrl);
             }
 
             var deleteRequest = new DeleteObjectRequest
             {
                 BucketName = _settings.BucketName,
-                Key = fileName
+                Key = fileUrl
             };
 
             await _s3Client.DeleteObjectAsync(deleteRequest, ct);
-        }
-
-        private string GetFileUrl(string fileName)
-        {
-            return $"{_settings.S3BaseUrl}/{fileName}";
         }
     }
 }

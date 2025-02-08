@@ -15,6 +15,11 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import dayjs from 'dayjs';
 import { UniversityService } from '../../../core/services/university.service';
 import { UniversityResponse } from '../../../shared/models/universityModel';
+import { FileService } from '../../../core/services/file.service';
+import { AuthenticationService } from '../../../core/services/authentication.service';
+import { SnackbarService } from '../../../core/services/snackbar.service';
+import { RegisterRequest } from '../../../shared/models/authenticationModel';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -30,7 +35,8 @@ import { UniversityResponse } from '../../../shared/models/universityModel';
     MatStepperModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    RouterModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
@@ -38,6 +44,10 @@ import { UniversityResponse } from '../../../shared/models/universityModel';
 export class RegisterComponent {
   private fb = inject(FormBuilder);
   private universityService = inject(UniversityService);
+  private fileService = inject(FileService);
+  private authService = inject(AuthenticationService);
+  private snackbarService = inject(SnackbarService);
+  private router = inject(Router);
 
   universities$: Observable<UniversityResponse[]> = of([]);
   selectedUniversityId: string | null = null;
@@ -96,6 +106,7 @@ export class RegisterComponent {
   hidePassword = true;
   hideConfirmPassword = true;
   selectedImage: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
 
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
@@ -108,29 +119,73 @@ export class RegisterComponent {
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        this.snackbarService.error('Only image files are allowed!');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => this.selectedImage = e.target?.result!;
       reader.readAsDataURL(file);
-      this.step3Form.patchValue({ profilePicture: file });
+
+      this.selectedFile = file;
     }
   }
 
   removeImage(): void {
     this.selectedImage = null;
-    this.step3Form.patchValue({ profilePicture: null });
+    this.selectedFile = null;
   }
 
   onSubmit(): void {
     if (this.step1Form.valid && this.step2Form.valid) {
-      const formData = {
-        ...this.step1Form.value,
-        ...this.step2Form.value,
-        profilePicture: this.step3Form.value.profilePicture
-      };
+      let registerData: RegisterRequest = {
+        firstName: this.step1Form.value.firstName,
+        lastName: this.step1Form.value.lastName,
+        birthday: new Date(this.step1Form.value.birthday).toISOString(),
+        pictureURL: null,
+        email: this.step2Form.value.email,
+        password: this.step2Form.value.password,
+        role: 1,
+        year: this.mapUniversityYear(this.step1Form.value.year),
+        universityId: this.selectedUniversityId
+      }
 
-      console.log('Form Data:', formData);
-      // TODO: Call API to register user
+      if (this.selectedFile) {
+        this.fileService.uploadFile(this.selectedFile).subscribe({
+          next: (response) => {
+            registerData.pictureURL = response.url;
+            this.registerUser(registerData);
+          },
+          error: () => {
+            this.snackbarService.error("Picture upload failed. Registering without a picture.");
+            this.registerUser(registerData);
+          }
+        });
+      } else {
+        this.registerUser(registerData);
+      }
     }
+  }
+
+  private registerUser(data: RegisterRequest): void {
+    this.authService.register(data).subscribe({
+      next: () => {
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        console.error("Registration failed:");
+        this.snackbarService.error("Registration failed. Please try again.");
+      }
+    });
+  }
+
+  private mapUniversityYear(year: string): number {
+    const mapping: { [key: string]: number } = {
+      'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6,
+      'Master I': 7, 'Master II': 8
+    };
+    return mapping[year];
   }
 
   // Custom validator for names (only alphabet characters, spaces, and - , . ' allowed)

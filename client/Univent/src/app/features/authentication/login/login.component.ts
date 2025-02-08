@@ -63,7 +63,6 @@ export class LoginComponent {
       this.authService.login(loginData).subscribe({
         next: (response: LoginResponse) => {
           localStorage.setItem('token', response.token);
-          console.log(response.token);
           this.router.navigate(['']);
         },
         error: (error) => {

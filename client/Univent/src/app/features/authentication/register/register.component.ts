@@ -95,7 +95,7 @@ export class RegisterComponent {
 
   step2Form: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(10)]],
+    password: ['', [Validators.required, this.passwordValidator]],
     confirmPassword: ['', [Validators.required]]
   }, { validators: this.passwordMatchValidator });
 
@@ -188,6 +188,30 @@ export class RegisterComponent {
     return mapping[year];
   }
 
+  getPasswordErrors(): string[] {
+    const control = this.step2Form.get('password');
+    if (!control || !control.errors) return [];
+
+    const errors = control.errors;
+    const messages = [];
+
+    if (errors['requiredLength']) messages.push('10 characters');
+    if (errors['requireLowercase']) messages.push('one lowercase character');
+    if (errors['requireUppercase']) messages.push('one uppercase character');
+    if (errors['requireDigit']) messages.push('one digit');
+    if (errors['requireNonAlphanumeric']) messages.push('one special character (!?@#)');
+
+    return messages;
+  }
+
+  getPasswordValidationClass(errorType: string): string {
+    const control = this.step2Form.get('password');
+
+    if (!control || !control.value) return 'text-red-500';
+
+    return control.errors?.[errorType] ? 'text-red-500' : 'text-green-500';
+  }
+
   // Custom validator for names (only alphabet characters, spaces, and - , . ' allowed)
   nameValidator(control: AbstractControl): ValidationErrors | null {
     const nameRegex = /^[a-zA-Z ,.'-]+$/;
@@ -205,6 +229,22 @@ export class RegisterComponent {
     const currentAge = dayjs().diff(birthDate, 'year');
 
     return currentAge >= 18 ? null : { invalidAge: 'You must be at least 18 years old' };
+  }
+
+  // Custom validator to check for Identity password constraints
+  passwordValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+
+    const errors: any = {};
+    
+    if (value.length < 10) errors.requiredLength = true;
+    if (!/[a-z]/.test(value)) errors.requireLowercase = true;
+    if (!/[A-Z]/.test(value)) errors.requireUppercase = true;
+    if (!/[0-9]/.test(value)) errors.requireDigit = true;
+    if (!/[\W_]/.test(value)) errors.requireNonAlphanumeric = true;
+
+    return Object.keys(errors).length ? errors : null;
   }
 
   // Custom validator to check if password and confirm password match
@@ -265,7 +305,11 @@ export class RegisterComponent {
   
       case 'password':
         if (errors['required']) return `Password is required`;
-        if (errors['minlength']) return `Password must have at least 10 characters`;
+        if (errors['requiredLength']) return ``;
+        if (errors['requireLowercase']) return ``;
+        if (errors['requireUppercase']) return ``;
+        if (errors['requireDigit']) return ``;
+        if (errors['requireNonAlphanumeric']) return ``;
         break;
   
       case 'confirmPassword':

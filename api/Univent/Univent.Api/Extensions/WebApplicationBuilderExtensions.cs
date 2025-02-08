@@ -52,7 +52,7 @@ namespace Univent.Api.Extensions
                 .AddIdentityCore<AppUser>(options =>
                 {
                     options.Password.RequireDigit = true;
-                    options.Password.RequiredLength = 8;
+                    options.Password.RequiredLength = 10;
                     options.Password.RequireLowercase = true;
                     options.Password.RequireUppercase = true;
                     options.Password.RequireNonAlphanumeric = true;

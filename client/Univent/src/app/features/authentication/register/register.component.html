@@ -94,6 +94,17 @@
             </mat-error>
           </mat-form-field>
 
+          <div class="mt-2 mb-6 text-sm">
+            <p>Password must have at least:</p>
+            <ul class="list-disc pl-5">
+              <li [ngClass]="getPasswordValidationClass('requiredLength')">10 characters</li>
+              <li [ngClass]="getPasswordValidationClass('requireLowercase')">one lowercase character</li>
+              <li [ngClass]="getPasswordValidationClass('requireUppercase')">one uppercase character</li>
+              <li [ngClass]="getPasswordValidationClass('requireDigit')">one digit</li>
+              <li [ngClass]="getPasswordValidationClass('requireNonAlphanumeric')">one special character</li>
+            </ul>
+          </div>
+
           <div class="flex justify-between mt-4">
             <button mat-button matStepperPrevious>Back</button>
             <button mat-button matStepperNext [disabled]="step2Form.invalid">Next</button>

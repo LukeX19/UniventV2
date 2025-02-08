@@ -18,7 +18,7 @@ namespace Univent.App.Authentication.Dtos
 
         public DateTime Birthday { get; set; }
 
-        public string PictureURL { get; set; }
+        public string? PictureURL { get; set; }
 
         [Required]
         [EmailAddress]

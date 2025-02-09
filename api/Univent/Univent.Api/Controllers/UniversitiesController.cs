@@ -58,5 +58,14 @@ namespace Univent.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUniversity([FromQuery] string input)
+        {
+            var query = new SearchUniversityQuery(input);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
     }
 }

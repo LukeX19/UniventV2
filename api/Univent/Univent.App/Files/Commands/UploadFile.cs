@@ -19,7 +19,8 @@ namespace Univent.App.Files.Commands
         {
             using var stream = request.FileDto.File.OpenReadStream();
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(request.FileDto.File.FileName)}";
-            var fileUrl = await _fileService.UploadAsync(stream, fileName, ct);
+            var contentType = request.FileDto.File.ContentType;
+            var fileUrl = await _fileService.UploadAsync(stream, fileName, contentType, ct);
 
             return new FileResponseDto
             {

@@ -2,7 +2,7 @@
 {
     public interface IFileService
     {
-        Task<string> UploadAsync(Stream stream, string fileName, CancellationToken ct = default);
+        Task<string> UploadAsync(Stream stream, string fileName, string contentType, CancellationToken ct = default);
         Task DeleteAsync(string fileName, CancellationToken ct = default);
     }
 }

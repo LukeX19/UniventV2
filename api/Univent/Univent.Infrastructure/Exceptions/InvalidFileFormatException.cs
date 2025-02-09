@@ -2,12 +2,12 @@
 {
     public class InvalidFileFormatException : Exception
     {
-        private const string MessageTemplate = "The provided file extension is not supported. Please use '.png', '.jpg' or '.jpeg' files instead.";
+        private const string MessageTemplate = "Unsupported file type: {0}";
 
-        public InvalidFileFormatException()
-            : base(string.Format(MessageTemplate)) { }
+        public InvalidFileFormatException(string contentType)
+            : base(string.Format(MessageTemplate, contentType)) { }
 
-        public InvalidFileFormatException(Exception innerException)
-            : base(string.Format(MessageTemplate), innerException) { }
+        public InvalidFileFormatException(string contentType, Exception innerException)
+            : base(string.Format(MessageTemplate, contentType), innerException) { }
     }
 }

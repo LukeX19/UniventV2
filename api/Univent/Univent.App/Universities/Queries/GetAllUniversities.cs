@@ -6,6 +6,7 @@ using Univent.App.Universities.Dtos;
 namespace Univent.App.Universities.Queries
 {
     public record GetAllUniversitiesQuery() : IRequest<ICollection<UniversityResponseDto>>;
+
     public class GetAllUniversitiesHandler : IRequestHandler<GetAllUniversitiesQuery, ICollection<UniversityResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;

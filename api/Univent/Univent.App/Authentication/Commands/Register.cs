@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Univent.App.Authentication.Dtos;
 using Univent.App.Interfaces;
+using Univent.Domain.Enums;
 using Univent.Domain.Models.Users;
 
 namespace Univent.App.Authentication.Commands
@@ -31,7 +32,7 @@ namespace Univent.App.Authentication.Commands
                 Role = request.RegisterDto.Role,
                 Year = request.RegisterDto.Year,
                 UniversityId = request.RegisterDto.UniversityId,
-                IsAccountConfirmed = false
+                IsAccountConfirmed = request.RegisterDto.Role == AppRole.Student ? false : true
             };
 
             var createdUser = await _authenticationService.RegisterAsync(user, request.RegisterDto.Password, ct);

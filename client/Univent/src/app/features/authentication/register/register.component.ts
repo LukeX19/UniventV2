@@ -137,8 +137,11 @@ export class RegisterComponent {
     this.selectedFile = null;
   }
 
+  isRegistering = false;
   onSubmit(): void {
     if (this.step1Form.valid && this.step2Form.valid) {
+      this.isRegistering = true;
+
       let registerData: RegisterRequest = {
         firstName: this.step1Form.value.firstName,
         lastName: this.step1Form.value.lastName,
@@ -173,9 +176,17 @@ export class RegisterComponent {
       next: () => {
         this.router.navigate(['/home']);
       },
-      error: () => {
-        console.error("Registration failed:");
-        this.snackbarService.error("Registration failed. Please try again.");
+      error: (error) => {
+        console.error("Registration failed:", error);
+
+        if (error.status === 409) {
+          this.snackbarService.error("An account with this email already exists. Please try logging in.");
+        } else {
+          this.snackbarService.error("Something went wrong. Please try again later.");
+        }
+      },
+      complete: () => {
+        this.isRegistering = false;
       }
     });
   }

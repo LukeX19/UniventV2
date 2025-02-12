@@ -1,0 +1,21 @@
+.navbar {
+  background-color: transparent;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+
+  .burger-menu {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .burger-menu {
+      display: flex;
+    }
+
+    .hidden.md\\:flex {
+      display: none !important;
+    }
+  }
+}

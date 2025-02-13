@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { AuthenticationService } from '../../../core/services/authentication.service';
+import { Observable } from 'rxjs';
+import { UserResponse } from '../../models/userModel';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,11 +22,12 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent {
   private router = inject(Router);
+  private authService = inject(AuthenticationService);
+
+  user$: Observable<UserResponse | null> = this.authService.user$;
   
   isProfileMenuOpen = false;
   isBurgerMenuOpen = false;
-  userProfileImage: string | null = null;
-  userInitials: string = 'DT';
 
   constructor(private eRef: ElementRef) {}
 
@@ -44,7 +48,14 @@ export class NavbarComponent {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    this.authService.logout();
     this.router.navigate(['']);
+  }
+
+  getUserInitials(user: UserResponse | null): string {
+    if (!user) return 'U';
+    const firstNameInitial = user.firstName ? user.firstName.charAt(0).toUpperCase() : '';
+    const lastNameInitial = user.lastName ? user.lastName.charAt(0).toUpperCase() : '';
+    return `${firstNameInitial}${lastNameInitial}`;
   }
 }

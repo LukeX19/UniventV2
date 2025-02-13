@@ -61,8 +61,7 @@ export class LoginComponent {
       const loginData = this.loginForm.value; 
 
       this.authService.login(loginData).subscribe({
-        next: (response: LoginResponse) => {
-          localStorage.setItem('token', response.token);
+        next: () => {
           this.router.navigate(['/home']);
         },
         error: (error) => {

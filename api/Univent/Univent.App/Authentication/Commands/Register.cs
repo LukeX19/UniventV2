@@ -25,8 +25,8 @@ namespace Univent.App.Authentication.Commands
             {
                 Email = request.RegisterDto.Email,
                 UserName = request.RegisterDto.Email,
-                FirstName = request.RegisterDto.Email,
-                LastName = request.RegisterDto.Email,
+                FirstName = request.RegisterDto.FirstName,
+                LastName = request.RegisterDto.LastName,
                 Birthday = request.RegisterDto.Birthday,
                 PictureUrl = request.RegisterDto.PictureURL,
                 Role = request.RegisterDto.Role,

@@ -6,10 +6,6 @@
     </button>
     <span class="text-3xl font-semibold">Univent</span>
     <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
-      <!-- <img *ngIf="userProfileImage" [src]="userProfileImage" alt="User Avatar" class="w-10 h-10 rounded-full"/>
-      <div *ngIf="!userProfileImage" class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
-        {{ userInitials }}
-      </div> -->
       <!-- Show Profile Picture if available -->
       <ng-container *ngIf="(user$ | async) as user">
         <img *ngIf="user.pictureUrl; else showInitials" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
@@ -39,13 +35,9 @@
     <span class="text-3xl font-semibold">Univent</span>
     <div class="flex items-center space-x-6">
       <a mat-button routerLink="/browse">Browse Events</a>
-      <a mat-button routerLink="/host">Host a New Event</a>
+      <a mat-button (click)="goToEventCreate()">Host a New Event</a>
 
       <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
-        <!-- <img *ngIf="userProfileImage" [src]="userProfileImage" alt="User Avatar" class="w-10 h-10 rounded-full"/>
-        <div *ngIf="!userProfileImage" class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
-          {{ userInitials }}
-        </div> -->
         <!-- Show Profile Picture if available -->
         <ng-container *ngIf="(user$ | async) as user">
           <img *ngIf="user.pictureUrl; else showInitialsLarge" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
@@ -76,8 +68,8 @@
     <button mat-menu-item routerLink="/browse" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
       Browse Events
     </button>
-    <button mat-menu-item routerLink="/host" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
-      Host Event
+    <button mat-menu-item (click)="goToEventCreate()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+      Host a New Event
     </button>
   </div>
 </mat-toolbar>

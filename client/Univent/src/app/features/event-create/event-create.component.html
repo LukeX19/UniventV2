@@ -1,22 +1,17 @@
 <app-navbar></app-navbar>
 
 <div class="max-w-7xl mx-auto p-6">
-  <!-- Title -->
-  <p class="text-3xl font-semibold text-center w-full mb-16">Create Event</p>
+  <p class="text-3xl font-semibold text-center w-full mt-4 mb-12">Create Event</p>
 
-  <p class="text-xl font-semibold mb-4">Event Thumbnail</p>
-
-  <!-- Image Upload Section -->
-  <div *ngIf="!eventImage" 
+  <p class="text-xl font-semibold mb-4">Choose Thumbnail</p>
+  <div *ngIf="!eventImage"
     class="w-full h-96 border-2 border-dashed border-gray-400 rounded-lg flex justify-center items-center relative"
-    (dragover)="onDragOver($event)" 
+    (dragover)="onDragOver($event)"
     (drop)="onDrop($event)">
     
-    <!-- Upload Box -->
     <div class="flex flex-col items-center justify-center w-3/4 h-full text-center p-4">
       <p class="text-gray-600">Drag & drop an image or</p>
 
-      <!-- Choose File Button -->
       <button 
         mat-raised-button 
         class="text-white px-4 py-2 mt-2 rounded-md font-semibold" 
@@ -24,7 +19,6 @@
         Choose Event Image
       </button>
 
-      <!-- Hidden File Input -->
       <input 
         #fileInput 
         type="file" 
@@ -33,20 +27,104 @@
         (change)="onFileSelected($event)">
     </div>
   </div>
-
-  <!-- Image Preview (When an image is uploaded) -->
   <div *ngIf="eventImage" class="w-full flex flex-col items-center">
     <img 
       [src]="eventImage" 
       alt="Event Thumbnail" 
       class="max-w-full max-h-96 object-contain rounded-lg shadow-md">
 
-    <!-- Remove Image Button (Below Image) -->
     <button
       mat-raised-button
       class="mt-4 bg-red-500 text-white font-semibold px-6 py-2 rounded-md hover:bg-red-600 transition"
       (click)="removeImage()">
       Remove Image
+    </button>
+  </div>
+
+  <p class="text-xl font-semibold mb-4 mt-10">Enter Name</p>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Enter event name</mat-label>
+    <input matInput [(ngModel)]="eventName">
+  </mat-form-field>
+
+  <p class="text-xl font-semibold mb-4 mt-10">Select Event Type</p>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Select event type</mat-label>
+    <mat-select [(ngModel)]="eventType">
+      <mat-option *ngFor="let type of eventTypes" [value]="type">
+        {{ type }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <p class="text-xl font-semibold mb-4 mt-10">Choose Start Time</p>
+  <div class="flex space-x-4">
+    <mat-form-field appearance="outline" class="w-1/2">
+      <mat-label>Pick a Date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="startDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-1/2">
+      <mat-label>Select Time</mat-label>
+      <input matInput type="time" [(ngModel)]="startTime">
+    </mat-form-field>
+  </div>
+
+  <p class="text-xl font-semibold mb-4 mt-10">Estimate End Time</p>
+  <div class="flex space-x-4">
+    <mat-form-field appearance="outline" class="w-1/2">
+      <mat-label>Pick a Date</mat-label>
+      <input matInput [matDatepicker]="picker2" [(ngModel)]="endDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-1/2">
+      <mat-label>Select Time</mat-label>
+      <input matInput type="time" [(ngModel)]="endTime">
+    </mat-form-field>
+  </div>
+
+  <p class="text-xl font-semibold mb-4 mt-10">Select Maximum Participants Number</p>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Enter max participants</mat-label>
+    <input matInput type="number" [(ngModel)]="maxParticipants" min="1">
+  </mat-form-field>
+
+  <p class="text-xl font-semibold mb-4 mt-10">Enter a Short Description</p>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Write a short description</mat-label>
+    <textarea matInput rows="4" [(ngModel)]="eventDescription"></textarea>
+  </mat-form-field>
+
+  <p class="text-xl font-semibold mb-4 mt-10">Choose Location</p>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Enter Location</mat-label>
+    <input matInput type="text" #searchBox autocomplete="off" (input)="onSearchInput($event)">
+  </mat-form-field>
+
+  <div class="w-full h-[40rem] mt-4 rounded-lg overflow-hidden">
+    <google-map 
+      height="100%" 
+      width="100%" 
+      [zoom]="mapZoom" 
+      [center]="mapCenter"
+      (mapClick)="onMapClick($event)">
+      
+      <map-marker *ngIf="selectedLocation" [position]="selectedLocation"></map-marker>
+  
+    </google-map>
+  </div>
+
+  <div class="w-full flex justify-between mt-10 mb-10">
+    <button mat-raised-button color="primary" class="px-6 py-3 rounded-md font-semibold" (click)="cancel()">
+      Cancel
+    </button>
+
+    <button mat-raised-button color="primary" class="px-6 py-3 rounded-md font-semibold" (click)="submitEvent()">
+      Create Event
     </button>
   </div>
 </div>

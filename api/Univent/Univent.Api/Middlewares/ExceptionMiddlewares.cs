@@ -25,7 +25,7 @@ namespace Univent.Api.Middlewares
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.NotFound);
             }
-            catch (Exception ex) when (ex is EntityAlreadyExistsException || ex is NameConflictException || ex is AccountAlreadyExistsException)
+            catch (Exception ex) when (ex is EntityAlreadyExistsException || ex is NameConflictException || ex is NameConflictWithStatusException || ex is AccountAlreadyExistsException)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Conflict);
             }

@@ -26,6 +26,7 @@ namespace Univent.Infrastructure
 
             builder.ApplyConfiguration(new UniversityConfig());
             builder.ApplyConfiguration(new UserConfig());
+            builder.ApplyConfiguration(new EventTypeConfig());
             builder.ApplyConfiguration(new EventConfig());
             builder.ApplyConfiguration(new EventParticipantConfig());
             builder.ApplyConfiguration(new FeedbackConfig());

@@ -100,9 +100,34 @@
   </mat-form-field>
 
   <p class="text-xl font-semibold mb-4 mt-10">Choose Location</p>
-  <mat-form-field appearance="outline" class="w-full">
+  <mat-form-field appearance="outline" class="w-full" style="width: 100%; position: relative; display: flex; align-items: center;">
     <mat-label>Enter Location</mat-label>
-    <input matInput type="text" #searchBox autocomplete="off" (input)="onSearchInput($event)">
+    <input
+      matInput
+      type="text"
+      #searchBox
+      autocomplete="off"
+      (input)="onSearchInput($event)"
+      style="
+        width: 100%;
+        padding-right: 40px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;">
+    <button 
+      *ngIf="selectedLocation" 
+      mat-icon-button 
+      style="
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        cursor: pointer;"
+      (click)="clearLocation()">
+    <mat-icon>clear</mat-icon>
+  </button>
   </mat-form-field>
 
   <div class="w-full h-[40rem] mt-4 rounded-lg overflow-hidden">

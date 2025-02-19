@@ -13,5 +13,13 @@ namespace Univent.Infrastructure.Repositories
         {
             return await _context.EventTypes.FirstOrDefaultAsync(et => et.Name.ToLower() == name.ToLower(), ct);
         }
+
+        public async Task<ICollection<EventType>> GetAllActiveAsync(CancellationToken ct = default)
+        {
+            return await _context.EventTypes
+                .Where(et => !et.IsDeleted)
+                .AsNoTracking()
+                .ToListAsync(ct);
+        }
     }
 }

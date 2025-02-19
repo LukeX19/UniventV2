@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
-import { environment } from '../../../environments/environment';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-event-create',
@@ -22,6 +22,7 @@ import { environment } from '../../../environments/environment';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
@@ -47,8 +48,8 @@ export class EventCreateComponent implements AfterViewInit {
   maxParticipants: number | null = null;
   eventDescription: string = '';
 
-  mapZoom: number = 15;
-  mapCenter: google.maps.LatLngLiteral = { lat: 45.752098, lng: 21.224908 };
+  mapZoom: number = 13;
+  mapCenter: google.maps.LatLngLiteral = { lat: 45.7559, lng: 21.2298 };
   selectedLocation: google.maps.LatLngLiteral | null = null;
 
   constructor() { }
@@ -103,6 +104,11 @@ export class EventCreateComponent implements AfterViewInit {
       });
     }
   }
+
+  clearLocation() {
+    this.searchBox.nativeElement.value = '';
+    this.selectedLocation = null;
+  }  
 
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];

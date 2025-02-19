@@ -30,9 +30,9 @@ namespace Univent.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAllEventTypes()
+        public async Task<IActionResult> GetAllActiveEventTypes()
         {
-            var query = new GetAllEventTypesQuery();
+            var query = new GetAllActiveEventTypesQuery();
             var response = await _mediator.Send(query);
 
             return Ok(response);

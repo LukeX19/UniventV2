@@ -35,6 +35,7 @@
 
     <button
       mat-raised-button
+      color="warn"
       class="mt-4 bg-red-500 text-white font-semibold px-6 py-2 rounded-md hover:bg-red-600 transition"
       (click)="removeImage()">
       Remove Image
@@ -51,8 +52,18 @@
   <mat-form-field appearance="outline" class="w-full">
     <mat-label>Select event type</mat-label>
     <mat-select [(ngModel)]="eventType">
-      <mat-option *ngFor="let type of eventTypes" [value]="type">
-        {{ type }}
+      <!-- Loading state -->
+      <mat-option *ngIf="loadingEventTypes" disabled>
+        Loading event types...
+      </mat-option>
+
+      <!-- Error state -->
+      <mat-option *ngIf="errorLoadingEventTypes" disabled>
+        Failed to load event types. Please try again later.
+      </mat-option>
+
+      <mat-option *ngFor="let type of eventTypes" [value]="type.id">
+        {{ type.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -144,7 +155,7 @@
   </div>
 
   <div class="w-full flex justify-between mt-10 mb-10">
-    <button mat-raised-button color="primary" class="px-6 py-3 rounded-md font-semibold" (click)="cancel()">
+    <button mat-raised-button color="warn" class="px-6 py-3 rounded-md font-semibold" (click)="cancel()">
       Cancel
     </button>
 

@@ -29,6 +29,7 @@ namespace Univent.Api.Controllers
         }
 
         [HttpGet]
+        [Route("active")]
         [Authorize]
         public async Task<IActionResult> GetAllActiveEventTypes()
         {

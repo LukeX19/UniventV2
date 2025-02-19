@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
@@ -11,6 +11,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { MatIconModule } from '@angular/material/icon';
+import { EventTypeService } from '../../core/services/event-type.service';
+import { EventTypeResponse } from '../../shared/models/eventTypeModel';
 
 @Component({
   selector: 'app-event-create',
@@ -35,12 +37,13 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './event-create.component.scss'
 })
 export class EventCreateComponent implements AfterViewInit {
+  private eventTypeService = inject(EventTypeService);
+
   @ViewChild('searchBox') searchBox!: ElementRef;
   
   eventImage: string | null = null;
   eventName: string = '';
   eventType: string = '';
-  eventTypes: string[] = ['Event Type 1', 'Event Type 2'];
   startDate: Date | null = null;
   startTime: string = '';
   endDate: Date | null = null;
@@ -48,11 +51,27 @@ export class EventCreateComponent implements AfterViewInit {
   maxParticipants: number | null = null;
   eventDescription: string = '';
 
+  eventTypes: EventTypeResponse[] = [];
+  loadingEventTypes: boolean = true;
+  errorLoadingEventTypes: boolean = false;
+
   mapZoom: number = 13;
   mapCenter: google.maps.LatLngLiteral = { lat: 45.7559, lng: 21.2298 };
   selectedLocation: google.maps.LatLngLiteral | null = null;
 
-  constructor() { }
+  ngOnInit() {
+    this.eventTypeService.fetchActiveEventTypes().subscribe({
+      next: (data) => {
+        this.eventTypes = data;
+        this.loadingEventTypes = false;
+      },
+      error: (error) => {
+        console.error('Failed to load event types:', error);
+        this.loadingEventTypes = false;
+        this.errorLoadingEventTypes = true;
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     const defaultBounds = new google.maps.LatLngBounds(

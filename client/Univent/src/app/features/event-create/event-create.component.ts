@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -13,6 +13,8 @@ import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { MatIconModule } from '@angular/material/icon';
 import { EventTypeService } from '../../core/services/event-type.service';
 import { EventTypeResponse } from '../../shared/models/eventTypeModel';
+import { FileService } from '../../core/services/file.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-event-create',
@@ -37,7 +39,11 @@ import { EventTypeResponse } from '../../shared/models/eventTypeModel';
   styleUrl: './event-create.component.scss'
 })
 export class EventCreateComponent implements AfterViewInit {
+  private fb = inject(FormBuilder);
   private eventTypeService = inject(EventTypeService);
+  private fileService = inject(FileService);
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
   @ViewChild('searchBox') searchBox!: ElementRef;
   
@@ -58,6 +64,9 @@ export class EventCreateComponent implements AfterViewInit {
   mapZoom: number = 13;
   mapCenter: google.maps.LatLngLiteral = { lat: 45.7559, lng: 21.2298 };
   selectedLocation: google.maps.LatLngLiteral | null = null;
+  locationAddress: string = '';
+
+  submitting: boolean = false;
 
   ngOnInit() {
     this.eventTypeService.fetchActiveEventTypes().subscribe({
@@ -115,8 +124,8 @@ export class EventCreateComponent implements AfterViewInit {
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: this.selectedLocation }, (results, status) => {
         if (status === "OK" && results?.length) {
-          const formattedAddress = results[0].formatted_address;
-          this.searchBox.nativeElement.value = formattedAddress;
+          this.locationAddress = results[0].formatted_address;
+          this.searchBox.nativeElement.value = results[0].formatted_address;
         } else {
           console.error("Geocoder failed due to: ", status);
         }
@@ -127,6 +136,7 @@ export class EventCreateComponent implements AfterViewInit {
   clearLocation() {
     this.searchBox.nativeElement.value = '';
     this.selectedLocation = null;
+    this.locationAddress = '';
   }  
 
   onFileSelected(event: Event): void {

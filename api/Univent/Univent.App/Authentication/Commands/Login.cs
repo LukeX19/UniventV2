@@ -26,7 +26,6 @@ namespace Univent.App.Authentication.Commands
 
             return new AuthenticationResponseDto
             {
-                UserId = user.Id,
                 Token = token
             };
         }

@@ -93,21 +93,6 @@
       </mat-form-field>
     </div>
 
-    <p class="text-xl font-semibold mb-4 mt-10">Estimate End Time</p>
-    <div class="flex space-x-4">
-      <mat-form-field appearance="outline" class="w-1/2">
-        <mat-label>Pick a Date</mat-label>
-        <input matInput [matDatepicker]="picker2" [min]="tomorrow" formControlName="endDate">
-        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="w-1/2">
-        <mat-label>Select Time</mat-label>
-        <input matInput type="time" formControlName="endTime">
-      </mat-form-field>
-    </div>
-
     <p class="text-xl font-semibold mb-4 mt-10">Select Maximum Participants Number</p>
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Enter max participants</mat-label>

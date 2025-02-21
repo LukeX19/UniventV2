@@ -24,7 +24,6 @@ namespace Univent.App.Events.Commands
                 Description = request.EventDto.Description,
                 MaximumParticipants = request.EventDto.MaximumParticipants,
                 StartTime = request.EventDto.StartTime,
-                EndTime = request.EventDto.EndTime,
                 LocationAddress = request.EventDto.LocationAddress,
                 LocationLat = request.EventDto.LocationLat,
                 LocationLong = request.EventDto.LocationLong,

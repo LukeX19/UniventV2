@@ -60,8 +60,6 @@ export class EventCreateComponent implements AfterViewInit {
     maximumParticipants: ['', [Validators.required, Validators.min(1)]],
     startDate: ['', Validators.required],
     startTime: ['', Validators.required],
-    endDate: ['', Validators.required],
-    endTime: ['', Validators.required],
     locationAddress: ['', Validators.required],
     locationLat: [null, Validators.required],
     locationLong: [null, Validators.required],
@@ -255,16 +253,11 @@ export class EventCreateComponent implements AfterViewInit {
     const [startHours, startMinutes] = formValues.startTime.split(':').map(Number);
     fullStartDateTime.setHours(startHours, startMinutes);
 
-    const fullEndDateTime = new Date(formValues.endDate);
-    const [endHours, endMinutes] = formValues.endTime.split(':').map(Number);
-    fullEndDateTime.setHours(endHours, endMinutes);
-
     let eventData: EventRequest = {
       name: formValues.name,
       description: formValues.description,
       maximumParticipants: formValues.maximumParticipants,
       startTime: new Date(fullStartDateTime).toISOString(),
-      endTime: new Date(fullEndDateTime).toISOString(),
       locationAddress: formValues.locationAddress,
       locationLat: formValues.locationLat,
       locationLong: formValues.locationLong,

@@ -23,10 +23,6 @@ namespace Univent.App.Events.Dtos
         public DateTime StartTime { get; set; }
 
         [Required]
-        [EndTimeAfterStartTime(nameof(StartTime), ErrorMessage = "End time must be after the start time.")]
-        public DateTime EndTime { get; set; }
-
-        [Required]
         public string LocationAddress { get; set; }
 
         [Required]

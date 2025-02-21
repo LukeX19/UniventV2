@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,8 @@ import { EventTypeService } from '../../core/services/event-type.service';
 import { EventTypeResponse } from '../../shared/models/eventTypeModel';
 import { FileService } from '../../core/services/file.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
+import { EventRequest } from '../../shared/models/eventModel';
+import { EventService } from '../../core/services/event.service';
 
 @Component({
   selector: 'app-event-create',
@@ -43,11 +45,14 @@ export class EventCreateComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   private eventTypeService = inject(EventTypeService);
   private fileService = inject(FileService);
+  private eventService = inject(EventService);
   private snackbarService = inject(SnackbarService);
   private router = inject(Router);
+  private location = inject(Location);
 
   @ViewChild('searchBox') searchBox!: ElementRef;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild(GoogleMap) googleMap!: GoogleMap;
 
   eventForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -65,17 +70,19 @@ export class EventCreateComponent implements AfterViewInit {
   });
 
   selectedImage: string | ArrayBuffer | null = null;
-  //selectedFile: File | null = null;
 
   eventTypes: EventTypeResponse[] = [];
   loadingEventTypes: boolean = true;
   errorLoadingEventTypes: boolean = false;
 
+  // 86400000 = 24 * 60 * 60 * 1000
+  tomorrow: Date = new Date(Date.now() + 86400000);
+
   mapZoom: number = 13;
   mapCenter: google.maps.LatLngLiteral = { lat: 45.7559, lng: 21.2298 };
   selectedLocation: google.maps.LatLngLiteral | null = null;
 
-  submitting: boolean = false;
+  isSubmitting: boolean = false;
 
   ngOnInit() {
     this.eventTypeService.fetchActiveEventTypes().subscribe({
@@ -112,6 +119,7 @@ export class EventCreateComponent implements AfterViewInit {
           lng: place.geometry.location!.lng()
         };
         this.mapCenter = this.selectedLocation;
+        this.mapZoom = 16;
         this.eventForm.patchValue({
           locationAddress: place.formatted_address,
           locationLat: this.selectedLocation.lat,
@@ -119,6 +127,12 @@ export class EventCreateComponent implements AfterViewInit {
         });
       }
     });
+  }
+
+  onZoomChanged(): void {
+    if (this.googleMap) {
+      this.mapZoom = this.googleMap.getZoom()!;
+    }
   }
 
   onSearchInput(event: Event) {
@@ -187,7 +201,6 @@ export class EventCreateComponent implements AfterViewInit {
       reader.onload = (e) => this.selectedImage = e.target?.result!;
       reader.readAsDataURL(file);
 
-      //this.selectedFile = file;
       this.eventForm.patchValue({ selectedFile: file });
       this.triggerImageValidation();
     }
@@ -205,25 +218,38 @@ export class EventCreateComponent implements AfterViewInit {
       reader.onload = (e) => this.selectedImage = e.target?.result!;
       reader.readAsDataURL(file);
 
-      //this.selectedFile = file;
       this.eventForm.patchValue({ selectedFile: file });
     }
   }
 
   removeImage() {
     this.selectedImage = null;
-    //this.selectedFile = null;
     this.eventForm.patchValue({ selectedFile: null });
     this.triggerImageValidation();
   }
 
   cancel() {
-
+    this.location.back();
   }
 
-  submitEvent(): void {
+  onSubmit(): void {
     this.eventForm.markAllAsTouched();
 
+    if (this.eventForm.valid) {
+      this.isSubmitting = true;
+
+      this.fileService.uploadFile(this.eventForm.value.selectedFile).subscribe({
+        next: (response) => {
+          this.createEvent(response.url);
+        },
+        error: () => {
+          this.snackbarService.error("Picture upload failed. Event creation failed.");
+        }
+      })
+    }
+  }
+
+  private createEvent(responseUrl: string): void {
     const formValues = this.eventForm.value;
     const fullStartDateTime = new Date(formValues.startDate);
     const [startHours, startMinutes] = formValues.startTime.split(':').map(Number);
@@ -233,23 +259,36 @@ export class EventCreateComponent implements AfterViewInit {
     const [endHours, endMinutes] = formValues.endTime.split(':').map(Number);
     fullEndDateTime.setHours(endHours, endMinutes);
 
-    const eventData = {
+    let eventData: EventRequest = {
       name: formValues.name,
-      typeId: formValues.typeId,
-      startDateTime: fullStartDateTime,
-      endDateTime: fullEndDateTime,
-      maximumParticipants: formValues.maximumParticipants,
       description: formValues.description,
+      maximumParticipants: formValues.maximumParticipants,
+      startTime: new Date(fullStartDateTime).toISOString(),
+      endTime: new Date(fullEndDateTime).toISOString(),
       locationAddress: formValues.locationAddress,
       locationLat: formValues.locationLat,
-      locationLong: formValues.locationLong
-    };
+      locationLong: formValues.locationLong,
+      pictureUrl: responseUrl,
+      typeId: formValues.typeId
+    }
 
-    console.log("Event Data:", eventData);
+    this.eventService.createEvent(eventData).subscribe({
+      next: () => {
+        this.snackbarService.success("Event created successfully.");
+        this.router.navigate(['/home']);
+      },
+      error: (error) => {
+        console.error("Event creation failed:", error);
+        this.snackbarService.error("Something went wrong. Please try again later.");
+      },
+      complete: () => {
+        this.isSubmitting = true;
+      }
+    })
   }
 
   // Custom validator for image
   fileRequiredValidator(control: AbstractControl): ValidationErrors | null {
     return control.value ? null : { requiredFile: 'Please provide an image for event thumbnail.' };
-}
+  }
 }

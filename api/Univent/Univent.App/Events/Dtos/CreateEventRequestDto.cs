@@ -11,7 +11,7 @@ namespace Univent.App.Events.Dtos
         public string Name { get; set; }
 
         [Required]
-        [MinLength(1)]
+        [MinLength(3)]
         [MaxLength(3000)]
         public string Description { get; set; }
 

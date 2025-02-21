@@ -56,7 +56,7 @@ export class EventCreateComponent implements AfterViewInit {
 
   eventForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-    description: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3000)]],
+    description: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3000)]],
     maximumParticipants: ['', [Validators.required, Validators.min(1)]],
     startDate: ['', Validators.required],
     startTime: ['', Validators.required],
@@ -283,5 +283,46 @@ export class EventCreateComponent implements AfterViewInit {
   // Custom validator for image
   fileRequiredValidator(control: AbstractControl): ValidationErrors | null {
     return control.value ? null : { requiredFile: 'Please provide an image for event thumbnail.' };
+  }
+
+  getErrorMessage(field: string, errors: any): string {
+    if (!errors) return '';
+  
+    switch (field) {
+      case 'name':
+        if (errors['required']) return `Event Name is required`;
+        if (errors['minlength']) return `Event Name must have at least 3 characters`;
+        if (errors['maxlength']) return `Event Name must have a maximum of 50 characters`;
+        break;
+
+      case 'description':
+        if (errors['required']) return `Description is required`;
+        if (errors['minlength']) return `Description must have at least 3 characters`;
+        if (errors['maxlength']) return `Description must have a maximum of 3000 characters`;
+        break;
+  
+      case 'maximumParticipants':
+        if (errors['required']) return `Maximum participants number is required`;
+        if (errors['min']) return `Maximum participants number must be at least 1`;
+        break;
+      
+      case 'startDate':
+        if (errors['required']) return `Start date is required`;
+        break;
+  
+      case 'startTime':
+        if (errors['required']) return `Start time is required`;
+        break;
+      
+      case 'locationAddress':
+        if (errors['required']) return `Location is required`;
+        break;
+  
+      case 'typeId':
+        if (errors['required']) return `Event type is required`;
+        break;
+    }
+  
+    return 'Invalid input';
   }
 }

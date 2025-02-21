@@ -127,6 +127,7 @@
       <input
         matInput
         type="text"
+        formControlName="locationAddress"
         #searchBox
         autocomplete="off"
         (keydown.enter)="onEnterPress($event)"
@@ -152,10 +153,6 @@
         <mat-icon>clear</mat-icon>
       </button>
     </mat-form-field>
-
-    <p *ngIf="eventForm.get('locationAddress')?.invalid && eventForm.get('locationAddress')?.touched" class="text-red-700 text-sm mt-2">
-      Please select a valid location.
-    </p>
 
     <div class="w-full h-[40rem] mt-4 rounded-lg overflow-hidden">
       <google-map 

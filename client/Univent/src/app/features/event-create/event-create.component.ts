@@ -117,7 +117,6 @@ export class EventCreateComponent implements AfterViewInit {
           locationLat: this.selectedLocation.lat,
           locationLong: this.selectedLocation.lng
         });
-        this.triggerLocationValidation();
       }
     });
   }
@@ -166,8 +165,6 @@ export class EventCreateComponent implements AfterViewInit {
       locationLat: '',
       locationLong: ''
     });
-
-    this.triggerLocationValidation();
   }
 
   triggerImageValidation() {
@@ -175,14 +172,6 @@ export class EventCreateComponent implements AfterViewInit {
     if (selectedFileControl) {
       selectedFileControl.markAsTouched(); 
       selectedFileControl.updateValueAndValidity();
-    }
-  }
-
-  triggerLocationValidation() {
-    const locationControl = this.eventForm.get('locationAddress');
-    if (locationControl) {
-      locationControl.markAsTouched();
-      locationControl.updateValueAndValidity();
     }
   }
 

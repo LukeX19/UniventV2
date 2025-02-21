@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { EventTypeService } from '../../core/services/event-type.service';
 import { EventTypeResponse } from '../../shared/models/eventTypeModel';
 import { FileService } from '../../core/services/file.service';
-import { HttpClient } from '@angular/common/http';
+import { SnackbarService } from '../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-event-create',
@@ -23,6 +23,7 @@ import { HttpClient } from '@angular/common/http';
     CommonModule,
     RouterModule,
     FormsModule,
+    ReactiveFormsModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
@@ -42,20 +43,29 @@ export class EventCreateComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   private eventTypeService = inject(EventTypeService);
   private fileService = inject(FileService);
-  private http = inject(HttpClient);
+  private snackbarService = inject(SnackbarService);
   private router = inject(Router);
 
   @ViewChild('searchBox') searchBox!: ElementRef;
-  
-  eventImage: string | null = null;
-  eventName: string = '';
-  eventType: string = '';
-  startDate: Date | null = null;
-  startTime: string = '';
-  endDate: Date | null = null;
-  endTime: string = '';
-  maxParticipants: number | null = null;
-  eventDescription: string = '';
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+  eventForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+    description: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3000)]],
+    maximumParticipants: ['', [Validators.required, Validators.min(1)]],
+    startDate: ['', Validators.required],
+    startTime: ['', Validators.required],
+    endDate: ['', Validators.required],
+    endTime: ['', Validators.required],
+    locationAddress: ['', Validators.required],
+    locationLat: [null, Validators.required],
+    locationLong: [null, Validators.required],
+    typeId: ['', [Validators.required]],
+    selectedFile: [null, this.fileRequiredValidator]
+  });
+
+  selectedImage: string | ArrayBuffer | null = null;
+  //selectedFile: File | null = null;
 
   eventTypes: EventTypeResponse[] = [];
   loadingEventTypes: boolean = true;
@@ -64,7 +74,6 @@ export class EventCreateComponent implements AfterViewInit {
   mapZoom: number = 13;
   mapCenter: google.maps.LatLngLiteral = { lat: 45.7559, lng: 21.2298 };
   selectedLocation: google.maps.LatLngLiteral | null = null;
-  locationAddress: string = '';
 
   submitting: boolean = false;
 
@@ -103,13 +112,29 @@ export class EventCreateComponent implements AfterViewInit {
           lng: place.geometry.location!.lng()
         };
         this.mapCenter = this.selectedLocation;
-        this.searchBox.nativeElement.value = place.formatted_address;
+        this.eventForm.patchValue({
+          locationAddress: place.formatted_address,
+          locationLat: this.selectedLocation.lat,
+          locationLong: this.selectedLocation.lng
+        });
+        this.triggerLocationValidation();
       }
     });
   }
 
   onSearchInput(event: Event) {
     event.preventDefault();
+  }
+
+  onChooseImage(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.fileInput.nativeElement.click();
+  }
+
+  onEnterPress(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   onMapClick(event: google.maps.MapMouseEvent) {
@@ -124,8 +149,7 @@ export class EventCreateComponent implements AfterViewInit {
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: this.selectedLocation }, (results, status) => {
         if (status === "OK" && results?.length) {
-          this.locationAddress = results[0].formatted_address;
-          this.searchBox.nativeElement.value = results[0].formatted_address;
+          this.eventForm.patchValue({ locationAddress: results[0].formatted_address });
         } else {
           console.error("Geocoder failed due to: ", status);
         }
@@ -136,17 +160,47 @@ export class EventCreateComponent implements AfterViewInit {
   clearLocation() {
     this.searchBox.nativeElement.value = '';
     this.selectedLocation = null;
-    this.locationAddress = '';
-  }  
+
+    this.eventForm.patchValue({
+      locationAddress: '',
+      locationLat: '',
+      locationLong: ''
+    });
+
+    this.triggerLocationValidation();
+  }
+
+  triggerImageValidation() {
+    const selectedFileControl = this.eventForm.get('selectedFile');
+    if (selectedFileControl) {
+      selectedFileControl.markAsTouched(); 
+      selectedFileControl.updateValueAndValidity();
+    }
+  }
+
+  triggerLocationValidation() {
+    const locationControl = this.eventForm.get('locationAddress');
+    if (locationControl) {
+      locationControl.markAsTouched();
+      locationControl.updateValueAndValidity();
+    }
+  }
 
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        this.snackbarService.error('Only image files are allowed!');
+        return;
+      }
+
       const reader = new FileReader();
-      reader.onload = (e) => {
-        this.eventImage = e.target?.result as string;
-      };
+      reader.onload = (e) => this.selectedImage = e.target?.result!;
       reader.readAsDataURL(file);
+
+      //this.selectedFile = file;
+      this.eventForm.patchValue({ selectedFile: file });
+      this.triggerImageValidation();
     }
   }
   
@@ -159,15 +213,19 @@ export class EventCreateComponent implements AfterViewInit {
     const file = event.dataTransfer?.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        this.eventImage = e.target?.result as string;
-      };
+      reader.onload = (e) => this.selectedImage = e.target?.result!;
       reader.readAsDataURL(file);
+
+      //this.selectedFile = file;
+      this.eventForm.patchValue({ selectedFile: file });
     }
   }
 
   removeImage() {
-    this.eventImage = null;
+    this.selectedImage = null;
+    //this.selectedFile = null;
+    this.eventForm.patchValue({ selectedFile: null });
+    this.triggerImageValidation();
   }
 
   cancel() {
@@ -175,31 +233,34 @@ export class EventCreateComponent implements AfterViewInit {
   }
 
   submitEvent(): void {
-    if (!this.startDate || !this.startTime || !this.endDate || !this.endTime) {
-      console.error("Start and End Date & Time must be selected");
-      return;
-    }
+    this.eventForm.markAllAsTouched();
 
-    // Combine date & time for start time
-    const [startHours, startMinutes] = this.startTime.split(':').map(Number);
-    const fullStartDateTime = new Date(this.startDate);
+    const formValues = this.eventForm.value;
+    const fullStartDateTime = new Date(formValues.startDate);
+    const [startHours, startMinutes] = formValues.startTime.split(':').map(Number);
     fullStartDateTime.setHours(startHours, startMinutes);
 
-    // Combine date & time for end time
-    const [endHours, endMinutes] = this.endTime.split(':').map(Number);
-    const fullEndDateTime = new Date(this.endDate);
+    const fullEndDateTime = new Date(formValues.endDate);
+    const [endHours, endMinutes] = formValues.endTime.split(':').map(Number);
     fullEndDateTime.setHours(endHours, endMinutes);
 
     const eventData = {
-      name: this.eventName,
-      type: this.eventType,
+      name: formValues.name,
+      typeId: formValues.typeId,
       startDateTime: fullStartDateTime,
       endDateTime: fullEndDateTime,
-      maxParticipants: this.maxParticipants,
-      description: this.eventDescription,
-      image: this.eventImage
+      maximumParticipants: formValues.maximumParticipants,
+      description: formValues.description,
+      locationAddress: formValues.locationAddress,
+      locationLat: formValues.locationLat,
+      locationLong: formValues.locationLong
     };
 
     console.log("Event Data:", eventData);
   }
+
+  // Custom validator for image
+  fileRequiredValidator(control: AbstractControl): ValidationErrors | null {
+    return control.value ? null : { requiredFile: 'Please provide an image for event thumbnail.' };
+}
 }

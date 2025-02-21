@@ -22,7 +22,7 @@ namespace Univent.App.Universities.Commands
             var university = await _unitOfWork.UniversityRepository.GetByIdAsync(request.Id, ct);
 
             var nameExists = await _unitOfWork.UniversityRepository.ExistsByNameAsync(request.UniversityDto.Name, ct);
-            if (nameExists && university.Name != request.UniversityDto.Name)
+            if (nameExists && university.Name.ToLower() != request.UniversityDto.Name.ToLower())
             {
                 throw new NameConflictException(typeof(University).Name, request.UniversityDto.Name);
             }

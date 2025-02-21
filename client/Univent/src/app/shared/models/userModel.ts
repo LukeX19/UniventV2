@@ -9,4 +9,4 @@ export interface UserResponse {
   year: number;
   isAccountConfirmed: boolean;
   universityId?: string | null;
-}
+};

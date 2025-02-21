@@ -16,6 +16,7 @@ namespace Univent.App.Authentication.Dtos
         [MaxLength(50)]
         public string LastName { get; set; }
 
+        [Required]
         public DateTime Birthday { get; set; }
 
         public string? PictureURL { get; set; }

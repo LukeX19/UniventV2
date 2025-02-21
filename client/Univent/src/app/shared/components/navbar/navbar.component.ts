@@ -58,4 +58,12 @@ export class NavbarComponent {
     const lastNameInitial = user.lastName ? user.lastName.charAt(0).toUpperCase() : '';
     return `${firstNameInitial}${lastNameInitial}`;
   }
+
+  goToEventCreate() {
+    this.router.navigate(['/host']);
+  }
+
+  goToEventBrowse() {
+    this.router.navigate(['/browse']);
+  }
 }

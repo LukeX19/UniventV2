@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Univent.App.Exceptions;
 using Univent.App.Interfaces;
 using Univent.App.Universities.Dtos;

@@ -1,0 +1,185 @@
+<app-navbar></app-navbar>
+
+<div class="max-w-7xl mx-auto p-6">
+  <p class="text-3xl font-semibold text-center w-full mt-4 mb-12">Create Event</p>
+
+  <form [formGroup]="eventForm">
+    <p class="text-xl font-semibold mb-4">Choose Thumbnail</p>
+    <div *ngIf="!selectedImage"
+      [ngClass]="{
+        'border-gray-400': eventForm.get('selectedFile')?.valid || !eventForm.touched,
+        'border-red-700': eventForm.get('selectedFile')?.invalid && eventForm.touched
+      }"
+      class="w-full h-96 border-2 border-dashed rounded-lg flex justify-center items-center relative"
+      (dragover)="onDragOver($event)"
+      (drop)="onDrop($event)">
+      
+      <div class="flex flex-col items-center justify-center w-3/4 h-full text-center p-4">
+        <p class="text-gray-600">Drag & drop an image or</p>
+
+        <button 
+          mat-raised-button 
+          class="text-white px-4 py-2 mt-2 rounded-md font-semibold" 
+          (click)="onChooseImage($event)">
+          Choose Event Image
+        </button>
+
+        <input 
+          #fileInput 
+          type="file" 
+          accept="image/*" 
+          class="hidden" 
+          (change)="onFileSelected($event)">
+      </div>
+    </div>
+
+    <p *ngIf="eventForm.get('selectedFile')?.invalid && eventForm.get('selectedFile')?.touched" class="text-red-700 text-sm mt-2">
+      Please select an event image.
+    </p>
+
+    <div *ngIf="selectedImage" class="w-full flex flex-col items-center">
+      <img 
+        [src]="selectedImage" 
+        alt="Event Thumbnail" 
+        class="max-w-full max-h-96 object-contain rounded-lg shadow-md">
+
+      <button
+        mat-raised-button
+        color="warn"
+        class="mt-4 bg-red-500 text-white font-semibold px-6 py-2 rounded-md hover:bg-red-600 transition"
+        (click)="removeImage()">
+        Remove Image
+      </button>
+    </div>
+
+    <p class="text-xl font-semibold mb-4 mt-10">Enter Name</p>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Enter event name</mat-label>
+      <input matInput formControlName="name">
+      <mat-error *ngIf="eventForm.get('name')?.errors as errors">
+        {{ getErrorMessage('name', errors) }}
+      </mat-error>
+    </mat-form-field>
+
+    <p class="text-xl font-semibold mb-4 mt-10">Select Event Type</p>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Select event type</mat-label>
+      <mat-select formControlName="typeId">
+        <!-- Loading state -->
+        <mat-option *ngIf="loadingEventTypes" disabled>
+          Loading event types...
+        </mat-option>
+
+        <!-- Error state -->
+        <mat-option *ngIf="errorLoadingEventTypes" disabled>
+          Failed to load event types. Please try again later.
+        </mat-option>
+
+        <mat-option *ngFor="let type of eventTypes" [value]="type.id">
+          {{ type.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="eventForm.get('typeId')?.errors as errors">
+        {{ getErrorMessage('typeId', errors) }}
+      </mat-error>
+    </mat-form-field>
+
+    <p class="text-xl font-semibold mb-4 mt-10">Choose Start Time</p>
+    <div class="flex space-x-4">
+      <mat-form-field appearance="outline" class="w-1/2">
+        <mat-label>Pick a Date</mat-label>
+        <input matInput [matDatepicker]="picker" [min]="tomorrow" formControlName="startDate">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="eventForm.get('startDate')?.errors as errors">
+          {{ getErrorMessage('startDate', errors) }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-1/2">
+        <mat-label>Select Time</mat-label>
+        <input matInput type="time" formControlName="startTime">
+        <mat-error *ngIf="eventForm.get('startTime')?.errors as errors">
+          {{ getErrorMessage('startTime', errors) }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <p class="text-xl font-semibold mb-4 mt-10">Select Maximum Participants Number</p>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Enter max participants</mat-label>
+      <input matInput type="number" formControlName="maximumParticipants" min="1">
+      <mat-error *ngIf="eventForm.get('maximumParticipants')?.errors as errors">
+        {{ getErrorMessage('maximumParticipants', errors) }}
+      </mat-error>
+    </mat-form-field>
+
+    <p class="text-xl font-semibold mb-4 mt-10">Enter a Short Description</p>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Write a short description</mat-label>
+      <textarea matInput rows="5" formControlName="description"></textarea>
+      <mat-error *ngIf="eventForm.get('description')?.errors as errors">
+        {{ getErrorMessage('description', errors) }}
+      </mat-error>
+    </mat-form-field>
+
+    <p class="text-xl font-semibold mb-4 mt-10">Choose Location</p>
+    <mat-form-field appearance="outline" class="w-full"
+      style="width: 100%; position: relative; display: flex; align-items: center;">
+      <mat-label>Enter Location</mat-label>
+      <input
+        matInput
+        type="text"
+        formControlName="locationAddress"
+        #searchBox
+        autocomplete="off"
+        (keydown.enter)="onEnterPress($event)"
+        (input)="onSearchInput($event)"
+        style="
+          width: 100%;
+          padding-right: 40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;">
+      <button 
+        *ngIf="selectedLocation" 
+        mat-icon-button 
+        style="
+          position: absolute;
+          right: 5px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          cursor: pointer;"
+        (click)="clearLocation()">
+        <mat-icon>clear</mat-icon>
+      </button>
+      <mat-error *ngIf="eventForm.get('locationAddress')?.errors as errors">
+        {{ getErrorMessage('locationAddress', errors) }}
+      </mat-error>
+    </mat-form-field>
+
+    <div class="w-full h-[40rem] mt-4 rounded-lg overflow-hidden">
+      <google-map
+        height="100%"
+        width="100%"
+        [zoom]="mapZoom"
+        [center]="mapCenter"
+        (zoomChanged)="onZoomChanged()"
+        (mapClick)="onMapClick($event)">
+          <map-marker *ngIf="selectedLocation" [position]="selectedLocation"></map-marker>
+      </google-map>
+    </div>
+
+    <div class="w-full flex justify-between mt-10 mb-10">
+      <button mat-raised-button color="warn" class="px-6 py-3 rounded-md font-semibold" (click)="cancel()">
+        Cancel
+      </button>
+
+      <button mat-raised-button color="primary" class="px-6 py-3 rounded-md font-semibold" (click)="onSubmit()">
+        Create Event
+      </button>
+    </div>
+  </form>
+</div>

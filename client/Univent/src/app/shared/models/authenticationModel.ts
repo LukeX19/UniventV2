@@ -18,4 +18,4 @@ export interface RegisterRequest {
   role: number;
   year: number;
   universityId?: string | null;
-}
+};

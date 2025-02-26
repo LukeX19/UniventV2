@@ -9,3 +9,20 @@ export interface EventRequest {
   pictureUrl: string;
   typeId: string;
 };
+
+export interface EventCardResponse {
+  id: string;
+  name: string;
+  enrolledParticipants: number;
+  maximumParticipants: number;
+  startTime: string;
+  locationAddress: string;
+  pictureUrl: string;
+  createdAt: string;
+  updatedAt: string;
+  typeName: string;
+  authorPictureUrl?: string | null;
+  authorFirstName: string;
+  authorLastName: string;
+  authorRating: number;
+}

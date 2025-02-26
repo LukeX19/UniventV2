@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Univent.Api.Extensions;
 using Univent.App.Events.Commands;
 using Univent.App.Events.Dtos;
+using Univent.App.Events.Queries;
 
 namespace Univent.Api.Controllers
 {
@@ -28,6 +29,15 @@ namespace Univent.Api.Controllers
             var response = await _mediator.Send(command);
 
             return Created($"/api/events/{response}", response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllEventsSummaries()
+        {
+            var query = new GetAllEventsSummariesQuery();
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
         }
     }
 }

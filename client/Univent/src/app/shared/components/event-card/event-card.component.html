@@ -40,7 +40,7 @@
       <!-- Created by Section -->
       <div class="flex items-center mt-2">
         <img 
-          [src]="event.authorPictureUrl || 'https://via.placeholder.com/50'"
+          [src]="event.author.pictureUrl"
           alt="Creator Avatar"
           class="w-10 h-10 rounded-full mr-2" />
         <div>
@@ -48,7 +48,7 @@
           <!-- Rating Text & Star -->
           <div class="flex items-center bg-gray-100 rounded-full px-1 pr-2 w-fit">
             <mat-icon style="width: 20px; color: #FBBF24; font-size: 18px; vertical-align: middle; padding-top: 3px;">star</mat-icon>
-            <span class="text-xs font-medium text-gray-800">{{ event.authorRating.toFixed(2) }}</span>
+            <span class="text-xs font-medium text-gray-800">{{ event.author.rating.toFixed(2) }}</span>
           </div>
         </div>
       </div>

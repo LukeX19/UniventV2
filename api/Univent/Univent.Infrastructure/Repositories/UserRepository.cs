@@ -20,5 +20,18 @@ namespace Univent.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Id == id, ct)
                 ?? throw new EntityNotFoundException("User", id);
         }
+
+        public async Task<Dictionary<Guid, double>> GetAverageRatingsAsync(List<Guid> userIds, CancellationToken ct)
+        {
+            return await _context.Users
+                .Where(u => userIds.Contains(u.Id))
+                .Select(u => new
+                {
+                    UserId = u.Id,
+                    AverageRating = u.Feedbacks.Any() ? u.Feedbacks.Average(f => f.Rating) : 0.0
+                })
+                .ToDictionaryAsync(u => u.UserId, u => u.AverageRating, ct);
+        }
+
     }
 }

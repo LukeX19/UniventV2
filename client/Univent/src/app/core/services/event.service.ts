@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { EventRequest } from '../../shared/models/eventModel';
+import { EventRequest, EventSummaryResponse } from '../../shared/models/eventModel';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -13,6 +13,12 @@ export class EventService {
 
   createEvent(eventData: EventRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/events`, eventData, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  getAllEventsSummaries(): Observable<EventSummaryResponse[]> {
+    return this.http.get<EventSummaryResponse[]>(`${this.apiUrl}/events/`, {
       headers: { 'Requires-Auth': 'true' }
     });
   }

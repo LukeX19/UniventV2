@@ -10,7 +10,14 @@ export interface EventRequest {
   typeId: string;
 };
 
-export interface EventCardResponse {
+export interface EventAuthorResponse {
+  firstName: string;
+  lastName: string;
+  pictureUrl?: string | null;
+  rating: number;
+}
+
+export interface EventSummaryResponse {
   id: string;
   name: string;
   enrolledParticipants: number;
@@ -21,8 +28,5 @@ export interface EventCardResponse {
   createdAt: string;
   updatedAt: string;
   typeName: string;
-  authorPictureUrl?: string | null;
-  authorFirstName: string;
-  authorLastName: string;
-  authorRating: number;
+  author: EventAuthorResponse;
 }

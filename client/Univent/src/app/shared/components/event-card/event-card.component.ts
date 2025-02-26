@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { EventCardResponse } from '../../models/eventModel';
+import { EventSummaryResponse } from '../../models/eventModel';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './event-card.component.scss'
 })
 export class EventCardComponent {
-  @Input() event!: EventCardResponse;
+  @Input() event!: EventSummaryResponse;
 
   getFormattedStartTime(): string {
     const startTime = new Date(this.event.startTime).toLocaleString("ro-RO", {
@@ -55,11 +55,10 @@ export class EventCardComponent {
   
 
   getAuthorFullName(): string {
-    return `${this.event.authorFirstName} ${this.event.authorLastName}`;
+    return `${this.event.author.firstName} ${this.event.author.lastName}`;
   }
 
   navigateToEvent() {
     console.log(`Navigating to event: ${this.event.id}`);
-    // Implement navigation logic here if needed.
   }
 }

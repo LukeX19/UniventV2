@@ -2,12 +2,13 @@
 using MediatR;
 using Univent.App.Events.Dtos;
 using Univent.App.Interfaces;
+using Univent.App.Pagination.Dtos;
 
 namespace Univent.App.Events.Queries
 {
-    public record GetAllEventsSummariesQuery() : IRequest<ICollection<EventSummaryResponseDto>>;
+    public record GetAllEventsSummariesQuery(PaginationRequestDto Pagination) : IRequest<PaginationResponseDto<EventSummaryResponseDto>>;
 
-    public class GetAllEventsSummariesHandler : IRequestHandler<GetAllEventsSummariesQuery, ICollection<EventSummaryResponseDto>>
+    public class GetAllEventsSummariesHandler : IRequestHandler<GetAllEventsSummariesQuery, PaginationResponseDto<EventSummaryResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -18,19 +19,17 @@ namespace Univent.App.Events.Queries
             _mapper = mapper;
         }
 
-        public async Task<ICollection<EventSummaryResponseDto>> Handle(GetAllEventsSummariesQuery request, CancellationToken ct)
+        public async Task<PaginationResponseDto<EventSummaryResponseDto>> Handle(GetAllEventsSummariesQuery request, CancellationToken ct)
         {
-            var events = await _unitOfWork.EventRepository.GetAllEventsSummariesAsync(ct);
+            var paginatedEvents = await _unitOfWork.EventRepository.GetAllEventsSummariesAsync(request.Pagination, ct);
 
-            var eventIds = events.Select(e => e.Id).ToList();
-
+            var eventIds = paginatedEvents.Elements.Select(e => e.Id).ToList();
             var participantCounts = await _unitOfWork.EventRepository.GetEventParticipantsCountAsync(eventIds, ct);
 
-            var authorIds = events.Select(e => e.Author.Id).Distinct().ToList();
-
+            var authorIds = paginatedEvents.Elements.Select(e => e.Author.Id).Distinct().ToList();
             var authorRatings = await _unitOfWork.UserRepository.GetAverageRatingsAsync(authorIds, ct);
 
-            var eventsDtos = events.Select(eventEntity =>
+            var eventDtos = paginatedEvents.Elements.Select(eventEntity =>
             {
                 var dto = _mapper.Map<EventSummaryResponseDto>(eventEntity);
 
@@ -47,7 +46,11 @@ namespace Univent.App.Events.Queries
                 return dto;
             }).ToList();
 
-            return eventsDtos;
+            return new PaginationResponseDto<EventSummaryResponseDto>(
+                eventDtos,
+                paginatedEvents.PageIndex,
+                paginatedEvents.TotalPages,
+                paginatedEvents.ResultsCount);
         }
     }
 }

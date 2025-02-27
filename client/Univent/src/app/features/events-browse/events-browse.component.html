@@ -3,22 +3,20 @@
 <div class="max-w-7xl mx-auto px-6">
   <p class="text-3xl font-semibold text-center w-full mt-4 mb-6">Browse Events</p>
 
-  <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center text-gray-600">
     Loading events...
   </div>
 
-  <!-- Events List -->
   <div *ngIf="!isLoading">
     <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
   </div>
 
-  <!-- Paginator -->
   <div class="flex justify-center mt-6">
     <mat-paginator 
       [length]="totalEvents"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 15]"
+      [pageSize]="pagination.pageSize"
+      [pageSizeOptions]="[1, 5, 10, 15, 20]"
+      [pageIndex]="pagination.pageIndex - 1"
       (page)="onPageChange($event)"
       style="background-color: transparent;">
     </mat-paginator>

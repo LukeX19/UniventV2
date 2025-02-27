@@ -7,6 +7,7 @@ import { EventCardComponent } from "../../shared/components/event-card/event-car
 import { EventService } from '../../core/services/event.service';
 import { EventSummaryResponse } from '../../shared/models/eventModel';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PaginationRequest } from '../../shared/models/paginationModel';
 
 @Component({
   selector: 'app-events-browse',
@@ -28,9 +29,9 @@ export class EventsBrowseComponent {
   events: EventSummaryResponse[] = [];
   isLoading = true;
 
-  pageSize = 10;
-  pageIndex = 0;
+  pagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
   totalEvents = 0;
+  totalPages = 1;
 
   ngOnInit() {
     this.fetchEvents();
@@ -39,9 +40,13 @@ export class EventsBrowseComponent {
   fetchEvents() {
     this.isLoading = true;
 
-    this.eventService.fetchAllEventsSummaries().subscribe({
+    this.eventService.fetchAllEventsSummaries(this.pagination).subscribe({
       next: (data) => {
-        this.events = data;
+        this.events = data.elements;
+        this.totalEvents = data.resultsCount;
+        this.totalPages = data.totalPages;
+        this.pagination.pageIndex = data.pageIndex;
+        
         this.isLoading = false;
       },
       error: (error) => {
@@ -51,12 +56,14 @@ export class EventsBrowseComponent {
     });
   }
 
-  updateEvents() {
-    //TO DO
-  }
-
   onPageChange(event: PageEvent) {
-    // TO DO
-    this.updateEvents();
+    if (event.pageSize !== this.pagination.pageSize) {
+      this.pagination.pageIndex = 1;
+    } else {
+      this.pagination.pageIndex = event.pageIndex + 1;
+    }
+
+    this.pagination.pageSize = event.pageSize;
+    this.fetchEvents();
   }
 }

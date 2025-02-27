@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Univent.App.Interfaces;
+using Univent.App.Pagination.Dtos;
 using Univent.Domain.Models.Events;
 using Univent.Infrastructure.Repositories.BasicRepositories;
 
@@ -9,14 +10,25 @@ namespace Univent.Infrastructure.Repositories
     {
         public EventRepository(AppDbContext context) : base(context) { }
 
-        public async Task<ICollection<Event>> GetAllEventsSummariesAsync(CancellationToken ct = default)
+        public async Task<PaginationResponseDto<Event>> GetAllEventsSummariesAsync(PaginationRequestDto pagination, CancellationToken ct = default)
         {
-            return await _context.Events
+            var query = _context.Events
                 .AsNoTracking()
                 .AsSplitQuery()
                 .Include(e => e.Author)
                 .Include(e => e.Type)
+                .OrderByDescending(e => e.CreatedAt);
+
+            int totalEvents = await query.CountAsync(ct);
+
+            var events = await query
+                .Skip((pagination.PageIndex - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
                 .ToListAsync(ct);
+
+            int totalPages = (int)Math.Ceiling((double)totalEvents / pagination.PageSize);
+
+            return new PaginationResponseDto<Event>(events, pagination.PageIndex, totalPages, totalEvents);
         }
 
         public async Task<Dictionary<Guid, int>> GetEventParticipantsCountAsync(IEnumerable<Guid> eventIds, CancellationToken ct = default)

@@ -5,6 +5,7 @@ using Univent.Api.Extensions;
 using Univent.App.Events.Commands;
 using Univent.App.Events.Dtos;
 using Univent.App.Events.Queries;
+using Univent.App.Pagination.Dtos;
 
 namespace Univent.Api.Controllers
 {
@@ -32,9 +33,9 @@ namespace Univent.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEventsSummaries()
+        public async Task<IActionResult> GetAllEventsSummaries([FromQuery] PaginationRequestDto pagination)
         {
-            var query = new GetAllEventsSummariesQuery();
+            var query = new GetAllEventsSummariesQuery(pagination);
             var response = await _mediator.Send(query);
 
             return Ok(response);

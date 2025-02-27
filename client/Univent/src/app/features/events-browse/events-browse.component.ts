@@ -6,6 +6,7 @@ import { NavbarComponent } from '../../shared/components/navbar/navbar.component
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
 import { EventService } from '../../core/services/event.service';
 import { EventSummaryResponse } from '../../shared/models/eventModel';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-events-browse',
@@ -15,7 +16,8 @@ import { EventSummaryResponse } from '../../shared/models/eventModel';
     RouterModule,
     MatButtonModule,
     NavbarComponent,
-    EventCardComponent
+    EventCardComponent,
+    MatPaginatorModule
 ],
   templateUrl: './events-browse.component.html',
   styleUrl: './events-browse.component.scss'
@@ -26,6 +28,10 @@ export class EventsBrowseComponent {
   events: EventSummaryResponse[] = [];
   isLoading = true;
 
+  pageSize = 10;
+  pageIndex = 0;
+  totalEvents = 0;
+
   ngOnInit() {
     this.fetchEvents();
   }
@@ -33,7 +39,7 @@ export class EventsBrowseComponent {
   fetchEvents() {
     this.isLoading = true;
 
-    this.eventService.getAllEventsSummaries().subscribe({
+    this.eventService.fetchAllEventsSummaries().subscribe({
       next: (data) => {
         this.events = data;
         this.isLoading = false;
@@ -43,5 +49,14 @@ export class EventsBrowseComponent {
         this.isLoading = false;
       }
     });
+  }
+
+  updateEvents() {
+    //TO DO
+  }
+
+  onPageChange(event: PageEvent) {
+    // TO DO
+    this.updateEvents();
   }
 }

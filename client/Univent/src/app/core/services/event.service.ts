@@ -17,7 +17,7 @@ export class EventService {
     });
   }
 
-  getAllEventsSummaries(): Observable<EventSummaryResponse[]> {
+  fetchAllEventsSummaries(): Observable<EventSummaryResponse[]> {
     return this.http.get<EventSummaryResponse[]>(`${this.apiUrl}/events/`, {
       headers: { 'Requires-Auth': 'true' }
     });

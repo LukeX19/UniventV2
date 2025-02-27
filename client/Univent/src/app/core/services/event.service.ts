@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { EventRequest, EventSummaryResponse } from '../../shared/models/eventModel';
+import { EventFullResponse, EventRequest, EventSummaryResponse } from '../../shared/models/eventModel';
 import { Observable } from 'rxjs';
 import { PaginationRequest, PaginationResponse } from '../../shared/models/paginationModel';
 
@@ -25,6 +25,12 @@ export class EventService {
     
     return this.http.get<PaginationResponse<EventSummaryResponse>>(`${this.apiUrl}/events/`, {
       params,
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  fetchEventById(id: string): Observable<EventFullResponse> {
+    return this.http.get<EventFullResponse>(`${this.apiUrl}/events/${id}`, {
       headers: { 'Requires-Auth': 'true' }
     });
   }

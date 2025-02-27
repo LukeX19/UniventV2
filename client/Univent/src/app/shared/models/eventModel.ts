@@ -30,3 +30,20 @@ export interface EventSummaryResponse {
   typeName: string;
   author: EventAuthorResponse;
 }
+
+export interface EventFullResponse {
+  id: string;
+  name: string;
+  enrolledParticipants: number;
+  maximumParticipants: number;
+  startTime: string;
+  description: string;
+  locationAddress: string;
+  locationLat: number;
+  locationLong: number;
+  pictureUrl: string;
+  createdAt: string;
+  updatedAt: string;
+  typeName: string;
+  author: EventAuthorResponse;
+}

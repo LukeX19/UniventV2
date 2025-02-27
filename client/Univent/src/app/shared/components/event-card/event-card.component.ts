@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { EventSummaryResponse } from '../../models/eventModel';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-event-card',
@@ -16,6 +17,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './event-card.component.scss'
 })
 export class EventCardComponent {
+  private router = inject(Router);
+  
   @Input() event!: EventSummaryResponse;
 
   getFormattedStartTime(): string {
@@ -59,6 +62,6 @@ export class EventCardComponent {
   }
 
   navigateToEvent() {
-    console.log(`Navigating to event: ${this.event.id}`);
+    this.router.navigate([`/event/${this.event.id}`]);
   }
 }

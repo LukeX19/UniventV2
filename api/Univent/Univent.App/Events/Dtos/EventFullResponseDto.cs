@@ -1,13 +1,16 @@
 ﻿namespace Univent.App.Events.Dtos
 {
-    public class EventSummaryResponseDto
+    public class EventFullResponseDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int EnrolledParticipants { get; set; }
         public int MaximumParticipants { get; set; }
         public DateTime StartTime { get; set; }
+        public string Description { get; set; }
         public string LocationAddress { get; set; }
+        public double LocationLat { get; set; }
+        public double LocationLong { get; set; }
         public string PictureUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

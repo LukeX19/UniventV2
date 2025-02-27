@@ -40,5 +40,15 @@ namespace Univent.Api.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetEventById(Guid id)
+        {
+            var query = new GetEventByIdQuery(id);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
     }
 }

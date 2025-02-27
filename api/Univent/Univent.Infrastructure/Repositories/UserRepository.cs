@@ -21,7 +21,7 @@ namespace Univent.Infrastructure.Repositories
                 ?? throw new EntityNotFoundException("User", id);
         }
 
-        public async Task<Dictionary<Guid, double>> GetAverageRatingsAsync(List<Guid> userIds, CancellationToken ct)
+        public async Task<Dictionary<Guid, double>> GetAverageRatingsAsync(ICollection<Guid> userIds, CancellationToken ct)
         {
             return await _context.Users
                 .Where(u => userIds.Contains(u.Id))

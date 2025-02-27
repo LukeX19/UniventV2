@@ -2,6 +2,7 @@
 using Univent.App.Interfaces;
 using Univent.App.Pagination.Dtos;
 using Univent.Domain.Models.Events;
+using Univent.Infrastructure.Exceptions;
 using Univent.Infrastructure.Repositories.BasicRepositories;
 
 namespace Univent.Infrastructure.Repositories
@@ -31,7 +32,19 @@ namespace Univent.Infrastructure.Repositories
             return new PaginationResponseDto<Event>(events, pagination.PageIndex, totalPages, totalEvents);
         }
 
-        public async Task<Dictionary<Guid, int>> GetEventParticipantsCountAsync(IEnumerable<Guid> eventIds, CancellationToken ct = default)
+        public async Task<Event> GetEventByIdAsync(Guid id, CancellationToken ct = default)
+        {
+            var eventEntity = await _context.Events
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Include(e => e.Author)
+                .Include(e => e.Type)
+                .FirstOrDefaultAsync(e => e.Id == id, ct);
+
+            return eventEntity ?? throw new EntityNotFoundException(nameof(Event), id);
+        }
+
+        public async Task<Dictionary<Guid, int>> GetEventParticipantsCountAsync(ICollection<Guid> eventIds, CancellationToken ct = default)
         {
             return await _context.EventParticipants
                 .Where(ep => eventIds.Contains(ep.EventId))

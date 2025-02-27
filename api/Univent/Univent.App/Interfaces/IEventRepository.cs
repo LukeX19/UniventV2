@@ -6,6 +6,7 @@ namespace Univent.App.Interfaces
     public interface IEventRepository : IBaseRepository<Event>
     {
         Task<PaginationResponseDto<Event>> GetAllEventsSummariesAsync(PaginationRequestDto pagination, CancellationToken ct = default);
-        Task<Dictionary<Guid, int>> GetEventParticipantsCountAsync(IEnumerable<Guid> eventIds, CancellationToken ct = default);
+        Task<Event> GetEventByIdAsync(Guid id, CancellationToken ct = default);
+        Task<Dictionary<Guid, int>> GetEventParticipantsCountAsync(ICollection<Guid> eventIds, CancellationToken ct = default);
     }
 }

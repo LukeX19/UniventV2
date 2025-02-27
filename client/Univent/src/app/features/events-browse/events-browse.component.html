@@ -15,7 +15,7 @@
     <mat-paginator 
       [length]="totalEvents"
       [pageSize]="pagination.pageSize"
-      [pageSizeOptions]="[1, 5, 10, 15, 20]"
+      [pageSizeOptions]="[5, 10, 15, 20]"
       [pageIndex]="pagination.pageIndex - 1"
       (page)="onPageChange($event)"
       style="background-color: transparent;">

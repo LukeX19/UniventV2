@@ -5,7 +5,7 @@
   <div class="w-full h-96 flex justify-center items-center">
     <img 
       *ngIf="event?.pictureUrl" 
-      [src]="event!.pictureUrl" 
+      [src]="event?.pictureUrl" 
       alt="Event Image" 
       class="max-w-full max-h-96 object-contain rounded-lg shadow-md" />
   </div>
@@ -14,43 +14,76 @@
   <div class="mt-6">
     <p class="text-3xl font-semibold text-center">{{ event?.name }}</p>
 
-    <!-- Participants & Date -->
-    <div class="flex justify-between items-center mt-4 text-gray-600">
-      <p class="text-lg">
-        <mat-icon style="vertical-align: middle;">people</mat-icon>
-        {{ event?.enrolledParticipants }} / {{ event?.maximumParticipants }} Participants
-      </p>
-      <p class="text-lg">
-        <mat-icon style="vertical-align: middle;">event</mat-icon>
-        Starts {{ formattedStartTime }}
-      </p>
-    </div>
+    <!-- Author, Date, and Participants -->
+    <div class="mt-8 flex justify-between items-start">
 
-    <!-- Location -->
-    <div class="mt-4 text-gray-700">
-      <mat-icon style="vertical-align: middle;">location_on</mat-icon>
-      {{ event?.locationAddress }}
+      <!-- Left: Author Information & Created Date -->
+      <div class="flex flex-col">
+        <!-- Author -->
+        <div class="flex items-center mb-1">
+          <img 
+            [src]="event?.author?.pictureUrl"
+            alt="Creator Avatar"
+            class="w-10 h-10 rounded-full mr-2" />
+          <div>
+            <span class="text-sm font-medium">{{ getAuthorFullName() }}</span>
+            <div class="flex items-center bg-gray-200 rounded-full px-1 pr-2 w-fit mb-1">
+              <mat-icon style="width: 20px; color: #FFA500; font-size: 18px; vertical-align: middle; padding-top: 3px;">star</mat-icon>
+              <span class="text-xs font-medium text-gray-800">{{ event?.author?.rating?.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Created Date -->
+        <p class="text-gray-500 text-sm">{{ formattedDate }}</p>
+      </div>
+
+      <!-- Right: Start Date & Participants -->
+      <div class="text-right">
+        <p class="mb-2 text-lg text-gray-600">
+          <mat-icon style="vertical-align: middle;">event</mat-icon>
+          {{ formattedStartTime }}
+        </p>
+        <p class="text-lg text-gray-600 mt-1">
+          <mat-icon style="vertical-align: middle;">people</mat-icon>
+          {{ event?.enrolledParticipants }} / {{ event?.maximumParticipants }} Participants
+        </p>
+      </div>
+
     </div>
 
     <!-- Description -->
-    <p class="mt-6 text-gray-800">{{ event?.description }}</p>
+    <div class="mt-8">
+      <p class="text-xl font-semibold text-gray-900">Description</p>
+      <mat-divider style="margin: 8px 0; background-color: rgba(0, 0, 0, 0.15);"></mat-divider> <!-- Light Gray Divider -->
+      <p class="mt-4 text-gray-800">{{ event?.description }}</p>
+    </div>
 
-    <!-- Author Information -->
-    <div class="flex items-center mt-6">
-      <img 
-        [src]="event?.author?.pictureUrl || 'https://via.placeholder.com/50'" 
-        alt="Author Picture" 
-        class="w-10 h-10 rounded-full mr-3">
-      <div>
-        <p class="text-lg font-semibold">{{ getAuthorFullName() }}</p>
-        <div class="flex items-center text-gray-700">
-          <mat-icon style="color: #FBBF24; font-size: 16px; vertical-align: middle;">star</mat-icon>
-          <span class="ml-1">{{ event?.author?.rating?.toFixed(2) }}</span>
-        </div>
+    <!-- Location Map Section -->
+    <div *ngIf="event?.locationLat && event?.locationLong" class="mt-8 mb-8">
+      <p class="text-xl font-semibold text-gray-900">Location</p>
+      <mat-divider style="margin: 8px 0; background-color: rgba(0, 0, 0, 0.15);"></mat-divider> <!-- Light Gray Divider -->
+      
+      <!-- Location Address-->
+      <div class="mt-4 text-gray-700">
+        <mat-icon style="vertical-align: middle;">location_on</mat-icon>
+        {{ event?.locationAddress }}
+      </div>
+
+      <div class="w-full h-[40rem] mt-4 rounded-lg overflow-hidden">
+        <google-map
+          height="100%"
+          width="100%"
+          [zoom]="15"
+          [center]="{ lat: event!.locationLat, lng: event!.locationLong }">
+          
+          <map-marker 
+            [position]="{ lat: event!.locationLat, lng: event!.locationLong }">
+          </map-marker>
+
+        </google-map>
       </div>
     </div>
 
-    <!-- Created Date -->
-    <p class="mt-4 text-gray-500 text-sm">{{ formattedDate }}</p>
   </div>
 </div>

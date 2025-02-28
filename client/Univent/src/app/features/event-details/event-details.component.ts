@@ -5,14 +5,19 @@ import { NavbarComponent } from '../../shared/components/navbar/navbar.component
 import { EventService } from '../../core/services/event.service';
 import { ActivatedRoute } from '@angular/router';
 import { EventFullResponse } from '../../shared/models/eventModel';
+import { MatDividerModule } from '@angular/material/divider';
+import { GoogleMap, MapMarker } from '@angular/google-maps';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
   imports: [
     CommonModule,
+    NavbarComponent,
     MatIconModule,
-    NavbarComponent
+    MatDividerModule,
+    GoogleMap,
+    MapMarker
   ],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.scss'
@@ -77,7 +82,7 @@ export class EventDetailsComponent {
       hour12: false
     });
 
-    return updatedAt > createdAt ? `Updated on ${updatedAt}` : `Created on ${createdAt}`;
+    return updatedAt > createdAt ? `Last updated on ${updatedAt}` : `Posted on ${createdAt}`;
   }
 
   getAuthorFullName(): string {

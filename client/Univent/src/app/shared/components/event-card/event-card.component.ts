@@ -53,7 +53,7 @@ export class EventCardComponent {
       hour12: false
     });
   
-    return updatedAt > createdAt ? `Updated on ${updatedAt}` : `Created on ${createdAt}`;
+    return updatedAt > createdAt ? `Last updated on ${updatedAt}` : `Posted on ${createdAt}`;
   }
   
 

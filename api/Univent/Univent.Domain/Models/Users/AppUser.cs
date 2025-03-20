@@ -15,6 +15,7 @@ namespace Univent.Domain.Models.Users
         public AppRole Role { get; set; }
         public UniversityYear Year { get; set; }
         public bool IsAccountConfirmed { get; set; }
+        public DateTime CreatedAt { get; set; }
         public Guid? UniversityId { get; set; }
         public University University { get; set; }
         public ICollection<Event> CreatedEvents { get; set; }

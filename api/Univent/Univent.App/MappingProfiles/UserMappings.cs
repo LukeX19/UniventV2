@@ -8,7 +8,9 @@ namespace Univent.App.MappingProfiles
     {
         public UserMappings()
         {
-            CreateMap<AppUser, UserResponseDto>();
+            CreateMap<AppUser, UserBasicInfoResponseDto>();
+            CreateMap<AppUser, UserProfileResponseDto>()
+                .ForMember(dest => dest.UniversityName, opt => opt.MapFrom(src => src.University.Name));
         }
     }
 }

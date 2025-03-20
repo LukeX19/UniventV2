@@ -16,9 +16,13 @@ namespace Univent.Infrastructure.Repositories
 
         public async Task<AppUser> GetUserById(Guid id, CancellationToken ct = default)
         {
-            return await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == id, ct)
-                ?? throw new EntityNotFoundException("User", id);
+            var user = await _context.Users
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Include(u => u.University)
+                .FirstOrDefaultAsync(u => u.Id == id, ct);
+
+            return user ?? throw new EntityNotFoundException("User", id);
         }
 
         public async Task<Dictionary<Guid, double>> GetAverageRatingsAsync(ICollection<Guid> userIds, CancellationToken ct)

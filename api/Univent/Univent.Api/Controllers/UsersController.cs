@@ -24,7 +24,17 @@ namespace Univent.Api.Controllers
         {
             var userId = HttpContext.GetUserIdClaimValue();
 
-            var query = new GetUserByIdQuery(userId);
+            var query = new GetUserBasicInfoByIdQuery(userId);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetUserProfileById(Guid id)
+        {
+            var query = new GetUserProfileByIdQuery(id);
             var response = await _mediator.Send(query);
 
             return Ok(response);

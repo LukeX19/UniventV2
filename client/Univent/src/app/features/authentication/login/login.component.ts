@@ -8,7 +8,6 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { AuthenticationService } from '../../../core/services/authentication.service';
-import { LoginResponse } from '../../../shared/models/authenticationModel';
 import { SnackbarService } from '../../../core/services/snackbar.service';
 
 @Component({

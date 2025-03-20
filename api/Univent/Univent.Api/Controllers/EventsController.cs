@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Univent.Api.Extensions;
 using Univent.App.Events.Commands;
 using Univent.App.Events.Dtos;
+using Univent.App.Events.Queries;
+using Univent.App.Pagination.Dtos;
 
 namespace Univent.Api.Controllers
 {
@@ -28,6 +30,25 @@ namespace Univent.Api.Controllers
             var response = await _mediator.Send(command);
 
             return Created($"/api/events/{response}", response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllEventsSummaries([FromQuery] PaginationRequestDto pagination)
+        {
+            var query = new GetAllEventsSummariesQuery(pagination);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetEventById(Guid id)
+        {
+            var query = new GetEventByIdQuery(id);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
         }
     }
 }

@@ -63,7 +63,7 @@ export class NavbarComponent {
     this.router.navigate(['/host']);
   }
 
-  goToEventBrowse() {
+  goToEventsBrowse() {
     this.router.navigate(['/browse']);
   }
 }

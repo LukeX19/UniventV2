@@ -1,12 +1,21 @@
 export interface UserResponse {
   id: string;
-  email: string;
+  firstName: string;
+  lastName: string;
+  pictureUrl?: string | null;
+  role: number;
+  isAccountConfirmed: boolean;
+};
+
+export interface UserProfileResponse {
+  id: string;
   firstName: string;
   lastName: string;
   birthday: string;
   pictureUrl?: string | null;
   role: number;
+  createdAt: string;
   year: number;
-  isAccountConfirmed: boolean;
-  universityId?: string | null;
+  universityName: string;
+  rating: number;
 };

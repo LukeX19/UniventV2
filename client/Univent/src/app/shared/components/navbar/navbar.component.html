@@ -20,7 +20,7 @@
 
       <!-- Profile Dropdown Menu -->
       <div *ngIf="isProfileMenuOpen" class="absolute right-0 top-10 mt-2 bg-white shadow-md rounded-md py-2 w-30">
-        <button mat-menu-item routerLink="/profile" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+        <button mat-menu-item *ngIf="(user$ | async) as user" (click)="goToMyProfile(user.id)" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
           <mat-icon class="mr-2">person</mat-icon> Profile
         </button>
         <button mat-menu-item (click)="logout()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
@@ -52,7 +52,7 @@
 
         <!-- Profile Dropdown Menu -->
         <div *ngIf="isProfileMenuOpen" class="absolute right-0 top-10 mt-2 bg-white shadow-md rounded-md py-2 w-30">
-          <button mat-menu-item routerLink="/profile" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+          <button mat-menu-item *ngIf="(user$ | async) as user" (click)="goToMyProfile(user.id)" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
             <mat-icon class="mr-2">person</mat-icon> Profile
           </button>
           <button mat-menu-item (click)="logout()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">

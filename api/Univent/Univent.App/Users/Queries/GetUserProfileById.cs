@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Univent.App.Interfaces;
 using Univent.App.Users.Dtos;
 

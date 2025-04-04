@@ -5,6 +5,10 @@ import { UserProfileResponse } from '../../shared/models/userModel';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { MatIconModule } from '@angular/material/icon';
+import { EventSummaryResponse } from '../../shared/models/eventModel';
+import { EventService } from '../../core/services/event.service';
+import { PaginationRequest } from '../../shared/models/paginationModel';
+import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
 
 @Component({
   selector: 'app-profile',
@@ -12,17 +16,32 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     NavbarComponent,
-    MatIconModule
-  ],
+    MatIconModule,
+    EventCardComponent
+],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
   private userService = inject(UserService);
+  private eventService = inject(EventService);
   private route = inject(ActivatedRoute);
 
   user: UserProfileResponse | null = null;
-  isLoading = true;
+  isUserLoading = true;
+
+  showCreatedSection = true;
+
+  createdEvents: EventSummaryResponse[] = [];
+  areCreatedEventsLoading = true;
+
+  participatedEvents: EventSummaryResponse[] = [];
+  areParticipatedEventsLoading = true;
+
+  createdPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
+  participatedPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
+  totalEvents = 0;
+  totalPages = 1;
 
   ngOnInit() {
     this.fetchUser();
@@ -32,15 +51,48 @@ export class ProfileComponent {
     const userId = this.route.snapshot.paramMap.get('id');
     if (!userId) return;
 
-    this.isLoading = true;
+    this.isUserLoading = true;
     this.userService.fetchUserProfileById(userId).subscribe({
       next: (data) => {
         this.user = data;
-        this.isLoading = false;
+        this.isUserLoading = false;
+        this.fetchCreatedEvents(userId);
       },
       error: (error) => {
         console.error("Error fetching user:", error);
-        this.isLoading = false;
+        this.isUserLoading = false;
+      }
+    });
+  }
+
+  fetchCreatedEvents(userId: string) {
+    this.areCreatedEventsLoading = true;
+  
+    this.eventService.fetchCreatedEventsSummariesByUserId(userId, this.participatedPagination).subscribe({
+      next: (data) => {
+        this.createdEvents = data.elements;
+        this.totalEvents = data.resultsCount;
+        this.totalPages = data.totalPages;
+        this.areCreatedEventsLoading = false;
+      },
+      error: (error) => {
+        console.error("Error fetching created events:", error);
+        this.areCreatedEventsLoading = false;
+      }
+    });
+  }
+  
+  fetchParticipatedEvents(userId: string) {
+    this.areParticipatedEventsLoading = true;
+  
+    this.eventService.fetchParticipatedEventsSummariesByUserId(userId, this.participatedPagination).subscribe({
+      next: (data) => {
+        this.participatedEvents = data.elements;
+        this.areParticipatedEventsLoading = false;
+      },
+      error: (error) => {
+        console.error("Error fetching participated events:", error);
+        this.areParticipatedEventsLoading = false;
       }
     });
   }
@@ -79,5 +131,13 @@ export class ProfileComponent {
     if (!year) return '';
     const map: { [key: number]: string } = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'I Master', 8: 'II Master' };
     return map[year] || `${year}`;
+  }
+
+  switchSection(showCreated: boolean) {
+    this.showCreatedSection = showCreated;
+  
+    if (!showCreated && this.participatedEvents.length === 0 && this.user) {
+      this.fetchParticipatedEvents(this.user.id);
+    }
   }
 }

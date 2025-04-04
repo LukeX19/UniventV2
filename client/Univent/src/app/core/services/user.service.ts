@@ -13,7 +13,7 @@ export class UserService {
   private apiUrl = `${environment.apiUrl}`;
 
   fetchUserProfileById(id: string): Observable<UserProfileResponse> {
-    return this.http.get<UserProfileResponse>(`${this.apiUrl}/users/${id}`, {
+    return this.http.get<UserProfileResponse>(`${this.apiUrl}/users/profile/${id}`, {
       headers: { 'Requires-Auth': 'true' }
     });
   }

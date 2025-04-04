@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { EventService } from '../../core/services/event.service';
 import { ActivatedRoute } from '@angular/router';
-import { EventFullResponse } from '../../shared/models/eventModel';
+import { EventAuthorResponse, EventFullResponse } from '../../shared/models/eventModel';
 import { MatDividerModule } from '@angular/material/divider';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
 
@@ -87,5 +87,12 @@ export class EventDetailsComponent {
 
   getAuthorFullName(): string {
     return `${this.event?.author?.firstName || ''} ${this.event?.author?.lastName || ''}`;
+  }
+
+  getAuthorInitials(user: EventAuthorResponse | null): string {
+    if (!user) return 'U';
+    const firstNameInitial = user.firstName ? user.firstName.charAt(0).toUpperCase() : '';
+    const lastNameInitial = user.lastName ? user.lastName.charAt(0).toUpperCase() : '';
+    return `${firstNameInitial}${lastNameInitial}`;
   }
 }

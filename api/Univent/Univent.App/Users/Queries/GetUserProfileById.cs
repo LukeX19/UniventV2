@@ -24,12 +24,21 @@ namespace Univent.App.Users.Queries
 
             var authorRatings = await _unitOfWork.UserRepository.GetAverageRatingsAsync([request.Id], ct);
 
+            var createdEventsCounter = await _unitOfWork.EventRepository.GetCreatedEventsCountByUserIdAsync(request.Id);
+            var participatedEventsCounter = await _unitOfWork.EventRepository.GetParticipatedEventsCountByUserIdAsync(request.Id);
+
             var userDto = _mapper.Map<UserProfileResponseDto>(user);
 
             // Set user overall rating
             userDto.Rating = authorRatings.ContainsKey(request.Id)
                 ? authorRatings[request.Id]
                 : 0.0;
+
+            // Set created events counter
+            userDto.CreatedEvents = createdEventsCounter;
+
+            // Set events participation counter
+            userDto.Participations = participatedEventsCounter;
 
             return userDto;
         }

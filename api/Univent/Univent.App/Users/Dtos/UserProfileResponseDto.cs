@@ -14,5 +14,7 @@ namespace Univent.App.Users.Dtos
         public UniversityYear Year { get; set; }
         public string UniversityName { get; set; }
         public double Rating { get; set; }
+        public int CreatedEvents { get; set; }
+        public int Participations { get; set; }
     }
 }

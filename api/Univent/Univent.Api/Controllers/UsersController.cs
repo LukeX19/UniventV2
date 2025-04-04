@@ -31,7 +31,7 @@ namespace Univent.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("profile/{id}")]
         public async Task<IActionResult> GetUserProfileById(Guid id)
         {
             var query = new GetUserProfileByIdQuery(id);

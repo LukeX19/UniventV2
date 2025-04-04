@@ -1,46 +1,100 @@
 <app-navbar></app-navbar>
 
-<div class="bg-gray-100 rounded-xl p-10 flex items-center gap-6 max-w-3xl mx-auto shadow-sm mt-12">
-  <div class="w-44 h-44 flex-shrink-0">
-    <ng-container *ngIf="user?.pictureUrl; else initialsAvatar">
-      <img
-        [src]="user?.pictureUrl"
-        alt="Profile"
-        class="w-44 h-44 rounded-full object-cover border shadow"
-      />
-    </ng-container>
-    <ng-template #initialsAvatar>
-      <div class="w-44 h-44 rounded-full bg-blue-600 text-white flex items-center justify-center text-3xl font-semibold">
-        {{ getUserInitials(user) }}
-      </div>
-    </ng-template>
-  </div>
+<div class="max-w-7xl mx-auto px-6 mt-8">
+  <!-- Profile Card -->
+  <div class="bg-gray-100 rounded-xl p-10 flex items-center gap-6 max-w-3xl mx-auto shadow-sm">
+    <!-- Avatar -->
+    <div class="w-44 h-44 flex-shrink-0">
+      <ng-container *ngIf="user?.pictureUrl; else initialsAvatar">
+        <img
+          [src]="user?.pictureUrl"
+          alt="Profile"
+          class="w-44 h-44 rounded-full object-cover border shadow"
+        />
+      </ng-container>
+      <ng-template #initialsAvatar>
+        <div class="w-44 h-44 rounded-full text-white bg-gray-400 flex items-center justify-center text-8xl font-semibold">
+          {{ getUserInitials(user) }}
+        </div>
+      </ng-template>
+    </div>
 
-  <div class="flex flex-col ml-4">
-    <!-- Name + Join Date -->
-    <div>
+    <!-- Info -->
+    <div class="flex flex-col ml-4">
       <h2 class="text-2xl font-bold">{{ user?.firstName }} {{ user?.lastName }}</h2>
       <p class="text-gray-600">Joined {{ getAccountAge(user?.createdAt) }} ago</p>
-    </div>
-  
-    <!-- Info Section -->
-    <div class="mt-6 space-y-2">
-      <div class="flex items-center gap-2 text-gray-700">
-        <mat-icon>school</mat-icon>
-        <span>{{ user?.universityName }} – Year {{ yearMapper(user?.year) }}</span>
-      </div>
-  
-      <div class="flex items-center gap-2 text-gray-700">
-        <mat-icon>cake</mat-icon>
-        <span>Born on {{ formattedDate }}</span>
-      </div>
-  
-      <div class="flex items-center gap-2 text-gray-700">
-        <mat-icon>star</mat-icon>
-        <span>Rating: {{ user?.rating?.toFixed(2) }}</span>
+
+      <!-- Additional Info -->
+      <div class="mt-6 space-y-2">
+        <div class="flex items-center gap-2 text-gray-700">
+          <mat-icon>school</mat-icon>
+          <span>{{ user?.universityName }} – Year {{ yearMapper(user?.year) }}</span>
+        </div>
+
+        <div class="flex items-center gap-2 text-gray-700">
+          <mat-icon>cake</mat-icon>
+          <span>Born on {{ formattedDate }}</span>
+        </div>
+
+        <div class="flex items-center gap-2 text-gray-700">
+          <mat-icon>star</mat-icon>
+          <span>Rating: {{ user?.rating?.toFixed(2) }}</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- Counters -->
+  <div class="mt-10 flex justify-center items-center gap-40 text-center">
+    <div>
+      <p class="text-xl font-semibold">{{ user?.createdEvents }}</p>
+      <p class="text-gray-600 text-sm">
+        {{ user?.createdEvents === 1 ? 'Event Hosted' : 'Events Hosted' }}
+      </p>
+    </div>
+    <div>
+      <p class="text-xl font-semibold">{{ user?.participations }}</p>
+      <p class="text-gray-600 text-sm">
+        {{ user?.participations === 1 ? 'Participation' : 'Participations' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Section Switch -->
+  <div class="mt-16 flex justify-center items-center gap-4 text-center">
+    <!-- Left Arrow -->
+    <button
+      (click)="switchSection(true)"
+      [style.visibility]="showCreatedSection ? 'hidden' : 'visible'"
+      class="flex items-center justify-center w-9 h-9 rounded-full transition duration-200 ease-in-out hover:bg-gray-200 active:bg-gray-300"
+    >
+      <mat-icon class="align-middle">chevron_left</mat-icon>
+    </button>
+  
+    <!-- Title -->
+    <h3 class="text-xl font-semibold leading-none">
+      {{ showCreatedSection ? 'Events Hosted' : 'Participations' }}
+    </h3>
+  
+    <!-- Right Arrow -->
+    <button
+      (click)="switchSection(false)"
+      [style.visibility]="showCreatedSection ? 'visible' : 'hidden'"
+      class="flex items-center justify-center w-9 h-9 rounded-full transition duration-200 ease-in-out hover:bg-gray-200 active:bg-gray-300"
+    >
+      <mat-icon class="align-middle">chevron_right</mat-icon>
+    </button>
+  </div>
+  
+  <!-- Events List -->
+  <div class="mt-6 space-y-4">
+    <ng-container *ngIf="showCreatedSection; else participatedEventsSection">
+      <app-event-card *ngFor="let event of createdEvents" [event]="event" />
+    </ng-container>
+
+    <ng-template #participatedEventsSection>
+      <app-event-card *ngFor="let event of participatedEvents" [event]="event" />
+    </ng-template>
+  </div>
+</div>
 

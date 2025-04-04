@@ -18,4 +18,6 @@ export interface UserProfileResponse {
   year: number;
   universityName: string;
   rating: number;
+  createdEvents: number;
+  participations: number;
 };

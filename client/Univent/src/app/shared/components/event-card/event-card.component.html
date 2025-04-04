@@ -25,10 +25,15 @@
         <p class="text-sm text-gray-600">{{ getFormattedStartTime() }}</p>
         <p class="text-sm text-gray-600">{{ event.locationAddress }}</p>
         <div class="flex items-center mt-2 mb-1">
-          <img 
+          <img *ngIf="event.author.pictureUrl; else showInitials"
             [src]="event.author.pictureUrl"
-            alt="Creator Avatar"
-            class="w-10 h-10 rounded-full mr-2" />
+            alt="User Avatar"
+            class="w-10 h-10 rounded-full mr-2"/>
+          <ng-template #showInitials>
+            <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2">
+              {{ getAuthorInitials(event.author) }}
+            </div>
+          </ng-template>
           <div>
             <span class="text-sm font-medium">{{ getAuthorFullName() }}</span>
             <div class="flex items-center bg-gray-200 rounded-full px-1 pr-2 w-fit mb-1">

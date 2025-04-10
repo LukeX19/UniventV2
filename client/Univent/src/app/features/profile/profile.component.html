@@ -87,13 +87,37 @@
   </div>
   
   <!-- Events List -->
-  <div class="mt-6 space-y-4">
+  <div class="mt-6 mb-6 space-y-4">
+    <!-- Created Events -->
     <ng-container *ngIf="showCreatedSection; else participatedEventsSection">
       <app-event-card *ngFor="let event of createdEvents" [event]="event" />
+
+      <div class="flex justify-center mt-6">
+        <mat-paginator 
+          [length]="createdTotalEvents"
+          [pageSize]="createdPagination.pageSize"
+          [pageSizeOptions]="[5, 10, 15, 20]"
+          [pageIndex]="createdPagination.pageIndex - 1"
+          (page)="onCreatedPageChange($event)"
+          style="background-color: transparent;">
+        </mat-paginator>
+      </div>
     </ng-container>
 
+    <!-- Participated Events -->
     <ng-template #participatedEventsSection>
       <app-event-card *ngFor="let event of participatedEvents" [event]="event" />
+
+      <div class="flex justify-center mt-6">
+        <mat-paginator 
+          [length]="participatedTotalEvents"
+          [pageSize]="participatedPagination.pageSize"
+          [pageSizeOptions]="[5, 10, 15, 20]"
+          [pageIndex]="participatedPagination.pageIndex - 1"
+          (page)="onParticipatedPageChange($event)"
+          style="background-color: transparent;">
+        </mat-paginator>
+      </div>
     </ng-template>
   </div>
 </div>

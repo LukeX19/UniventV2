@@ -9,6 +9,7 @@ import { EventSummaryResponse } from '../../shared/models/eventModel';
 import { EventService } from '../../core/services/event.service';
 import { PaginationRequest } from '../../shared/models/paginationModel';
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-profile',
@@ -17,7 +18,8 @@ import { EventCardComponent } from "../../shared/components/event-card/event-car
     CommonModule,
     NavbarComponent,
     MatIconModule,
-    EventCardComponent
+    EventCardComponent,
+    MatPaginatorModule
 ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
@@ -39,9 +41,12 @@ export class ProfileComponent {
   areParticipatedEventsLoading = true;
 
   createdPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
+  createdTotalEvents = 0;
+  createdTotalPages = 1;
+
   participatedPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
-  totalEvents = 0;
-  totalPages = 1;
+  participatedTotalEvents = 0;
+  participatedTotalPages = 1;
 
   ngOnInit() {
     this.fetchUser();
@@ -68,11 +73,12 @@ export class ProfileComponent {
   fetchCreatedEvents(userId: string) {
     this.areCreatedEventsLoading = true;
   
-    this.eventService.fetchCreatedEventsSummariesByUserId(userId, this.participatedPagination).subscribe({
+    this.eventService.fetchCreatedEventsSummariesByUserId(userId, this.createdPagination).subscribe({
       next: (data) => {
         this.createdEvents = data.elements;
-        this.totalEvents = data.resultsCount;
-        this.totalPages = data.totalPages;
+        this.createdTotalEvents = data.resultsCount;
+        this.createdTotalPages = data.totalPages;
+        this.createdPagination.pageIndex = data.pageIndex;
         this.areCreatedEventsLoading = false;
       },
       error: (error) => {
@@ -88,6 +94,9 @@ export class ProfileComponent {
     this.eventService.fetchParticipatedEventsSummariesByUserId(userId, this.participatedPagination).subscribe({
       next: (data) => {
         this.participatedEvents = data.elements;
+        this.participatedTotalEvents = data.resultsCount;
+        this.participatedTotalPages = data.totalPages;
+        this.participatedPagination.pageIndex = data.pageIndex;
         this.areParticipatedEventsLoading = false;
       },
       error: (error) => {
@@ -96,6 +105,23 @@ export class ProfileComponent {
       }
     });
   }
+
+  onCreatedPageChange(event: PageEvent) {
+    if (!this.user) return;
+  
+    this.createdPagination.pageIndex = event.pageIndex + 1;
+    this.createdPagination.pageSize = event.pageSize;
+    this.fetchCreatedEvents(this.user.id);
+  }
+  
+  onParticipatedPageChange(event: PageEvent) {
+    if (!this.user) return;
+  
+    this.participatedPagination.pageIndex = event.pageIndex + 1;
+    this.participatedPagination.pageSize = event.pageSize;
+    this.fetchParticipatedEvents(this.user.id);
+  }
+  
 
   getUserInitials(user: UserProfileResponse | null): string {
       if (!user) return 'U';

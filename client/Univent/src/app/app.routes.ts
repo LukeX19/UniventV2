@@ -5,6 +5,7 @@ import { HomeComponent } from './features/home/home.component';
 import { EventCreateComponent } from './features/event-create/event-create.component';
 import { EventsBrowseComponent } from './features/events-browse/events-browse.component';
 import { EventDetailsComponent } from './features/event-details/event-details.component';
+import { ProfileComponent } from './features/profile/profile.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -12,5 +13,6 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'host', component: EventCreateComponent },
   { path: 'browse', component: EventsBrowseComponent},
-  { path: 'event/:id', component: EventDetailsComponent }
+  { path: 'event/:id', component: EventDetailsComponent },
+  { path: 'profile/:id', component: ProfileComponent }
 ];

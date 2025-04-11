@@ -66,4 +66,8 @@ export class NavbarComponent {
   goToEventsBrowse() {
     this.router.navigate(['/browse']);
   }
+
+  goToMyProfile(id: string) {
+    this.router.navigate([`/profile/${id}`]);
+  }
 }

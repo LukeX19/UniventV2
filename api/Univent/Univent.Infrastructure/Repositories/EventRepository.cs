@@ -32,6 +32,68 @@ namespace Univent.Infrastructure.Repositories
             return new PaginationResponseDto<Event>(events, pagination.PageIndex, totalPages, totalEvents);
         }
 
+        public async Task<PaginationResponseDto<Event>> GetCreatedEventsSummariesByUserIdAsync(Guid userId, PaginationRequestDto pagination, CancellationToken ct = default)
+        {
+            var query = _context.Events
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(e => e.AuthorId == userId)
+                .Include(e => e.Author)
+                .Include(e => e.Type)
+                .OrderByDescending(e => e.CreatedAt);
+
+            int totalEvents = await query.CountAsync(ct);
+
+            var events = await query
+                .Skip((pagination.PageIndex - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync(ct);
+
+            int totalPages = (int)Math.Ceiling((double)totalEvents / pagination.PageSize);
+
+            return new PaginationResponseDto<Event>(events, pagination.PageIndex, totalPages, totalEvents);
+        }
+
+        public async Task<int> GetCreatedEventsCountByUserIdAsync(Guid userId, CancellationToken ct = default)
+        {
+            return await _context.Events
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(e => e.AuthorId == userId)
+                .CountAsync(ct);
+        }
+
+        public async Task<PaginationResponseDto<Event>> GetParticipatedEventsSummariesByUserIdAsync(Guid userId, PaginationRequestDto pagination, CancellationToken ct = default)
+        {
+            var query = _context.Events
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(e => e.Participants.Any(ep => ep.UserId == userId))
+                .Include(e => e.Author)
+                .Include(e => e.Type)
+                .OrderByDescending(e => e.CreatedAt);
+
+            int totalEvents = await query.CountAsync(ct);
+
+            var events = await query
+                .Skip((pagination.PageIndex - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync(ct);
+
+            int totalPages = (int)Math.Ceiling((double)totalEvents / pagination.PageSize);
+
+            return new PaginationResponseDto<Event>(events, pagination.PageIndex, totalPages, totalEvents);
+        }
+
+        public async Task<int> GetParticipatedEventsCountByUserIdAsync(Guid userId, CancellationToken ct = default)
+        {
+            return await _context.Events
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(e => e.Participants.Any(ep => ep.UserId == userId))
+                .CountAsync(ct);
+        }
+
         public async Task<Event> GetEventByIdAsync(Guid id, CancellationToken ct = default)
         {
             var eventEntity = await _context.Events

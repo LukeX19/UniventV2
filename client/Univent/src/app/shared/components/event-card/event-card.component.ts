@@ -1,5 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import { EventSummaryResponse } from '../../models/eventModel';
+import { EventAuthorResponse, EventSummaryResponse } from '../../models/eventModel';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -55,10 +55,16 @@ export class EventCardComponent {
   
     return updatedAt > createdAt ? `Last updated on ${updatedAt}` : `Posted on ${createdAt}`;
   }
-  
 
   getAuthorFullName(): string {
     return `${this.event.author.firstName} ${this.event.author.lastName}`;
+  }
+
+  getAuthorInitials(user: EventAuthorResponse | null): string {
+    if (!user) return 'U';
+    const firstNameInitial = user.firstName ? user.firstName.charAt(0).toUpperCase() : '';
+    const lastNameInitial = user.lastName ? user.lastName.charAt(0).toUpperCase() : '';
+    return `${firstNameInitial}${lastNameInitial}`;
   }
 
   navigateToEvent() {

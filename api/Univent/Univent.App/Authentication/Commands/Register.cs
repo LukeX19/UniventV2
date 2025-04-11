@@ -32,7 +32,8 @@ namespace Univent.App.Authentication.Commands
                 Role = request.RegisterDto.Role,
                 Year = request.RegisterDto.Year,
                 UniversityId = request.RegisterDto.UniversityId,
-                IsAccountConfirmed = request.RegisterDto.Role == AppRole.Student ? false : true
+                IsAccountConfirmed = request.RegisterDto.Role == AppRole.Student ? false : true,
+                CreatedAt = DateTime.UtcNow
             };
 
             var createdUser = await _authenticationService.RegisterAsync(user, request.RegisterDto.Password, ct);

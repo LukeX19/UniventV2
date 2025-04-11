@@ -41,6 +41,24 @@ namespace Univent.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet("created-by/{userId}")]
+        public async Task<IActionResult> GetCreatedEventsSummariesByUserId(Guid userId, [FromQuery] PaginationRequestDto pagination)
+        {
+            var query = new GetCreatedEventsSummariesByUserIdQuery(userId, pagination);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
+        [HttpGet("participated-by/{userId}")]
+        public async Task<IActionResult> GetParticipatedEventsSummariesByUserId(Guid userId, [FromQuery] PaginationRequestDto pagination)
+        {
+            var query = new GetParticipatedEventsSummariesByUserIdQuery(userId, pagination);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetEventById(Guid id)

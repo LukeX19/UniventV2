@@ -29,6 +29,28 @@ export class EventService {
     });
   }
 
+  fetchCreatedEventsSummariesByUserId(userId: string, pagination: PaginationRequest): Observable<PaginationResponse<EventSummaryResponse>> {
+    const params = new HttpParams()
+      .set('pageIndex', pagination.pageIndex.toString())
+      .set('pageSize', pagination.pageSize.toString());
+    
+    return this.http.get<PaginationResponse<EventSummaryResponse>>(`${this.apiUrl}/events/created-by/${userId}`, {
+      params,
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  fetchParticipatedEventsSummariesByUserId(userId: string, pagination: PaginationRequest): Observable<PaginationResponse<EventSummaryResponse>> {
+    const params = new HttpParams()
+      .set('pageIndex', pagination.pageIndex.toString())
+      .set('pageSize', pagination.pageSize.toString());
+    
+    return this.http.get<PaginationResponse<EventSummaryResponse>>(`${this.apiUrl}/events/participated-by/${userId}`, {
+      params,
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
   fetchEventById(id: string): Observable<EventFullResponse> {
     return this.http.get<EventFullResponse>(`${this.apiUrl}/events/${id}`, {
       headers: { 'Requires-Auth': 'true' }

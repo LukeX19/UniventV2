@@ -90,34 +90,46 @@
   <div class="mt-6 mb-6 space-y-4">
     <!-- Created Events -->
     <ng-container *ngIf="showCreatedSection; else participatedEventsSection">
-      <app-event-card *ngFor="let event of createdEvents" [event]="event" />
+      <ng-container *ngIf="createdEvents.length > 0; else noCreated">
+        <app-event-card *ngFor="let event of createdEvents" [event]="event"/>
 
-      <div class="flex justify-center mt-6">
-        <mat-paginator 
-          [length]="createdTotalEvents"
-          [pageSize]="createdPagination.pageSize"
-          [pageSizeOptions]="[5, 10, 15, 20]"
-          [pageIndex]="createdPagination.pageIndex - 1"
-          (page)="onCreatedPageChange($event)"
-          style="background-color: transparent;">
-        </mat-paginator>
-      </div>
+        <div class="flex justify-center mt-6">
+          <mat-paginator 
+            [length]="createdTotalEvents"
+            [pageSize]="createdPagination.pageSize"
+            [pageSizeOptions]="[5, 10, 15, 20]"
+            [pageIndex]="createdPagination.pageIndex - 1"
+            (page)="onCreatedPageChange($event)"
+            style="background-color: transparent;">
+          </mat-paginator>
+        </div>
+      </ng-container>
+
+      <ng-template #noCreated>
+        <p class="text-center text-gray-500 mt-12">No events created yet.</p>
+      </ng-template>
     </ng-container>
 
     <!-- Participated Events -->
     <ng-template #participatedEventsSection>
-      <app-event-card *ngFor="let event of participatedEvents" [event]="event" />
+      <ng-container *ngIf="participatedEvents.length > 0; else noParticipated">
+        <app-event-card *ngFor="let event of participatedEvents" [event]="event"/>
 
-      <div class="flex justify-center mt-6">
-        <mat-paginator 
-          [length]="participatedTotalEvents"
-          [pageSize]="participatedPagination.pageSize"
-          [pageSizeOptions]="[5, 10, 15, 20]"
-          [pageIndex]="participatedPagination.pageIndex - 1"
-          (page)="onParticipatedPageChange($event)"
-          style="background-color: transparent;">
-        </mat-paginator>
-      </div>
+        <div class="flex justify-center mt-6">
+          <mat-paginator 
+            [length]="participatedTotalEvents"
+            [pageSize]="participatedPagination.pageSize"
+            [pageSizeOptions]="[5, 10, 15, 20]"
+            [pageIndex]="participatedPagination.pageIndex - 1"
+            (page)="onParticipatedPageChange($event)"
+            style="background-color: transparent;">
+          </mat-paginator>
+        </div>
+      </ng-container>
+
+      <ng-template #noParticipated>
+        <p class="text-center text-gray-500 mt-12">No participations yet.</p>
+      </ng-template>
     </ng-template>
   </div>
 </div>

@@ -3,6 +3,30 @@
 <div class="max-w-7xl mx-auto px-6">
   <p class="text-3xl font-semibold text-center w-full mt-4 mb-6">Browse Events</p>
 
+  <!-- Search Bar -->
+  <div class="flex justify-center mb-6">
+    <div class="flex w-full max-w-2xl rounded-full border shadow-sm overflow-hidden">
+      <!-- Input -->
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+        placeholder="Search events..."
+        class="flex-grow px-4 py-2 text-sm focus:outline-none"
+        style="font-size: 16px;"
+      />
+
+      <!-- Search Button -->
+      <button
+        (click)="onSearch()"
+        class="flex items-center justify-center px-4 bg-gray-100 border-l hover:bg-gray-200 transition"
+        style="height: 100%;"
+      >
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
+  </div>
+
   <div *ngIf="isLoading" class="text-center text-gray-600">
     Loading events...
   </div>

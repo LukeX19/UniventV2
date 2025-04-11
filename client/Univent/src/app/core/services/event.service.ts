@@ -18,10 +18,14 @@ export class EventService {
     });
   }
 
-  fetchAllEventsSummaries(pagination: PaginationRequest): Observable<PaginationResponse<EventSummaryResponse>> {
-    const params = new HttpParams()
+  fetchAllEventsSummaries(pagination: PaginationRequest, searchQuery?: string): Observable<PaginationResponse<EventSummaryResponse>> {
+    let params = new HttpParams()
       .set('pageIndex', pagination.pageIndex.toString())
       .set('pageSize', pagination.pageSize.toString());
+    
+    if (searchQuery && searchQuery.trim() !== '') {
+      params = params.set('search', searchQuery.trim());
+    }
     
     return this.http.get<PaginationResponse<EventSummaryResponse>>(`${this.apiUrl}/events/`, {
       params,

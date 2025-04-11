@@ -27,7 +27,7 @@
             class="w-10 h-10 rounded-full mr-2"/>
           <ng-template #showInitials>
             <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2">
-              {{ getAuthorInitials(event!.author) }}
+              {{ getAuthorInitials(event?.author || null) }}
             </div>
           </ng-template>
           <div>

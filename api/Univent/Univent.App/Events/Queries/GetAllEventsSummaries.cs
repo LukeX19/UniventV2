@@ -6,7 +6,7 @@ using Univent.App.Pagination.Dtos;
 
 namespace Univent.App.Events.Queries
 {
-    public record GetAllEventsSummariesQuery(PaginationRequestDto Pagination) : IRequest<PaginationResponseDto<EventSummaryResponseDto>>;
+    public record GetAllEventsSummariesQuery(PaginationRequestDto Pagination, string? Search) : IRequest<PaginationResponseDto<EventSummaryResponseDto>>;
 
     public class GetAllEventsSummariesHandler : IRequestHandler<GetAllEventsSummariesQuery, PaginationResponseDto<EventSummaryResponseDto>>
     {
@@ -21,7 +21,7 @@ namespace Univent.App.Events.Queries
 
         public async Task<PaginationResponseDto<EventSummaryResponseDto>> Handle(GetAllEventsSummariesQuery request, CancellationToken ct)
         {
-            var paginatedEvents = await _unitOfWork.EventRepository.GetAllEventsSummariesAsync(request.Pagination, ct);
+            var paginatedEvents = await _unitOfWork.EventRepository.GetAllEventsSummariesAsync(request.Pagination, request.Search, ct);
 
             var eventIds = paginatedEvents.Elements.Select(e => e.Id).ToList();
             var participantCounts = await _unitOfWork.EventRepository.GetEventParticipantsCountAsync(eventIds, ct);

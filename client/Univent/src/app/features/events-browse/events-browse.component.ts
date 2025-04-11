@@ -8,6 +8,8 @@ import { EventService } from '../../core/services/event.service';
 import { EventSummaryResponse } from '../../shared/models/eventModel';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { PaginationRequest } from '../../shared/models/paginationModel';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-events-browse',
@@ -18,7 +20,9 @@ import { PaginationRequest } from '../../shared/models/paginationModel';
     MatButtonModule,
     NavbarComponent,
     EventCardComponent,
-    MatPaginatorModule
+    MatPaginatorModule,
+    FormsModule,
+    MatIconModule
 ],
   templateUrl: './events-browse.component.html',
   styleUrl: './events-browse.component.scss'
@@ -33,6 +37,8 @@ export class EventsBrowseComponent {
   totalEvents = 0;
   totalPages = 1;
 
+  searchQuery: string = '';
+
   ngOnInit() {
     this.fetchEvents();
   }
@@ -40,7 +46,7 @@ export class EventsBrowseComponent {
   fetchEvents() {
     this.isLoading = true;
 
-    this.eventService.fetchAllEventsSummaries(this.pagination).subscribe({
+    this.eventService.fetchAllEventsSummaries(this.pagination, this.searchQuery).subscribe({
       next: (data) => {
         this.events = data.elements;
         this.totalEvents = data.resultsCount;
@@ -66,4 +72,9 @@ export class EventsBrowseComponent {
     this.pagination.pageSize = event.pageSize;
     this.fetchEvents();
   }
+
+  onSearch() {
+    this.pagination.pageIndex = 1;
+    this.fetchEvents();
+  }  
 }

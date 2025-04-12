@@ -18,13 +18,22 @@ export class EventService {
     });
   }
 
-  fetchAllEventsSummaries(pagination: PaginationRequest, searchQuery?: string): Observable<PaginationResponse<EventSummaryResponse>> {
+  fetchAllEventsSummaries(pagination: PaginationRequest,
+    searchQuery?: string, eventTypeIds?: string[]): Observable<PaginationResponse<EventSummaryResponse>> {
     let params = new HttpParams()
       .set('pageIndex', pagination.pageIndex.toString())
       .set('pageSize', pagination.pageSize.toString());
     
     if (searchQuery && searchQuery.trim() !== '') {
       params = params.set('search', searchQuery.trim());
+    }
+
+    if (eventTypeIds && eventTypeIds.length > 0) {
+      eventTypeIds.forEach(id => {
+        if (id) {
+          params = params.append('types', id);
+        }
+      });
     }
     
     return this.http.get<PaginationResponse<EventSummaryResponse>>(`${this.apiUrl}/events/`, {

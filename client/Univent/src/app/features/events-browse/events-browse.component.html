@@ -1,48 +1,67 @@
-<app-navbar></app-navbar>
+<mat-drawer-container style="height: 100vh; background-color: transparent;" autosize>
+  <!-- FILTER SIDE DRAWER -->
+  <mat-drawer #drawer mode="side" position="end" style="width: 300px; padding: 20px;">
+    <h3 class="text-lg font-semibold mb-4">Filter by Event Type</h3>
+    <mat-selection-list [(ngModel)]="selectedEventTypeIds" (ngModelChange)="onFilterChange(drawer)">
+      <mat-list-option *ngFor="let type of eventTypes" [value]="type.id">
+        {{ type.name }}
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-drawer>
 
-<div class="max-w-7xl mx-auto px-6">
-  <p class="text-3xl font-semibold text-center w-full mt-4 mb-6">Browse Events</p>
+  <!-- MAIN CONTENT -->
+  <app-navbar></app-navbar>
 
-  <!-- Search Bar -->
-  <div class="flex justify-center mb-6">
-    <div class="flex w-full max-w-2xl rounded-full border shadow-sm overflow-hidden">
-      <!-- Input -->
-      <input
-        type="text"
-        [(ngModel)]="searchQuery"
-        (keyup.enter)="onSearch()"
-        placeholder="Search events..."
-        class="flex-grow px-4 py-2 text-sm focus:outline-none"
-        style="font-size: 16px;"
-      />
+  <div class="max-w-7xl mx-auto px-6">
+    <p class="text-3xl font-semibold text-center w-full mt-4 mb-6">Browse Events</p>
 
-      <!-- Search Button -->
-      <button
-        (click)="onSearch()"
-        class="flex items-center justify-center px-4 bg-gray-100 border-l hover:bg-gray-200 transition"
-        style="height: 100%;"
-      >
-        <mat-icon>search</mat-icon>
+    <!-- Search Bar + Filter Icon -->
+    <div class="flex justify-center mb-6 gap-4">
+      <div class="flex w-full max-w-2xl rounded-full border shadow-sm overflow-hidden">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+          placeholder="Search events..."
+          class="flex-grow px-4 py-2 text-sm focus:outline-none"
+          style="font-size: 16px;"
+        />
+
+        <!-- Search Button -->
+        <button
+          (click)="onSearch()"
+          class="flex items-center justify-center px-4 bg-gray-100 border-l hover:bg-gray-200 transition"
+          style="height: 100%;"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
+
+      <!-- Filter Icon Button -->
+      <button mat-icon-button (click)="drawer.toggle()" aria-label="Filter">
+        <mat-icon>filter_list</mat-icon>
       </button>
     </div>
-  </div>
 
-  <div *ngIf="isLoading" class="text-center text-gray-600">
-    Loading events...
-  </div>
+    <!-- Events List -->
+    <div *ngIf="isLoading" class="text-center text-gray-600">
+      Loading events...
+    </div>
 
-  <div *ngIf="!isLoading">
-    <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
-  </div>
+    <div *ngIf="!isLoading">
+      <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
+    </div>
 
-  <div class="flex justify-center mt-6">
-    <mat-paginator 
-      [length]="totalEvents"
-      [pageSize]="pagination.pageSize"
-      [pageSizeOptions]="[5, 10, 15, 20]"
-      [pageIndex]="pagination.pageIndex - 1"
-      (page)="onPageChange($event)"
-      style="background-color: transparent;">
-    </mat-paginator>
+    <!-- Paginator -->
+    <div class="flex justify-center mt-6 mb-6">
+      <mat-paginator 
+        [length]="totalEvents"
+        [pageSize]="pagination.pageSize"
+        [pageSizeOptions]="[5, 10, 15, 20]"
+        [pageIndex]="pagination.pageIndex - 1"
+        (page)="onPageChange($event)"
+        style="background-color: transparent;">
+      </mat-paginator>
+    </div>
   </div>
-</div>
+</mat-drawer-container>

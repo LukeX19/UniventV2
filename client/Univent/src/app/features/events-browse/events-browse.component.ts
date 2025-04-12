@@ -10,6 +10,9 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { PaginationRequest } from '../../shared/models/paginationModel';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { EventTypeService } from '../../core/services/event-type.service';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-events-browse',
@@ -22,13 +25,16 @@ import { MatIconModule } from '@angular/material/icon';
     EventCardComponent,
     MatPaginatorModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    MatSidenavModule,
+    MatListModule
 ],
   templateUrl: './events-browse.component.html',
   styleUrl: './events-browse.component.scss'
 })
 export class EventsBrowseComponent {
   private eventService = inject(EventService);
+  private eventTypeService = inject(EventTypeService);
   
   events: EventSummaryResponse[] = [];
   isLoading = true;
@@ -39,14 +45,21 @@ export class EventsBrowseComponent {
 
   searchQuery: string = '';
 
+  eventTypes: { id: string, name: string }[] = [];
+  selectedEventTypeIds: (string | null)[] = [];
+
   ngOnInit() {
     this.fetchEvents();
+    this.fetchEventTypes();
   }
 
   fetchEvents() {
     this.isLoading = true;
 
-    this.eventService.fetchAllEventsSummaries(this.pagination, this.searchQuery).subscribe({
+    const typeFilters = this.selectedEventTypeIds.includes(null) ? [] : this.selectedEventTypeIds;
+
+    this.eventService.fetchAllEventsSummaries(this.pagination,
+      this.searchQuery, typeFilters as string[]).subscribe({
       next: (data) => {
         this.events = data.elements;
         this.totalEvents = data.resultsCount;
@@ -59,6 +72,15 @@ export class EventsBrowseComponent {
         console.error("Error fetching events:", error);
         this.isLoading = false;
       }
+    });
+  }
+
+  fetchEventTypes() {
+    this.eventTypeService.fetchActiveEventTypes().subscribe({
+      next: (data) => {
+        this.eventTypes = data;
+      },
+      error: (error) => console.error("Error fetching event types:", error)
     });
   }
 
@@ -76,5 +98,16 @@ export class EventsBrowseComponent {
   onSearch() {
     this.pagination.pageIndex = 1;
     this.fetchEvents();
-  }  
+  }
+
+  onFilterChange(drawer: MatDrawer) {
+    this.pagination.pageIndex = 1;
+
+    // If 'All Types' is selected, clear others
+    if (this.selectedEventTypeIds.includes(null)) {
+      this.selectedEventTypeIds = []; // Treat as "no filters"
+    }
+
+    this.fetchEvents();
+  }
 }

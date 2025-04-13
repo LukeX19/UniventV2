@@ -12,7 +12,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CommonModule } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import dayjs from 'dayjs';
+import { differenceInYears, parseISO, isValid } from 'date-fns';
 import { UniversityService } from '../../../core/services/university.service';
 import { UniversityResponse } from '../../../shared/models/universityModel';
 import { FileService } from '../../../core/services/file.service';
@@ -234,12 +234,15 @@ export class RegisterComponent {
 
   // Custom validator to check if user is at least 18 years old
   ageValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) return null;
-    
-    const birthDate = dayjs(control.value);
-    const currentAge = dayjs().diff(birthDate, 'year');
-
-    return currentAge >= 18 ? null : { invalidAge: 'You must be at least 18 years old' };
+    const value = control.value;
+    if (!value) return null;
+  
+    const birthDate = new Date(value);
+    if (!isValid(birthDate)) return { invalidAge: 'Invalid date' };
+  
+    const age = differenceInYears(new Date(), birthDate);
+  
+    return age >= 18 ? null : { invalidAge: 'You must be at least 18 years old' };
   }
 
   // Custom validator to check for Identity password constraints

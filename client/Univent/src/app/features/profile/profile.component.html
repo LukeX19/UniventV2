@@ -91,7 +91,7 @@
     <!-- Created Events -->
     <ng-container *ngIf="showCreatedSection; else participatedEventsSection">
       <ng-container *ngIf="createdEvents.length > 0; else noCreated">
-        <app-event-card *ngFor="let event of createdEvents" [event]="event"/>
+        <app-event-card *ngFor="let event of createdEvents" [event]="event" [enableOptions]="isOwnProfile" />
 
         <div class="flex justify-center mt-6">
           <mat-paginator 

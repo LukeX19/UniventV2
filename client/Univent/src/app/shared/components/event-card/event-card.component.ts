@@ -2,6 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { EventAuthorResponse, EventSummaryResponse } from '../../models/eventModel';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -11,7 +12,8 @@ import { Router } from '@angular/router';
   imports: [
     CommonModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatMenuModule
   ],
   templateUrl: './event-card.component.html',
   styleUrl: './event-card.component.scss'
@@ -20,6 +22,7 @@ export class EventCardComponent {
   private router = inject(Router);
   
   @Input() event!: EventSummaryResponse;
+  @Input() enableOptions: boolean = false;
 
   getFormattedStartTime(): string {
     const startTime = new Date(this.event.startTime).toLocaleString("ro-RO", {
@@ -70,4 +73,12 @@ export class EventCardComponent {
   navigateToEvent() {
     this.router.navigate([`/event/${this.event.id}`]);
   }
+
+  onUpdate() {
+    console.log("Update clicked for event:", this.event.id);
+  }
+  
+  onCancel() {
+    console.log("Cancel clicked for event:", this.event.id);
+  }  
 }

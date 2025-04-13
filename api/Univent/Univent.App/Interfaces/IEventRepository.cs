@@ -5,7 +5,8 @@ namespace Univent.App.Interfaces
 {
     public interface IEventRepository : IBaseRepository<Event>
     {
-        Task<PaginationResponseDto<Event>> GetAllEventsSummariesAsync(PaginationRequestDto pagination, CancellationToken ct = default);
+        Task<PaginationResponseDto<Event>> GetAllEventsSummariesAsync(PaginationRequestDto pagination,
+            string? search = null, ICollection<Guid>? types = null, CancellationToken ct = default);
         Task<PaginationResponseDto<Event>> GetCreatedEventsSummariesByUserIdAsync(Guid userId, PaginationRequestDto pagination, CancellationToken ct = default);
         Task<int> GetCreatedEventsCountByUserIdAsync(Guid userId, CancellationToken ct = default);
         Task<PaginationResponseDto<Event>> GetParticipatedEventsSummariesByUserIdAsync(Guid userId, PaginationRequestDto pagination, CancellationToken ct = default);

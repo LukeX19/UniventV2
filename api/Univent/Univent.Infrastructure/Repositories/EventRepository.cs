@@ -11,14 +11,30 @@ namespace Univent.Infrastructure.Repositories
     {
         public EventRepository(AppDbContext context) : base(context) { }
 
-        public async Task<PaginationResponseDto<Event>> GetAllEventsSummariesAsync(PaginationRequestDto pagination, CancellationToken ct = default)
+        public async Task<PaginationResponseDto<Event>> GetAllEventsSummariesAsync(PaginationRequestDto pagination,
+            string? search = null, ICollection<Guid>? types = null, CancellationToken ct = default)
         {
             var query = _context.Events
                 .AsNoTracking()
                 .AsSplitQuery()
                 .Include(e => e.Author)
                 .Include(e => e.Type)
-                .OrderByDescending(e => e.CreatedAt);
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string lowerSearch = search.ToLower();
+                query = query.Where(e =>
+                    e.Name.ToLower().Contains(lowerSearch) ||
+                    e.Description.ToLower().Contains(lowerSearch));
+            }
+
+            if (types != null && types.Count > 0)
+            {
+                query = query.Where(e => types.Contains(e.TypeId.Value));
+            }
+
+            query = query.OrderByDescending(e => e.CreatedAt);
 
             int totalEvents = await query.CountAsync(ct);
 

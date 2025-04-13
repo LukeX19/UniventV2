@@ -8,6 +8,11 @@ import { EventService } from '../../core/services/event.service';
 import { EventSummaryResponse } from '../../shared/models/eventModel';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { PaginationRequest } from '../../shared/models/paginationModel';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { EventTypeService } from '../../core/services/event-type.service';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-events-browse',
@@ -18,13 +23,18 @@ import { PaginationRequest } from '../../shared/models/paginationModel';
     MatButtonModule,
     NavbarComponent,
     EventCardComponent,
-    MatPaginatorModule
+    MatPaginatorModule,
+    FormsModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatListModule
 ],
   templateUrl: './events-browse.component.html',
   styleUrl: './events-browse.component.scss'
 })
 export class EventsBrowseComponent {
   private eventService = inject(EventService);
+  private eventTypeService = inject(EventTypeService);
   
   events: EventSummaryResponse[] = [];
   isLoading = true;
@@ -33,14 +43,23 @@ export class EventsBrowseComponent {
   totalEvents = 0;
   totalPages = 1;
 
+  searchQuery: string = '';
+
+  eventTypes: { id: string, name: string }[] = [];
+  selectedEventTypeIds: (string | null)[] = [];
+
   ngOnInit() {
     this.fetchEvents();
+    this.fetchEventTypes();
   }
 
   fetchEvents() {
     this.isLoading = true;
 
-    this.eventService.fetchAllEventsSummaries(this.pagination).subscribe({
+    const typeFilters = this.selectedEventTypeIds.includes(null) ? [] : this.selectedEventTypeIds;
+
+    this.eventService.fetchAllEventsSummaries(this.pagination,
+      this.searchQuery, typeFilters as string[]).subscribe({
       next: (data) => {
         this.events = data.elements;
         this.totalEvents = data.resultsCount;
@@ -56,6 +75,15 @@ export class EventsBrowseComponent {
     });
   }
 
+  fetchEventTypes() {
+    this.eventTypeService.fetchActiveEventTypes().subscribe({
+      next: (data) => {
+        this.eventTypes = data;
+      },
+      error: (error) => console.error("Error fetching event types:", error)
+    });
+  }
+
   onPageChange(event: PageEvent) {
     if (event.pageSize !== this.pagination.pageSize) {
       this.pagination.pageIndex = 1;
@@ -64,6 +92,22 @@ export class EventsBrowseComponent {
     }
 
     this.pagination.pageSize = event.pageSize;
+    this.fetchEvents();
+  }
+
+  onSearch() {
+    this.pagination.pageIndex = 1;
+    this.fetchEvents();
+  }
+
+  onFilterChange(drawer: MatDrawer) {
+    this.pagination.pageIndex = 1;
+
+    // If 'All Types' is selected, clear others
+    if (this.selectedEventTypeIds.includes(null)) {
+      this.selectedEventTypeIds = []; // Treat as "no filters"
+    }
+
     this.fetchEvents();
   }
 }

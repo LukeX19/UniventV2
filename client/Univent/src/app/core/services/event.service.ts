@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { EventFullResponse, EventRequest, EventSummaryResponse } from '../../shared/models/eventModel';
+import { EventFullResponse, CreateEventRequest, EventSummaryResponse, UpdateEventRequest } from '../../shared/models/eventModel';
 import { Observable } from 'rxjs';
 import { PaginationRequest, PaginationResponse } from '../../shared/models/paginationModel';
 
@@ -12,7 +12,7 @@ export class EventService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}`;
 
-  createEvent(eventData: EventRequest): Observable<void> {
+  createEvent(eventData: CreateEventRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/events`, eventData, {
       headers: { 'Requires-Auth': 'true' }
     });
@@ -66,6 +66,12 @@ export class EventService {
 
   fetchEventById(id: string): Observable<EventFullResponse> {
     return this.http.get<EventFullResponse>(`${this.apiUrl}/events/${id}`, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  updateEvent(id: string, eventData: UpdateEventRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/events/${id}`, eventData, {
       headers: { 'Requires-Auth': 'true' }
     });
   }

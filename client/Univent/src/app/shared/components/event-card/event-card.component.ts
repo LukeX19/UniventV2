@@ -75,7 +75,7 @@ export class EventCardComponent {
   }
 
   onUpdate() {
-    console.log("Update clicked for event:", this.event.id);
+    this.router.navigate([`/event/${this.event.id}/update`]);
   }
   
   onCancel() {

@@ -69,5 +69,15 @@ namespace Univent.Api.Controllers
 
             return Ok(response);
         }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateEvent(Guid id, UpdateEventRequestDto eventDto)
+        {
+            var command = new UpdateEventCommand(id, eventDto);
+            await _mediator.Send(command);
+
+            return NoContent();
+        }
     }
 }

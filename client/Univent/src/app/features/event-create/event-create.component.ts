@@ -160,7 +160,11 @@ export class EventCreateComponent implements AfterViewInit {
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: this.selectedLocation }, (results, status) => {
         if (status === "OK" && results?.length) {
-          this.eventForm.patchValue({ locationAddress: results[0].formatted_address });
+          this.eventForm.patchValue({
+            locationAddress: results[0].formatted_address,
+            locationLat: this.selectedLocation!.lat,
+            locationLong: this.selectedLocation!.lng
+          });
         } else {
           console.error("Geocoder failed due to: ", status);
         }

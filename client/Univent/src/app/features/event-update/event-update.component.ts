@@ -264,6 +264,8 @@ export class EventUpdateComponent implements AfterViewInit {
 
   removeImage() {
     this.selectedImage = null;
+    this.originalImageUrl = null;
+    
     this.eventForm.patchValue({ selectedFile: null });
     this.triggerImageValidation();
   }

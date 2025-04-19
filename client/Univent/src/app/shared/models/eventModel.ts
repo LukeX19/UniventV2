@@ -38,6 +38,7 @@ export interface EventSummaryResponse {
   pictureUrl: string;
   createdAt: string;
   updatedAt: string;
+  isCancelled: boolean;
   typeName: string;
   author: EventAuthorResponse;
 }
@@ -55,6 +56,7 @@ export interface EventFullResponse {
   pictureUrl: string;
   createdAt: string;
   updatedAt: string;
+  isCancelled: boolean;
   typeName: string;
   author: EventAuthorResponse;
 }

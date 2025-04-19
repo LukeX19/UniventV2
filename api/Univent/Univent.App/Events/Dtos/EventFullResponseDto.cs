@@ -14,6 +14,7 @@
         public string PictureUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public bool IsCancelled { get; set; }
         public string TypeName { get; set; }
         public EventAuthorResponseDto Author { get; set; }
     }

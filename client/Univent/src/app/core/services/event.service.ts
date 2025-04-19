@@ -75,4 +75,10 @@ export class EventService {
       headers: { 'Requires-Auth': 'true' }
     });
   }
+
+  cancelEvent(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/events/${id}/cancel`, null, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
 }

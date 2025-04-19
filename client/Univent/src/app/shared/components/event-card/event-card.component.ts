@@ -5,6 +5,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { GenericDialogComponent } from '../generic-dialog/generic-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { EventService } from '../../../core/services/event.service';
+import { SnackbarService } from '../../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-event-card',
@@ -20,6 +24,9 @@ import { Router } from '@angular/router';
 })
 export class EventCardComponent {
   private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private eventService = inject(EventService);
+  private snackbar = inject(SnackbarService);
   
   @Input() event!: EventSummaryResponse;
   @Input() enableOptions: boolean = false;
@@ -79,6 +86,25 @@ export class EventCardComponent {
   }
   
   onCancel() {
-    console.log("Cancel clicked for event:", this.event.id);
-  }  
+    const dialogRef = this.dialog.open(GenericDialogComponent, {
+      data: {
+        title: 'Cancel Event',
+        message: 'Are you sure you want to cancel this event? This action cannot be undone.',
+        cancelText: 'No, Keep It',
+        confirmText: 'Yes, Cancel'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.eventService.cancelEvent(this.event.id).subscribe({
+          next: () => {
+            this.event.isCancelled = true;
+            this.snackbar.success("Event successfully cancelled.")
+          },
+          error: () => this.snackbar.error("Failed to cancel the event.")
+        });
+      }
+    });
+  }
 }

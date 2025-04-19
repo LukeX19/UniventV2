@@ -42,7 +42,8 @@ namespace Univent.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("created-by/{userId}")]
+        [HttpGet]
+        [Route("created-by/{userId}")]
         public async Task<IActionResult> GetCreatedEventsSummariesByUserId(Guid userId, [FromQuery] PaginationRequestDto pagination)
         {
             var query = new GetCreatedEventsSummariesByUserIdQuery(userId, pagination);
@@ -51,7 +52,8 @@ namespace Univent.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("participated-by/{userId}")]
+        [HttpGet]
+        [Route("participated-by/{userId}")]
         public async Task<IActionResult> GetParticipatedEventsSummariesByUserId(Guid userId, [FromQuery] PaginationRequestDto pagination)
         {
             var query = new GetParticipatedEventsSummariesByUserIdQuery(userId, pagination);
@@ -75,6 +77,16 @@ namespace Univent.Api.Controllers
         public async Task<IActionResult> UpdateEvent(Guid id, UpdateEventRequestDto eventDto)
         {
             var command = new UpdateEventCommand(id, eventDto);
+            await _mediator.Send(command);
+
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("{id}/cancel")]
+        public async Task<IActionResult> CancelEvent(Guid id)
+        {
+            var command = new CancelEventCommand(id);
             await _mediator.Send(command);
 
             return NoContent();

@@ -2,7 +2,7 @@
 {
     public class NameConflictException : Exception
     {
-        private const string MessageTemplate = "The {0} named '{1}' already exists.";
+        private const string MessageTemplate = "The {0} with name '{1}' already exists.";
 
         public NameConflictException()
             : base() { }

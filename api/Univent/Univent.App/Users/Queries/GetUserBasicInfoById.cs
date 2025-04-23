@@ -20,7 +20,7 @@ namespace Univent.App.Users.Queries
 
         public async Task<UserBasicInfoResponseDto> Handle(GetUserBasicInfoByIdQuery request, CancellationToken ct)
         {
-            var user = await _unitOfWork.UserRepository.GetUserById(request.Id, ct);
+            var user = await _unitOfWork.UserRepository.GetUserByIdAsync(request.Id, ct);
 
             return _mapper.Map<UserBasicInfoResponseDto>(user);
         }

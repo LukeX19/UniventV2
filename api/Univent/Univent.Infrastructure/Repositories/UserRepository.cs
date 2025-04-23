@@ -14,7 +14,7 @@ namespace Univent.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<AppUser> GetUserById(Guid id, CancellationToken ct = default)
+        public async Task<AppUser> GetUserByIdAsync(Guid id, CancellationToken ct = default)
         {
             var user = await _context.Users
                 .AsNoTracking()

@@ -13,6 +13,7 @@ namespace Univent.Api.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IEventTypeRepository, EventTypeRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IEventParticipantRepository, EventParticipantRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

@@ -9,17 +9,20 @@ namespace Univent.Infrastructure
         public IUserRepository UserRepository { get; private set; }
         public IEventTypeRepository EventTypeRepository { get; private set; }
         public IEventRepository EventRepository { get; private set; }
+        public IEventParticipantRepository EventParticipantRepository { get; private set; }
         public IFeedbackRepository FeedbackRepository { get; private set; }
 
         public UnitOfWork(AppDbContext context, IUniversityRepository universityRepository,
             IUserRepository userRepository, IEventTypeRepository eventTypeRepository,
-            IEventRepository eventRepository, IFeedbackRepository feedbackRepository)
+            IEventRepository eventRepository, IEventParticipantRepository eventParticipantRepository,
+            IFeedbackRepository feedbackRepository)
         {
             _context = context;
             UniversityRepository = universityRepository;
             UserRepository = userRepository;
             EventTypeRepository = eventTypeRepository;
             EventRepository = eventRepository;
+            EventParticipantRepository = eventParticipantRepository;
             FeedbackRepository = feedbackRepository;
         }
 

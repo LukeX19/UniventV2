@@ -17,6 +17,7 @@ namespace Univent.Infrastructure.Repositories
             var query = _context.Events
                 .AsNoTracking()
                 .AsSplitQuery()
+                .Where(e => e.IsCancelled == false)
                 .Include(e => e.Author)
                 .Include(e => e.Type)
                 .AsQueryable();

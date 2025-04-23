@@ -1,4 +1,4 @@
-export interface EventRequest {
+export interface CreateEventRequest {
   name: string;
   description: string;
   maximumParticipants: number;
@@ -8,6 +8,17 @@ export interface EventRequest {
   locationLong: number;
   pictureUrl: string;
   typeId: string;
+};
+
+export interface UpdateEventRequest {
+  name: string;
+  description: string;
+  maximumParticipants: number;
+  startTime: string;
+  locationAddress: string;
+  locationLat: number;
+  locationLong: number;
+  pictureUrl: string;
 };
 
 export interface EventAuthorResponse {
@@ -27,6 +38,7 @@ export interface EventSummaryResponse {
   pictureUrl: string;
   createdAt: string;
   updatedAt: string;
+  isCancelled: boolean;
   typeName: string;
   author: EventAuthorResponse;
 }
@@ -44,6 +56,7 @@ export interface EventFullResponse {
   pictureUrl: string;
   createdAt: string;
   updatedAt: string;
+  isCancelled: boolean;
   typeName: string;
   author: EventAuthorResponse;
 }

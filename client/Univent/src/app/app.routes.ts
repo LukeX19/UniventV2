@@ -6,6 +6,7 @@ import { EventCreateComponent } from './features/event-create/event-create.compo
 import { EventsBrowseComponent } from './features/events-browse/events-browse.component';
 import { EventDetailsComponent } from './features/event-details/event-details.component';
 import { ProfileComponent } from './features/profile/profile.component';
+import { EventUpdateComponent } from './features/event-update/event-update.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'host', component: EventCreateComponent },
   { path: 'browse', component: EventsBrowseComponent},
   { path: 'event/:id', component: EventDetailsComponent },
-  { path: 'profile/:id', component: ProfileComponent }
+  { path: 'profile/:id', component: ProfileComponent },
+  { path: 'event/:id/update', component: EventUpdateComponent },
 ];

@@ -103,9 +103,8 @@ export class EventsBrowseComponent {
   onFilterChange(drawer: MatDrawer) {
     this.pagination.pageIndex = 1;
 
-    // If 'All Types' is selected, clear others
     if (this.selectedEventTypeIds.includes(null)) {
-      this.selectedEventTypeIds = []; // Treat as "no filters"
+      this.selectedEventTypeIds = [];
     }
 
     this.fetchEvents();

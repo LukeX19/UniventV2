@@ -2,8 +2,13 @@ import { Component, inject, Input } from '@angular/core';
 import { EventAuthorResponse, EventSummaryResponse } from '../../models/eventModel';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { GenericDialogComponent } from '../generic-dialog/generic-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { EventService } from '../../../core/services/event.service';
+import { SnackbarService } from '../../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-event-card',
@@ -11,15 +16,20 @@ import { Router } from '@angular/router';
   imports: [
     CommonModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatMenuModule
   ],
   templateUrl: './event-card.component.html',
   styleUrl: './event-card.component.scss'
 })
 export class EventCardComponent {
   private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private eventService = inject(EventService);
+  private snackbar = inject(SnackbarService);
   
   @Input() event!: EventSummaryResponse;
+  @Input() enableOptions: boolean = false;
 
   getFormattedStartTime(): string {
     const startTime = new Date(this.event.startTime).toLocaleString("ro-RO", {
@@ -69,5 +79,32 @@ export class EventCardComponent {
 
   navigateToEvent() {
     this.router.navigate([`/event/${this.event.id}`]);
+  }
+
+  onUpdate() {
+    this.router.navigate([`/event/${this.event.id}/update`]);
+  }
+  
+  onCancel() {
+    const dialogRef = this.dialog.open(GenericDialogComponent, {
+      data: {
+        title: 'Cancel Event',
+        message: 'Are you sure you want to cancel this event? This action cannot be undone.',
+        cancelText: 'No, Keep It',
+        confirmText: 'Yes, Cancel'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.eventService.cancelEvent(this.event.id).subscribe({
+          next: () => {
+            this.event.isCancelled = true;
+            this.snackbar.success("Event successfully cancelled.")
+          },
+          error: () => this.snackbar.error("Failed to cancel the event.")
+        });
+      }
+    });
   }
 }

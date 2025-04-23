@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
-import { UserProfileResponse } from '../../shared/models/userModel';
+import { UserProfileResponse, UserResponse } from '../../shared/models/userModel';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,8 @@ import { EventService } from '../../core/services/event.service';
 import { PaginationRequest } from '../../shared/models/paginationModel';
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { AuthenticationService } from '../../core/services/authentication.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -26,11 +28,14 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 })
 export class ProfileComponent {
   private userService = inject(UserService);
+  private authService = inject(AuthenticationService);
   private eventService = inject(EventService);
   private route = inject(ActivatedRoute);
 
   user: UserProfileResponse | null = null;
   isUserLoading = true;
+
+  currentUser: UserResponse | null = null;
 
   showCreatedSection = true;
 
@@ -49,6 +54,10 @@ export class ProfileComponent {
   participatedTotalPages = 1;
 
   ngOnInit() {
+    this.authService.user$.subscribe((user) => {
+      this.currentUser = user;
+    });
+
     this.fetchUser();
   }
 
@@ -166,4 +175,8 @@ export class ProfileComponent {
       this.fetchParticipatedEvents(this.user.id);
     }
   }
+
+  get isOwnProfile(): boolean {
+    return this.currentUser?.id === this.user?.id;
+  }  
 }

@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
@@ -11,15 +11,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { MatIconModule } from '@angular/material/icon';
-import { EventTypeService } from '../../core/services/event-type.service';
-import { EventTypeResponse } from '../../shared/models/eventTypeModel';
 import { FileService } from '../../core/services/file.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
-import { CreateEventRequest } from '../../shared/models/eventModel';
+import { UpdateEventRequest } from '../../shared/models/eventModel';
 import { EventService } from '../../core/services/event.service';
 
 @Component({
-  selector: 'app-event-create',
+  selector: 'app-event-update',
   standalone: true,
   imports: [
     CommonModule,
@@ -37,22 +35,36 @@ import { EventService } from '../../core/services/event.service';
     GoogleMap,
     MapMarker
   ],
-  providers: [],
-  templateUrl: './event-create.component.html',
-  styleUrl: './event-create.component.scss'
+  templateUrl: './event-update.component.html',
+  styleUrl: './event-update.component.scss'
 })
-export class EventCreateComponent implements AfterViewInit {
+export class EventUpdateComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
-  private eventTypeService = inject(EventTypeService);
   private fileService = inject(FileService);
   private eventService = inject(EventService);
   private snackbarService = inject(SnackbarService);
   private router = inject(Router);
   private location = inject(Location);
+  private route = inject(ActivatedRoute);
 
   @ViewChild('searchBox') searchBox!: ElementRef;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild(GoogleMap) googleMap!: GoogleMap;
+
+  eventId!: string;
+  originalImageUrl: string | null = null;
+  eventTypeName: string = '';
+  isLoading = true;
+
+  // Custom validator for image
+  createFileValidator = () => {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const hasNewFile = !!control.value;
+      const hasOriginalImage = !!this.originalImageUrl;
+  
+      return hasNewFile || hasOriginalImage ? null : { requiredFile: 'Please provide an image for event thumbnail.' };
+    };
+  }  
 
   eventForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -63,15 +75,10 @@ export class EventCreateComponent implements AfterViewInit {
     locationAddress: ['', Validators.required],
     locationLat: [null, Validators.required],
     locationLong: [null, Validators.required],
-    typeId: ['', [Validators.required]],
-    selectedFile: [null, this.fileRequiredValidator]
+    selectedFile: [null, this.createFileValidator()]
   });
 
   selectedImage: string | ArrayBuffer | null = null;
-
-  eventTypes: EventTypeResponse[] = [];
-  loadingEventTypes: boolean = true;
-  errorLoadingEventTypes: boolean = false;
 
   // 86400000 = 24 * 60 * 60 * 1000
   tomorrow: Date = new Date(Date.now() + 86400000);
@@ -83,17 +90,52 @@ export class EventCreateComponent implements AfterViewInit {
   isSubmitting: boolean = false;
 
   ngOnInit() {
-    this.eventTypeService.fetchActiveEventTypes().subscribe({
-      next: (data) => {
-        this.eventTypes = data;
-        this.loadingEventTypes = false;
+    this.eventId = this.route.snapshot.paramMap.get('id')!;
+    this.fetchEvent();
+  }
+
+  fetchEvent() {
+    this.eventService.fetchEventById(this.eventId).subscribe({
+      next: (event) => {
+        this.eventForm.patchValue({
+          name: event.name,
+          description: event.description,
+          maximumParticipants: event.maximumParticipants,
+          startDate: new Date(event.startTime),
+          startTime: this.extractTimeFromISOString(event.startTime),
+          locationAddress: event.locationAddress,
+          locationLat: event.locationLat,
+          locationLong: event.locationLong
+        });
+
+        this.originalImageUrl = event.pictureUrl;
+        this.selectedImage = event.pictureUrl;
+        this.eventTypeName = event.typeName;
+
+        this.eventForm.get('selectedFile')?.setValidators(this.createFileValidator());
+        this.eventForm.get('selectedFile')?.updateValueAndValidity();
+
+        this.selectedLocation = {
+          lat: event.locationLat,
+          lng: event.locationLong
+        };
+        this.mapCenter = this.selectedLocation;
+        this.mapZoom = 15;
+
+        this.isLoading = false;
       },
       error: (error) => {
-        console.error('Failed to load event types:', error);
-        this.loadingEventTypes = false;
-        this.errorLoadingEventTypes = true;
+        console.error("Error fetching event:", error);
+        this.isLoading = false;
       }
     });
+  }
+
+  extractTimeFromISOString(isoString: string): string {
+    const date = new Date(isoString);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
   ngAfterViewInit(): void {
@@ -226,6 +268,8 @@ export class EventCreateComponent implements AfterViewInit {
 
   removeImage() {
     this.selectedImage = null;
+    this.originalImageUrl = null;
+
     this.eventForm.patchValue({ selectedFile: null });
     this.triggerImageValidation();
   }
@@ -240,25 +284,32 @@ export class EventCreateComponent implements AfterViewInit {
     if (this.eventForm.valid) {
       this.isSubmitting = true;
 
-      this.fileService.uploadFile(this.eventForm.value.selectedFile).subscribe({
-        next: (response) => {
-          this.createEvent(response.url);
-        },
-        error: () => {
-          this.snackbarService.error("Picture upload failed. Event creation failed.");
-          this.isSubmitting = false;
-        }
-      })
+      const selectedFile = this.eventForm.value.selectedFile;
+
+      if (selectedFile) {
+        this.fileService.uploadFile(this.eventForm.value.selectedFile).subscribe({
+          next: (response) => {
+            this.updateEvent(response.url);
+          },
+          error: () => {
+            this.snackbarService.error("Picture upload failed. Event creation failed.");
+            this.isSubmitting = false;
+          }
+        });
+      } else {
+        this.updateEvent(this.originalImageUrl!);
+      }
+      
     }
   }
 
-  private createEvent(responseUrl: string): void {
+  private updateEvent(responseUrl: string): void {
     const formValues = this.eventForm.value;
     const fullStartDateTime = new Date(formValues.startDate);
     const [startHours, startMinutes] = formValues.startTime.split(':').map(Number);
     fullStartDateTime.setHours(startHours, startMinutes);
 
-    let eventData: CreateEventRequest = {
+    let eventData: UpdateEventRequest = {
       name: formValues.name,
       description: formValues.description,
       maximumParticipants: formValues.maximumParticipants,
@@ -266,28 +317,22 @@ export class EventCreateComponent implements AfterViewInit {
       locationAddress: formValues.locationAddress,
       locationLat: formValues.locationLat,
       locationLong: formValues.locationLong,
-      pictureUrl: responseUrl,
-      typeId: formValues.typeId
+      pictureUrl: responseUrl
     }
 
-    this.eventService.createEvent(eventData).subscribe({
+    this.eventService.updateEvent(this.eventId, eventData).subscribe({
       next: () => {
-        this.snackbarService.success("Event created successfully.");
+        this.snackbarService.success("Event updated successfully.");
         this.router.navigate(['/home']);
       },
       error: (error) => {
-        console.error("Event creation failed:", error);
+        console.error("Event update failed:", error);
         this.snackbarService.error("Something went wrong. Please try again later.");
       },
       complete: () => {
-        this.isSubmitting = false;
+        this.isSubmitting = true;
       }
     })
-  }
-
-  // Custom validator for image
-  fileRequiredValidator(control: AbstractControl): ValidationErrors | null {
-    return control.value ? null : { requiredFile: 'Please provide an image for event thumbnail.' };
   }
 
   getErrorMessage(field: string, errors: any): string {
@@ -321,10 +366,6 @@ export class EventCreateComponent implements AfterViewInit {
       
       case 'locationAddress':
         if (errors['required']) return `Location is required`;
-        break;
-  
-      case 'typeId':
-        if (errors['required']) return `Event type is required`;
         break;
     }
   

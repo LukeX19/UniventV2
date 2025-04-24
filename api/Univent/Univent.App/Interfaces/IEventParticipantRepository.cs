@@ -8,5 +8,6 @@ namespace Univent.App.Interfaces
         Task<ICollection<EventParticipant>> GetEventParticipantsByEventIdAsync(Guid eventId, CancellationToken ct = default);
         Task UpdateEventParticipantAsync(EventParticipant updatedEntity, CancellationToken ct = default);
         Task DeleteEventParticipantAsync(Guid eventId, Guid userId, CancellationToken ct = default);
+        Task<int> CountEventParticipantsByEventIdAsync(Guid eventId, CancellationToken ct = default);
     }
 }

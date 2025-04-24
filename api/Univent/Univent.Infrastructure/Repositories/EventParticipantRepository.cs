@@ -59,5 +59,12 @@ namespace Univent.Infrastructure.Repositories
             _context.EventParticipants.Remove(entityToDelete);
             await _context.SaveChangesAsync(ct);
         }
+
+        public async Task<int> CountEventParticipantsByEventIdAsync(Guid eventId, CancellationToken ct = default)
+        {
+            return await _context.EventParticipants
+                .Where(ep => ep.EventId == eventId)
+                .CountAsync(ct);
+        }
     }
 }

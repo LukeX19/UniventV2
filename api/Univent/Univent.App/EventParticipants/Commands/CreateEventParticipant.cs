@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Univent.App.EventParticipants.Dtos;
+using Univent.App.Exceptions;
 using Univent.App.Interfaces;
 using Univent.Domain.Models.Associations;
 
@@ -18,6 +19,15 @@ namespace Univent.App.EventParticipants.Commands
 
         public async Task<CreateEventParticipantResponseDto> Handle(CreateEventParticipantCommand request, CancellationToken ct)
         {
+            var eventEntity = await _unitOfWork.EventRepository.GetEventByIdAsync(request.EventId, ct);
+
+            var currentParticipantsCount = await _unitOfWork.EventParticipantRepository.CountEventParticipantsByEventIdAsync(request.EventId, ct);
+
+            if (currentParticipantsCount >= eventEntity.MaximumParticipants)
+            {
+                throw new EventMaximumParticipantsReachedException(request.EventId);
+            }
+
             var eventParticipant = new EventParticipant()
             {
                 EventId = request.EventId,

@@ -7,6 +7,11 @@ import { ActivatedRoute } from '@angular/router';
 import { EventAuthorResponse, EventFullResponse } from '../../shared/models/eventModel';
 import { MatDividerModule } from '@angular/material/divider';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
+import { MatDialog } from '@angular/material/dialog';
+import { EventParticipantService } from '../../core/services/event-participant.service';
+import { InfoDialogComponent } from '../../shared/components/info-dialog/info-dialog.component';
+import { EventParticipantFullResponse } from '../../shared/models/eventParticipantModel';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-event-details',
@@ -17,14 +22,17 @@ import { GoogleMap, MapMarker } from '@angular/google-maps';
     MatIconModule,
     MatDividerModule,
     GoogleMap,
-    MapMarker
+    MapMarker,
+    MatButtonModule
   ],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.scss'
 })
 export class EventDetailsComponent {
-  private eventService = inject(EventService);
   private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
+  private eventService = inject(EventService);
+  private participantService = inject(EventParticipantService);
 
   event: EventFullResponse | null = null;
   isLoading = true;
@@ -95,4 +103,30 @@ export class EventDetailsComponent {
     const lastNameInitial = user.lastName ? user.lastName.charAt(0).toUpperCase() : '';
     return `${firstNameInitial}${lastNameInitial}`;
   }
+
+  openParticipantsDialog(): void {
+    if (!this.event) return;
+  
+    this.participantService.fetchEventParticipantsByEventId(this.event.id).subscribe({
+      next: (participants: EventParticipantFullResponse[]) => {
+        this.dialog.open(InfoDialogComponent, {
+          data: {
+            title: 'Event Participants',
+            participants,
+            buttonText: 'Close'
+          },
+          width: '500px'
+        });
+      },
+      error: () => {
+        this.dialog.open(InfoDialogComponent, {
+          data: {
+            title: 'Failed to load participants',
+            message: 'Something went wrong while loading the participant list.',
+            buttonText: 'Close'
+          }
+        });
+      }
+    });
+  }  
 }

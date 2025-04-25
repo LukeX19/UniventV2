@@ -4,7 +4,6 @@
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public int EnrolledParticipants { get; set; }
         public int MaximumParticipants { get; set; }
         public DateTime StartTime { get; set; }
         public string Description { get; set; }

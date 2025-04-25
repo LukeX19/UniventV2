@@ -47,7 +47,6 @@ export interface EventSummaryResponse {
 export interface EventFullResponse {
   id: string;
   name: string;
-  enrolledParticipants: number;
   maximumParticipants: number;
   startTime: string;
   description: string;

@@ -139,9 +139,13 @@ export class EventDetailsComponent {
     return `${firstNameInitial}${lastNameInitial}`;
   }
 
+  get enrolledCount(): number {
+    return this.participants.length;
+  }
+
   get isEventFull(): boolean {
     if (!this.event) return false;
-    return this.event.enrolledParticipants >= this.event.maximumParticipants;
+    return this.enrolledCount >= this.event.maximumParticipants;
   }
 
   openParticipantsDialog(): void {
@@ -157,7 +161,6 @@ export class EventDetailsComponent {
   
   joinEvent() {
     if (!this.event) return;
-    console.log(this.event.id);
 
     this.participantService.createEventParticipant(this.event.id).subscribe({
       next: () => {

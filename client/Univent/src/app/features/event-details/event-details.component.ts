@@ -12,9 +12,8 @@ import { EventParticipantService } from '../../core/services/event-participant.s
 import { InfoDialogComponent } from '../../shared/components/info-dialog/info-dialog.component';
 import { EventParticipantFullResponse } from '../../shared/models/eventParticipantModel';
 import { MatButtonModule } from '@angular/material/button';
-import { Observable } from 'rxjs';
-import { UserResponse } from '../../shared/models/userModel';
 import { AuthenticationService } from '../../core/services/authentication.service';
+import { SnackbarService } from '../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-event-details',
@@ -37,6 +36,7 @@ export class EventDetailsComponent {
   private eventService = inject(EventService);
   private participantService = inject(EventParticipantService);
   private authService = inject(AuthenticationService);
+  private snackbarService = inject(SnackbarService);
   
   userId: string = '';
   isAuthor = false;
@@ -156,10 +156,33 @@ export class EventDetailsComponent {
   }
   
   joinEvent() {
+    if (!this.event) return;
+    console.log(this.event.id);
 
+    this.participantService.createEventParticipant(this.event.id).subscribe({
+      next: () => {
+        this.snackbarService.success("Joined event successfully.");
+        this.fetchParticipants();
+      },
+      error: (error) => {
+        console.error("Error joining event:", error);
+        this.snackbarService.error("Something went wrong. Please try again later.");
+      }
+    });
   }
 
   leaveEvent() {
+    if (!this.event) return;
 
+    this.participantService.deleteEventParticipant(this.event.id).subscribe({
+      next: () => {
+        this.snackbarService.success("Left event successfully.");
+        this.fetchParticipants();
+      },
+      error: (error) => {
+        console.error("Error leaving event:", error);
+        this.snackbarService.error("Something went wrong. Please try again later.");
+      }
+    });
   }
 }

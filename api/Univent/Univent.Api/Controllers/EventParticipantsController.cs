@@ -20,6 +20,7 @@ namespace Univent.Api.Controllers
         }
 
         [HttpPost]
+        [Route("{eventId}")]
         public async Task<IActionResult> CreateEventParticipant(Guid eventId)
         {
             var userId = HttpContext.GetUserIdClaimValue();

@@ -11,8 +11,20 @@ export class EventParticipantService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}`;
 
+  createEventParticipant(eventId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/event-participants/${eventId}`, null, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
   fetchEventParticipantsByEventId(eventId: string): Observable<EventParticipantFullResponse[]> {
     return this.http.get<EventParticipantFullResponse[]>(`${this.apiUrl}/event-participants/${eventId}/participants`, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  deleteEventParticipant(eventId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/event-participants/${eventId}`, {
       headers: { 'Requires-Auth': 'true' }
     });
   }

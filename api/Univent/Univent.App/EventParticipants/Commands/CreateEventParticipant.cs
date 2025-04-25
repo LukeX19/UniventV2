@@ -21,11 +21,16 @@ namespace Univent.App.EventParticipants.Commands
         {
             var eventEntity = await _unitOfWork.EventRepository.GetEventByIdAsync(request.EventId, ct);
 
+            if (eventEntity.AuthorId == request.UserId)
+            {
+                throw new EventAuthorEnrollmentException();
+            }
+
             var currentParticipantsCount = await _unitOfWork.EventParticipantRepository.CountEventParticipantsByEventIdAsync(request.EventId, ct);
 
             if (currentParticipantsCount >= eventEntity.MaximumParticipants)
             {
-                throw new EventMaximumParticipantsReachedException(request.EventId);
+                throw new EventMaximumParticipantsReachedException();
             }
 
             var eventParticipant = new EventParticipant()

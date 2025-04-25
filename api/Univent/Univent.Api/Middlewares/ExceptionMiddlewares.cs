@@ -27,7 +27,7 @@ namespace Univent.Api.Middlewares
             }
             catch (Exception ex) when (ex is EntityAlreadyExistsException || ex is NameConflictException
                 || ex is NameConflictWithStatusException || ex is AccountAlreadyExistsException || ex is StatusConflictException
-                || ex is EventMaximumParticipantsReachedException)
+                || ex is EventMaximumParticipantsReachedException || ex is EventAuthorEnrollmentException)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Conflict);
             }

@@ -93,8 +93,35 @@
   </div>
 
   <div class="w-full flex justify-end mt-10 mb-10">
-    <button mat-raised-button color="primary" class="px-6 py-3 rounded-md font-semibold" (click)="openParticipantsDialog()">
+    <button
+      mat-raised-button
+      color="primary"
+      class="px-6 py-3 rounded-md font-semibold"
+      (click)="openParticipantsDialog()">
       View Participants
     </button>
+
+    <ng-container *ngIf="!isAuthor">
+      <!-- Show Leave button if already a participant -->
+      <button
+        mat-raised-button
+        color="warn"
+        class="ml-4 px-6 py-3 rounded-md font-semibold"
+        *ngIf="isParticipant"
+        (click)="leaveEvent()">
+        Leave Event
+      </button>
+  
+      <!-- Show Join button if not a participant -->
+      <button
+        mat-raised-button
+        color="primary"
+        class="ml-4 px-6 py-3 rounded-md font-semibold"
+        [disabled]="isEventFull"
+        *ngIf="!isParticipant"
+        (click)="joinEvent()">
+        Join Event
+      </button>
+    </ng-container>
   </div>
 </div>

@@ -12,6 +12,9 @@ import { EventParticipantService } from '../../core/services/event-participant.s
 import { InfoDialogComponent } from '../../shared/components/info-dialog/info-dialog.component';
 import { EventParticipantFullResponse } from '../../shared/models/eventParticipantModel';
 import { MatButtonModule } from '@angular/material/button';
+import { Observable } from 'rxjs';
+import { UserResponse } from '../../shared/models/userModel';
+import { AuthenticationService } from '../../core/services/authentication.service';
 
 @Component({
   selector: 'app-event-details',
@@ -33,27 +36,59 @@ export class EventDetailsComponent {
   private dialog = inject(MatDialog);
   private eventService = inject(EventService);
   private participantService = inject(EventParticipantService);
+  private authService = inject(AuthenticationService);
+  
+  userId: string = '';
+  isAuthor = false;
+  isParticipant = false;
 
   event: EventFullResponse | null = null;
-  isLoading = true;
+  isEventLoading = true;
+
+  participants: EventParticipantFullResponse[] = [];
+  areParticipantsLoading = true;
 
   ngOnInit() {
+    this.authService.user$.subscribe(user => {
+      if (!user) return;
+      this.userId = user.id;
+    });
     this.fetchEvent();
+    this.fetchParticipants();
   }
 
   fetchEvent() {
     const eventId = this.route.snapshot.paramMap.get('id');
     if (!eventId) return;
 
-    this.isLoading = true;
+    this.isEventLoading = true;
     this.eventService.fetchEventById(eventId).subscribe({
       next: (data) => {
         this.event = data;
-        this.isLoading = false;
+        this.isAuthor = data.author.id === this.userId;
+        this.isEventLoading = false;
       },
       error: (error) => {
         console.error("Error fetching event:", error);
-        this.isLoading = false;
+        this.isEventLoading = false;
+      }
+    });
+  }
+
+  fetchParticipants() {
+    const eventId = this.route.snapshot.paramMap.get('id');
+    if (!eventId) return;
+
+    this.areParticipantsLoading = true;
+    this.participantService.fetchEventParticipantsByEventId(eventId).subscribe({
+      next: (data) => {
+        this.participants = data;
+        this.isParticipant = data.some(p => p.userId === this.userId);
+        this.areParticipantsLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching participants:', error);
+        this.areParticipantsLoading = false;
       }
     });
   }
@@ -104,29 +139,27 @@ export class EventDetailsComponent {
     return `${firstNameInitial}${lastNameInitial}`;
   }
 
+  get isEventFull(): boolean {
+    if (!this.event) return false;
+    return this.event.enrolledParticipants >= this.event.maximumParticipants;
+  }
+
   openParticipantsDialog(): void {
-    if (!this.event) return;
-  
-    this.participantService.fetchEventParticipantsByEventId(this.event.id).subscribe({
-      next: (participants: EventParticipantFullResponse[]) => {
-        this.dialog.open(InfoDialogComponent, {
-          data: {
-            title: 'Event Participants',
-            participants,
-            buttonText: 'Close'
-          },
-          width: '500px'
-        });
+    this.dialog.open(InfoDialogComponent, {
+      data: {
+        title: 'Event Participants',
+        participants: this.participants,
+        buttonText: 'Close'
       },
-      error: () => {
-        this.dialog.open(InfoDialogComponent, {
-          data: {
-            title: 'Failed to load participants',
-            message: 'Something went wrong while loading the participant list.',
-            buttonText: 'Close'
-          }
-        });
-      }
+      width: '500px'
     });
-  }  
+  }
+  
+  joinEvent() {
+
+  }
+
+  leaveEvent() {
+
+  }
 }

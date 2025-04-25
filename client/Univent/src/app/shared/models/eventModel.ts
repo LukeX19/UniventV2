@@ -22,6 +22,7 @@ export interface UpdateEventRequest {
 };
 
 export interface EventAuthorResponse {
+  id: string;
   firstName: string;
   lastName: string;
   pictureUrl?: string | null;

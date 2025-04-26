@@ -33,6 +33,11 @@ namespace Univent.App.EventParticipants.Commands
                 throw new EventMaximumParticipantsReachedException();
             }
 
+            if (DateTime.UtcNow > eventEntity.StartTime.AddHours(-2))
+            {
+                throw new EventEnrollmentClosedException(eventEntity.Id);
+            }
+
             var eventParticipant = new EventParticipant()
             {
                 EventId = request.EventId,

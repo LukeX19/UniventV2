@@ -2,7 +2,7 @@
 {
     public class EventMaximumParticipantsReachedException : Exception
     {
-        private const string MessageTemplate = "The event is full. No more participants can enroll!";
+        private const string MessageTemplate = "The event is full. No more participants can enroll.";
 
         public EventMaximumParticipantsReachedException()
             : base(MessageTemplate) { }

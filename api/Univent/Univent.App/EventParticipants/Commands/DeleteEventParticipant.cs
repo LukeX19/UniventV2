@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Univent.App.Exceptions;
 using Univent.App.Interfaces;
 
 namespace Univent.App.EventParticipants.Commands
@@ -16,6 +17,13 @@ namespace Univent.App.EventParticipants.Commands
 
         public async Task<Unit> Handle(DeleteEventParticipantCommand request, CancellationToken ct)
         {
+            var eventEntity = await _unitOfWork.EventRepository.GetEventByIdAsync(request.EventId, ct);
+
+            if (DateTime.UtcNow > eventEntity.StartTime.AddHours(-2))
+            {
+                throw new EventWithdrawalClosedException(eventEntity.Id);
+            }
+
             await _unitOfWork.EventParticipantRepository.DeleteEventParticipantAsync(request.EventId, request.UserId, ct);
 
             return Unit.Value;

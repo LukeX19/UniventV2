@@ -35,7 +35,8 @@ namespace Univent.Api.Middlewares
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Unauthorized);
             }
-            catch (InvalidFileFormatException ex)
+            catch (Exception ex) when (ex is InvalidFileFormatException
+                || ex is EventEnrollmentClosedException || ex is EventWithdrawalClosedException)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.BadRequest);
             }

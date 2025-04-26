@@ -148,6 +148,19 @@ export class EventDetailsComponent {
     return this.enrolledCount >= this.event.maximumParticipants;
   }
 
+  get canJoinOrLeave(): boolean {
+    if (!this.event) return false;
+  
+    const now = new Date();
+    const eventStart = new Date(this.event.startTime);
+  
+    const diffInMs = eventStart.getTime() - now.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+  
+    return diffInHours > 2;
+  }
+  
+
   openParticipantsDialog(): void {
     this.dialog.open(InfoDialogComponent, {
       data: {

@@ -108,6 +108,7 @@
         color="warn"
         class="ml-4 px-6 py-3 rounded-md font-semibold"
         *ngIf="isParticipant"
+        [disabled]="!canJoinOrLeave"
         (click)="leaveEvent()">
         Leave Event
       </button>
@@ -117,8 +118,8 @@
         mat-raised-button
         color="primary"
         class="ml-4 px-6 py-3 rounded-md font-semibold"
-        [disabled]="isEventFull"
         *ngIf="!isParticipant"
+        [disabled]="isEventFull || !canJoinOrLeave"
         (click)="joinEvent()">
         Join Event
       </button>

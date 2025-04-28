@@ -35,7 +35,7 @@ namespace Univent.Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("uid", user.Id.ToString()),
-                new Claim(ClaimTypes.Role, ((int)user.Role).ToString())
+                new Claim(ClaimTypes.Role, ((int)user.Role).ToString(), ClaimValueTypes.Integer32)
             });
         }
 

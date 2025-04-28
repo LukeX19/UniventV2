@@ -174,7 +174,8 @@ export class RegisterComponent {
   private registerUser(data: RegisterRequest): void {
     this.authService.register(data).subscribe({
       next: () => {
-        this.router.navigate(['/home']);
+        this.authService.logout();
+        this.router.navigate(['']);
       },
       error: (error) => {
         console.error("Registration failed:", error);

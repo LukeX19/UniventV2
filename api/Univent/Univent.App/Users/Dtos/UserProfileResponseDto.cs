@@ -9,7 +9,6 @@ namespace Univent.App.Users.Dtos
         public string LastName { get; set; }
         public DateTime Birthday { get; set; }
         public string? PictureUrl { get; set; }
-        public AppRole Role { get; set; }
         public DateTime CreatedAt { get; set; }
         public UniversityYear Year { get; set; }
         public string UniversityName { get; set; }

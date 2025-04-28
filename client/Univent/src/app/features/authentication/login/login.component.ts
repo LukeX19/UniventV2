@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { AuthenticationService } from '../../../core/services/authentication.service';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { LoginResponse } from '../../../shared/models/authenticationModel';
+import { TokenService } from '../../../core/services/token.service';
 
 @Component({
   selector: 'app-login',
@@ -31,6 +33,7 @@ export class LoginComponent {
   private authService = inject(AuthenticationService);
   private snackbarService = inject(SnackbarService);
   private router = inject(Router);
+  private tokenService = inject(TokenService);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -60,8 +63,15 @@ export class LoginComponent {
       const loginData = this.loginForm.value; 
 
       this.authService.login(loginData).subscribe({
-        next: () => {
-          this.router.navigate(['/home']);
+        next: (response: LoginResponse) => {
+          const role = this.tokenService.getUserRole(response.token);
+
+          if (role === 0) {
+            this.router.navigate(['/admin/dashboard']);
+          }
+          else if (role === 1) {
+            this.router.navigate(['/home']);
+          }
         },
         error: (error) => {
           if (error.status === 401) {

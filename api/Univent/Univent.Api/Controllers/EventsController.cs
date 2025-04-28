@@ -36,7 +36,7 @@ namespace Univent.Api.Controllers
         public async Task<IActionResult> GetAllEventsSummaries([FromQuery] PaginationRequestDto pagination,
             [FromQuery] string? search, [FromQuery] ICollection<Guid>? types)
         {
-            var query = new GetAllEventsSummariesQuery(pagination, search, types);
+            var query = new GetAvailableEventsSummariesQuery(pagination, search, types);
             var response = await _mediator.Send(query);
 
             return Ok(response);

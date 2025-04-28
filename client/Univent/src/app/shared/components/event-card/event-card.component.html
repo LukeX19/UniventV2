@@ -23,7 +23,7 @@
     </div>
 
     <!-- Options Menu -->
-    <div *ngIf="enableOptions && !event.isCancelled" class="absolute top-4 right-4 z-10" (click)="$event.stopPropagation()">
+    <div *ngIf="enableOptions && !event.isCancelled && canEditOrCancel" class="absolute top-4 right-4 z-10" (click)="$event.stopPropagation()">
       <button
         mat-icon-button
         [matMenuTriggerFor]="optionsMenu"
@@ -76,7 +76,6 @@
           </div>
         </div>
         <p class="text-xs text-gray-500">{{ getFormattedPostedDate() }}</p>
-
       </div>
     </div>
   </div>

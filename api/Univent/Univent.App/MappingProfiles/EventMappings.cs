@@ -12,6 +12,7 @@ namespace Univent.App.MappingProfiles
                 .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.Type.Name))
                 .ForMember(dest => dest.Author, opt => opt.MapFrom(src => new EventAuthorResponseDto
                 {
+                    Id = src.Author.Id,
                     FirstName = src.Author.FirstName,
                     LastName = src.Author.LastName,
                     PictureUrl = src.Author.PictureUrl,
@@ -22,6 +23,7 @@ namespace Univent.App.MappingProfiles
                 .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.Type.Name))
                 .ForMember(dest => dest.Author, opt => opt.MapFrom(src => new EventAuthorResponseDto
                 {
+                    Id = src.Author.Id,
                     FirstName = src.Author.FirstName,
                     LastName = src.Author.LastName,
                     PictureUrl = src.Author.PictureUrl,

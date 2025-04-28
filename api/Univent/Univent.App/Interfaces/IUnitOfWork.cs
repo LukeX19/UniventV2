@@ -6,6 +6,7 @@
         IUserRepository UserRepository { get; }
         IEventTypeRepository EventTypeRepository { get; }
         IEventRepository EventRepository { get; }
+        IEventParticipantRepository EventParticipantRepository { get; }
         IFeedbackRepository FeedbackRepository { get; }
 
         Task BeginTransactionAsync();

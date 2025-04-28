@@ -39,7 +39,7 @@ namespace Univent.Infrastructure.Repositories.BasicRepositories
 
         public async Task UpdateAsync(T updatedEntity, CancellationToken ct = default)
         {
-            var entityExists = await _context.Set<T>().AnyAsync(e => e.Id == updatedEntity.Id);
+            var entityExists = await _context.Set<T>().AnyAsync(e => e.Id == updatedEntity.Id, ct);
             if (!entityExists)
             {
                 throw new EntityNotFoundException(typeof(T).Name, updatedEntity.Id);
@@ -51,7 +51,7 @@ namespace Univent.Infrastructure.Repositories.BasicRepositories
 
         public async Task DeleteAsync(Guid id, CancellationToken ct = default)
         {
-            var entityToDelete = await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
+            var entityToDelete = await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id, ct);
             if (entityToDelete == null)
             {
                 throw new EntityNotFoundException(typeof(T).Name, id);

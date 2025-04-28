@@ -20,7 +20,7 @@ namespace Univent.App.Users.Queries
 
         public async Task<UserProfileResponseDto> Handle(GetUserProfileByIdQuery request, CancellationToken ct)
         {
-            var user = await _unitOfWork.UserRepository.GetUserById(request.Id, ct);
+            var user = await _unitOfWork.UserRepository.GetUserByIdAsync(request.Id, ct);
 
             var authorRatings = await _unitOfWork.UserRepository.GetAverageRatingsAsync([request.Id], ct);
 

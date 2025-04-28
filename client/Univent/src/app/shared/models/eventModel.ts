@@ -22,6 +22,7 @@ export interface UpdateEventRequest {
 };
 
 export interface EventAuthorResponse {
+  id: string;
   firstName: string;
   lastName: string;
   pictureUrl?: string | null;
@@ -46,7 +47,6 @@ export interface EventSummaryResponse {
 export interface EventFullResponse {
   id: string;
   name: string;
-  enrolledParticipants: number;
   maximumParticipants: number;
   startTime: string;
   description: string;

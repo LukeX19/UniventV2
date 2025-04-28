@@ -11,7 +11,6 @@ import { PaginationRequest } from '../../shared/models/paginationModel';
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AuthenticationService } from '../../core/services/authentication.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-profile',

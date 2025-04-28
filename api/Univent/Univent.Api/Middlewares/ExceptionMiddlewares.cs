@@ -26,7 +26,8 @@ namespace Univent.Api.Middlewares
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.NotFound);
             }
             catch (Exception ex) when (ex is EntityAlreadyExistsException || ex is NameConflictException
-                || ex is NameConflictWithStatusException || ex is AccountAlreadyExistsException || ex is StatusConflictException)
+                || ex is NameConflictWithStatusException || ex is AccountAlreadyExistsException || ex is StatusConflictException
+                || ex is EventMaximumParticipantsReachedException || ex is EventAuthorEnrollmentException)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Conflict);
             }
@@ -34,7 +35,8 @@ namespace Univent.Api.Middlewares
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Unauthorized);
             }
-            catch (InvalidFileFormatException ex)
+            catch (Exception ex) when (ex is InvalidFileFormatException
+                || ex is EventEnrollmentClosedException || ex is EventWithdrawalClosedException)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.BadRequest);
             }

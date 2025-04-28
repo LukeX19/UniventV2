@@ -2,8 +2,8 @@
 {
     public class NameConflictWithStatusException : Exception
     {
-        private const string EnabledMessageTemplate = "The {0} named '{1}' already exists and it is currently enabled.";
-        private const string DisabledMessageTemplate = "The {0} named '{1}' already exists, but it is currently disabled.";
+        private const string EnabledMessageTemplate = "The {0} with name '{1}' already exists and it is currently enabled.";
+        private const string DisabledMessageTemplate = "The {0} with name '{1}' already exists, but it is currently disabled.";
 
         public NameConflictWithStatusException()
             : base() { }

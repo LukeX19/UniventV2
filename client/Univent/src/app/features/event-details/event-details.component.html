@@ -49,9 +49,10 @@
           <mat-icon style="vertical-align: middle;">event</mat-icon>
           {{ formattedStartTime }}
         </p>
-        <p class="text-lg text-gray-600 mt-1">
+        <p class="text-lg text-gray-600 mt-1 cursor-pointer hover:underline hover:text-blue-600 transition"
+          (click)="openParticipantsDialog()">
           <mat-icon style="vertical-align: middle;">people</mat-icon>
-          {{ event?.enrolledParticipants }} / {{ event?.maximumParticipants }} Participants
+          {{ enrolledCount }} / {{ event?.maximumParticipants }} Participants
         </p>
       </div>
 
@@ -89,6 +90,39 @@
         </google-map>
       </div>
     </div>
+  </div>
 
+  <div class="w-full flex justify-end mt-10 mb-10">
+    <button
+      mat-raised-button
+      color="primary"
+      class="px-6 py-3 rounded-md font-semibold"
+      (click)="openParticipantsDialog()">
+      View Participants
+    </button>
+
+    <ng-container *ngIf="!isAuthor">
+      <!-- Show Leave button if already a participant -->
+      <button
+        mat-raised-button
+        color="warn"
+        class="ml-4 px-6 py-3 rounded-md font-semibold"
+        *ngIf="isParticipant"
+        [disabled]="!canJoinOrLeave"
+        (click)="leaveEvent()">
+        Leave Event
+      </button>
+  
+      <!-- Show Join button if not a participant -->
+      <button
+        mat-raised-button
+        color="primary"
+        class="ml-4 px-6 py-3 rounded-md font-semibold"
+        *ngIf="!isParticipant"
+        [disabled]="isEventFull || !canJoinOrLeave"
+        (click)="joinEvent()">
+        Join Event
+      </button>
+    </ng-container>
   </div>
 </div>

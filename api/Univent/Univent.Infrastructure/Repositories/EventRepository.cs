@@ -11,12 +11,13 @@ namespace Univent.Infrastructure.Repositories
     {
         public EventRepository(AppDbContext context) : base(context) { }
 
-        public async Task<PaginationResponseDto<Event>> GetAllEventsSummariesAsync(PaginationRequestDto pagination,
+        public async Task<PaginationResponseDto<Event>> GetAvailableEventsSummariesAsync(PaginationRequestDto pagination,
             string? search = null, ICollection<Guid>? types = null, CancellationToken ct = default)
         {
             var query = _context.Events
                 .AsNoTracking()
                 .AsSplitQuery()
+                .Where(e => e.StartTime > DateTime.UtcNow)
                 .Where(e => e.IsCancelled == false)
                 .Include(e => e.Author)
                 .Include(e => e.Type)

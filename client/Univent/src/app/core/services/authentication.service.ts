@@ -22,7 +22,7 @@ export class AuthenticationService {
   login(loginInfo: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/authentication/login`, loginInfo).pipe(
       tap((response: LoginResponse) => {
-        localStorage.setItem('token', response.token);
+        localStorage.setItem('uniapi-token', response.token);
         this.fetchUser();
       })
     );
@@ -33,7 +33,7 @@ export class AuthenticationService {
   }
 
   fetchUser(): void {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('uniapi-token');
     if (!token) return;
 
     this.http.get<UserResponse>(`${this.apiUrl}/users/current`, {
@@ -50,12 +50,12 @@ export class AuthenticationService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('uniapi-token');
     this.userSubject.next(null);
   }
 
   private restoreUserSession(): void {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('uniapi-token');
 
     if (token) {
       this.fetchUser();

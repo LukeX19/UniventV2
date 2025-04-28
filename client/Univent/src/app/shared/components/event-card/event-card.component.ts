@@ -107,4 +107,16 @@ export class EventCardComponent {
       }
     });
   }
+
+  get canEditOrCancel(): boolean {
+    if (!this.event) return false;
+
+    const now = new Date();
+    const eventStart = new Date(this.event.startTime);
+
+    const diffInMs = eventStart.getTime() - now.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+
+    return diffInHours > 2;
+  }
 }

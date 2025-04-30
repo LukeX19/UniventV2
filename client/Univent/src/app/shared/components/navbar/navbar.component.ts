@@ -7,6 +7,7 @@ import { AuthenticationService } from '../../../core/services/authentication.ser
 import { Observable } from 'rxjs';
 import { UserResponse } from '../../models/userModel';
 import { Router } from '@angular/router';
+import { TokenService } from '../../../core/services/token.service';
 
 @Component({
   selector: 'app-navbar',
@@ -23,6 +24,7 @@ import { Router } from '@angular/router';
 export class NavbarComponent {
   private router = inject(Router);
   private authService = inject(AuthenticationService);
+  private tokenService = inject(TokenService);
 
   user$: Observable<UserResponse | null> = this.authService.user$;
   
@@ -69,5 +71,11 @@ export class NavbarComponent {
 
   goToMyProfile(id: string) {
     this.router.navigate([`/profile/${id}`]);
+  }
+
+  get isAdmin(): boolean {
+    const token = localStorage.getItem('uniapi-token');
+    const role = this.tokenService.getUserRole(token ?? '');
+    return role === 0;
   }
 }

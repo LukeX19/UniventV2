@@ -1,71 +1,95 @@
 <mat-toolbar class="navbar">
   <!-- Small Screen Layout -->
   <div class="md:hidden flex items-center w-full justify-between px-4">
-    <button mat-icon-button class="burger-menu" (click)="toggleBurgerMenu()">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <span class="text-3xl font-semibold">Univent</span>
-    <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
-      <!-- Show Profile Picture if available -->
-      <ng-container *ngIf="(user$ | async) as user">
-        <img *ngIf="user.pictureUrl; else showInitials" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
+    <!-- Left side: Burger menu -->
+    <div class="w-10">
+      <button *ngIf="!isAdmin" mat-icon-button class="burger-menu" (click)="toggleBurgerMenu()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
 
-        <!-- Show Initials -->
-        <ng-template #showInitials>
-          <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
-            {{ getUserInitials(user) }}
-          </div>
-        </ng-template>
+    <!-- Center: Logo -->
+    <span class="text-3xl font-semibold">Univent</span>
+
+    <!-- Right side: Avatar or Logout -->
+    <div class="w-10 flex justify-end">
+      <ng-container *ngIf="isAdmin; else userMobileMenu">
+        <button mat-icon-button color="warn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+        </button>
       </ng-container>
 
-      <!-- Profile Dropdown Menu -->
-      <div *ngIf="isProfileMenuOpen" class="absolute right-0 top-10 mt-2 bg-white shadow-md rounded-md py-2 w-30">
-        <button mat-menu-item *ngIf="(user$ | async) as user" (click)="goToMyProfile(user.id)" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
-          <mat-icon class="mr-2">person</mat-icon> Profile
-        </button>
-        <button mat-menu-item (click)="logout()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
-          <mat-icon class="mr-2">logout</mat-icon> Logout
-        </button>
-      </div>
+      <ng-template #userMobileMenu>
+        <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
+          <!-- Show Profile Picture if available -->
+          <ng-container *ngIf="(user$ | async) as user">
+            <img *ngIf="user.pictureUrl; else showInitials" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
+
+            <!-- Show Initials -->
+            <ng-template #showInitials>
+              <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
+                {{ getUserInitials(user) }}
+              </div>
+            </ng-template>
+          </ng-container>
+
+          <!-- Profile Dropdown Menu -->
+          <div *ngIf="isProfileMenuOpen" class="absolute right-0 top-10 mt-2 bg-white shadow-md rounded-md py-2 w-30">
+            <button mat-menu-item *ngIf="(user$ | async) as user" (click)="goToMyProfile(user.id)" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+              <mat-icon class="mr-2">person</mat-icon> Profile
+            </button>
+            <button mat-menu-item (click)="logout()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+              <mat-icon class="mr-2">logout</mat-icon> Logout
+            </button>
+          </div>
+        </div>
+      </ng-template>
     </div>
   </div>
 
   <!-- Larger Screen Layout -->
   <div class="hidden md:flex items-center justify-between w-full max-w-7xl mx-auto">
     <span class="text-3xl font-semibold">Univent</span>
-    <div class="flex items-center space-x-6">
-      <a mat-button (click)="goToEventsBrowse()">Browse Events</a>
-      <a mat-button (click)="goToEventCreate()">Host a New Event</a>
 
-      <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
-        <!-- Show Profile Picture if available -->
-        <ng-container *ngIf="(user$ | async) as user">
-          <img *ngIf="user.pictureUrl; else showInitialsLarge" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
+    <ng-container *ngIf="!isAdmin; else adminView">
+      <div class="flex items-center space-x-6">
+        <a mat-button (click)="goToEventsBrowse()">Browse Events</a>
+        <a mat-button (click)="goToEventCreate()">Host a New Event</a>
 
-          <!-- Show Initials -->
-          <ng-template #showInitialsLarge>
-            <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
-              {{ getUserInitials(user) }}
-            </div>
-          </ng-template>
-        </ng-container>
+        <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
+          <!-- Show Profile Picture if available -->
+          <ng-container *ngIf="(user$ | async) as user">
+            <img *ngIf="user.pictureUrl; else showInitialsLarge" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
 
-        <!-- Profile Dropdown Menu -->
-        <div *ngIf="isProfileMenuOpen" class="absolute right-0 top-10 mt-2 bg-white shadow-md rounded-md py-2 w-30">
-          <button mat-menu-item *ngIf="(user$ | async) as user" (click)="goToMyProfile(user.id)" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
-            <mat-icon class="mr-2">person</mat-icon> Profile
-          </button>
-          <button mat-menu-item (click)="logout()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
-            <mat-icon class="mr-2">logout</mat-icon> Logout
-          </button>
+            <!-- Show Initials -->
+            <ng-template #showInitialsLarge>
+              <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
+                {{ getUserInitials(user) }}
+              </div>
+            </ng-template>
+          </ng-container>
+
+          <!-- Profile Dropdown Menu -->
+          <div *ngIf="isProfileMenuOpen" class="absolute right-0 top-10 mt-2 bg-white shadow-md rounded-md py-2 w-30">
+            <button mat-menu-item *ngIf="(user$ | async) as user" (click)="goToMyProfile(user.id)" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+              <mat-icon class="mr-2">person</mat-icon> Profile
+            </button>
+            <button mat-menu-item (click)="logout()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+              <mat-icon class="mr-2">logout</mat-icon> Logout
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
+
+    <ng-template #adminView>
+      <button mat-button color="warn" (click)="logout()">Logout</button>
+    </ng-template>
   </div>
 
   <!-- Burger Menu Dropdown (Small Screens Only) -->
   <div *ngIf="isBurgerMenuOpen" class="absolute left-4 top-16 bg-white shadow-md rounded-md mt-2 py-2 w-30 md:hidden">
-    <button mat-menu-item routerLink="/browse" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
+    <button mat-menu-item (click)="goToEventsBrowse()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">
       Browse Events
     </button>
     <button mat-menu-item (click)="goToEventCreate()" class="flex items-center px-4 py-2 w-full hover:bg-gray-100 text-sm">

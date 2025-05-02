@@ -8,5 +8,6 @@ namespace Univent.App.Interfaces
         Task<AppUser> GetUserByIdAsync(Guid id, CancellationToken ct = default);
         Task<PaginationResponseDto<AppUser>> GetAllUsersAsync(PaginationRequestDto pagination, CancellationToken ct = default);
         Task<Dictionary<Guid, double>> GetAverageRatingsAsync(ICollection<Guid> userIds, CancellationToken ct);
+        Task UpdateAsync(AppUser updatedEntity, CancellationToken ct = default);
     }
 }

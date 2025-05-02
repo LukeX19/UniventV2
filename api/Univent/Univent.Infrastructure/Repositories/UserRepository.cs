@@ -61,5 +61,17 @@ namespace Univent.Infrastructure.Repositories
                 })
                 .ToDictionaryAsync(u => u.UserId, u => u.AverageRating, ct);
         }
+
+        public async Task UpdateAsync(AppUser updatedEntity, CancellationToken ct = default)
+        {
+            var entityExists = await _context.Users.AnyAsync(e => e.Id == updatedEntity.Id, ct);
+            if (!entityExists)
+            {
+                throw new EntityNotFoundException(typeof(AppUser).Name, updatedEntity.Id);
+            }
+
+            _context.Users.Update(updatedEntity);
+            await _context.SaveChangesAsync(ct);
+        }
     }
 }

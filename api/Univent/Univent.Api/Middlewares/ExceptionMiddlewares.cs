@@ -40,6 +40,10 @@ namespace Univent.Api.Middlewares
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.BadRequest);
             }
+            catch (RestrictedRoleOperationException ex)
+            {
+                await HandleCustomExceptionAsync(context, ex, HttpStatusCode.Forbidden);
+            }
             catch (Exception ex)
             {
                 await HandleCustomExceptionAsync(context, ex, HttpStatusCode.InternalServerError);

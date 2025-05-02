@@ -29,6 +29,12 @@ namespace Univent.App.Users.Commands
             {
                 throw new StatusConflictException("User", request.Id, "approved");
             }
+
+            if (user.IsAccountBanned == true)
+            {
+                throw new StatusConflictException("User", request.Id, "banned");
+            }
+
             user.IsAccountConfirmed = true;
 
             await _unitOfWork.UserRepository.UpdateAsync(user, ct);

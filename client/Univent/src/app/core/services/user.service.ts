@@ -28,4 +28,16 @@ export class UserService {
       headers: { 'Requires-Auth': 'true' }
     });
   }
+
+  approveUser(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/users/${id}/approve`, null, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  banUser(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/users/${id}/ban`, null, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
 }

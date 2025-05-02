@@ -36,7 +36,7 @@ namespace Univent.Infrastructure.Repositories
                 .Include(u => u.University)
                 .AsQueryable();
 
-            query = query.OrderByDescending(e => e.CreatedAt);
+            query = query.OrderBy(u => u.FirstName);
 
             int totalUsers = await query.CountAsync(ct);
 

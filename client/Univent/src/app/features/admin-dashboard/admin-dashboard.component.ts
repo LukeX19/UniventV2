@@ -9,6 +9,7 @@ import { UserManagementResponse } from '../../shared/models/userModel';
 import { PaginationRequest } from '../../shared/models/paginationModel';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { SnackbarService } from '../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -27,6 +28,7 @@ import { MatTableModule } from '@angular/material/table';
 })
 export class AdminDashboardComponent {
   private userService = inject(UserService);
+  private snackbarService = inject(SnackbarService);
 
   users: UserManagementResponse[] = [];
   pagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
@@ -65,10 +67,28 @@ export class AdminDashboardComponent {
   }
 
   approveUser(id: string) {
-
+    this.userService.approveUser(id).subscribe({
+      next: () => {
+        this.snackbarService.success("User approved successfully.");
+        this.fetchUsers();
+      },
+      error: (error) => {
+        console.error("Failed to approve user:", error);
+        this.snackbarService.error("Something went wrong. Please try again later.");
+      }
+    });
   }
-
+  
   banUser(id: string) {
-
+    this.userService.banUser(id).subscribe({
+      next: () => {
+        this.snackbarService.success("User banned successfully.");
+        this.fetchUsers();
+      },
+      error: (error) => {
+        console.error("Failed to ban user:", error);
+        this.snackbarService.error("Something went wrong. Please try again later.");
+      }
+    });
   }
 }

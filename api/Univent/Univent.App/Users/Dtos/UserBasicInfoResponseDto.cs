@@ -7,5 +7,6 @@
         public string LastName { get; set; }
         public string? PictureUrl { get; set; }
         public bool IsAccountConfirmed { get; set; }
+        public bool IsAccountBanned { get; set; }
     }
 }

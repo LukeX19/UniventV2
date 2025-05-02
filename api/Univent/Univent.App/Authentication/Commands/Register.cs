@@ -33,6 +33,7 @@ namespace Univent.App.Authentication.Commands
                 Year = request.RegisterDto.Year,
                 UniversityId = request.RegisterDto.UniversityId,
                 IsAccountConfirmed = request.RegisterDto.Role == AppRole.Student ? false : true,
+                IsAccountBanned = false,
                 CreatedAt = DateTime.UtcNow
             };
 

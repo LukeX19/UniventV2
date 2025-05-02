@@ -1,2 +1,130 @@
 <app-navbar></app-navbar>
-<p>admin-dashboard works!</p>
+
+<div class="max-w-7xl mx-auto">
+  <!-- Tab Buttons -->
+  <div class="flex justify-center space-x-6">
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="selectedTab === 'users'"
+      (click)="selectTab('users')"
+      class="px-6 py-2 font-medium rounded-md"
+    >
+      Manage Users
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="selectedTab === 'universities'"
+      (click)="selectTab('universities')"
+      class="px-6 py-2 font-medium rounded-md"
+    >
+      Manage Universities
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="selectedTab === 'eventTypes'"
+      (click)="selectTab('eventTypes')"
+      class="px-6 py-2 font-medium rounded-md"
+    >
+      Manage Event Types
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="mt-16">
+    <ng-container [ngSwitch]="selectedTab">
+      <div *ngSwitchCase="'users'">
+        <table mat-table [dataSource]="users" style="width: 100%; background-color: transparent;" *ngIf="users.length > 0">
+
+          <!-- Number -->
+          <ng-container matColumnDef="number">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;">#</th>
+            <td mat-cell *matCellDef="let user; let i = index" style="text-align: center;">
+              {{ i + 1 + (pagination.pageIndex - 1) * pagination.pageSize }}
+            </td>
+          </ng-container>
+        
+          <!-- Name -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;">Name</th>
+            <td mat-cell *matCellDef="let user" style="text-align: center;">
+              {{ user.firstName }} {{ user.lastName }}
+            </td>
+          </ng-container>
+
+          <!-- Email -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;">Email</th>
+            <td mat-cell *matCellDef="let user" style="text-align: center;">
+              {{ user.email }}
+            </td>
+          </ng-container>
+          
+          <!-- Request Date -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;">Requested</th>
+            <td mat-cell *matCellDef="let user" style="text-align: center;">
+              {{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+          
+          <!-- University -->
+          <ng-container matColumnDef="university">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;">University</th>
+            <td mat-cell *matCellDef="let user" style="text-align: center;">
+              {{ user.universityName }} – Year {{ user.year }}
+            </td>
+          </ng-container>
+          
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;">Actions</th>
+            <td mat-cell *matCellDef="let user" style="text-align: center;">
+              <button mat-raised-button color="primary" class="mr-2" *ngIf="!user.isApproved" (click)="approveUser(user.id)">
+                Approve
+              </button>
+              <button mat-raised-button color="warn" (click)="banUser(user.id)" *ngIf="!user.isBanned">
+                Ban
+              </button>
+            </td>
+          </ng-container>
+          
+          <!-- Status -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef style="text-align: center;">Status</th>
+            <td mat-cell *matCellDef="let user" style="text-align: center;">
+              <mat-icon [ngClass]="getStatusInfo(user).color" class="mr-1">{{ getStatusInfo(user).icon }}</mat-icon>
+              <span [ngClass]="getStatusInfo(user).color">{{ getStatusInfo(user).label }}</span>
+            </td>
+          </ng-container>
+          
+          <tr mat-header-row *matHeaderRowDef="['number', 'name', 'email', 'createdAt', 'university', 'actions', 'status']" style="height: 80px;"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['number', 'name', 'email', 'createdAt', 'university', 'actions', 'status']" style="height: 80px;"></tr>
+        </table>
+        
+        <div class="flex justify-center mt-4">
+          <mat-paginator
+            [length]="totalUsers"
+            [pageSize]="pagination.pageSize"
+            [pageIndex]="pagination.pageIndex - 1"
+            [pageSizeOptions]="[5, 10, 15, 20]"
+            style="background-color: transparent;"
+            (page)="onPageChange($event)">
+          </mat-paginator>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'universities'" class="text-center text-gray-700">
+        <p class="text-lg font-semibold">University management goes here.</p>
+      </div>
+
+      <div *ngSwitchCase="'eventTypes'" class="text-center text-gray-700">
+        <p class="text-lg font-semibold">Event type management goes here.</p>
+      </div>
+    </ng-container>
+  </div>
+</div>

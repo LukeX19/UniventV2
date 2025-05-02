@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Univent.Api.Extensions;
+using Univent.App.Pagination.Dtos;
 using Univent.App.Users.Queries;
 
 namespace Univent.Api.Controllers
@@ -35,6 +36,16 @@ namespace Univent.Api.Controllers
         public async Task<IActionResult> GetUserProfileById(Guid id)
         {
             var query = new GetUserProfileByIdQuery(id);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "0")]
+        public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequestDto pagination)
+        {
+            var query = new GetAllUsersQuery(pagination);
             var response = await _mediator.Send(query);
 
             return Ok(response);

@@ -19,3 +19,15 @@ export interface UserProfileResponse {
   createdEvents: number;
   participations: number;
 };
+
+export interface UserManagementResponse {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: string;
+  year: number;
+  universityName: string;
+  isAccountConfirmed: boolean;
+  isAccountBanned: boolean;
+}

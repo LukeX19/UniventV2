@@ -9,11 +9,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { MatDialog } from '@angular/material/dialog';
 import { EventParticipantService } from '../../core/services/event-participant.service';
-import { InfoDialogComponent } from '../../shared/components/info-dialog/info-dialog.component';
 import { EventParticipantFullResponse } from '../../shared/models/eventParticipantModel';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
+import { EventParticipantsDialogComponent } from '../../shared/components/event-participants-dialog/event-participants-dialog.component';
 
 @Component({
   selector: 'app-event-details',
@@ -162,7 +162,7 @@ export class EventDetailsComponent {
   
 
   openParticipantsDialog(): void {
-    this.dialog.open(InfoDialogComponent, {
+    this.dialog.open(EventParticipantsDialogComponent, {
       data: {
         title: 'Event Participants',
         participants: this.participants,

@@ -11,6 +11,8 @@ import { AuthenticationService } from '../../../core/services/authentication.ser
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { LoginResponse } from '../../../shared/models/authenticationModel';
 import { TokenService } from '../../../core/services/token.service';
+import { MatDialog } from '@angular/material/dialog';
+import { InfoDialogComponent } from '../../../shared/components/info-dialog/info-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -34,6 +36,7 @@ export class LoginComponent {
   private snackbarService = inject(SnackbarService);
   private router = inject(Router);
   private tokenService = inject(TokenService);
+  private dialog = inject(MatDialog);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -74,8 +77,20 @@ export class LoginComponent {
           }
         },
         error: (error) => {
-          if (error.status === 401) {
-            this.snackbarService.error('The provided credentials are not valid.');
+          const message = error.error?.message as string;
+
+          if (error.status === 403 && message === "This account is awaiting approval.") {
+            this.dialog.open(InfoDialogComponent, {
+              data: {
+                title: 'Account Pending',
+                message: 'Your account is currently awaiting approval by an administrator. You will be able to log in once approved.',
+                buttonText: 'OK'
+              }
+            });
+          } else if (error.status === 403 && message === "This account has been banned.") {
+            this.snackbarService.error("This account has been banned from the platform.");
+          } else if (error.status === 401) {
+            this.snackbarService.error("The provided credentials are not valid.");
           } else {
             console.error("Login failed:", error);
             this.snackbarService.error("An error has occured! Please try again later.");

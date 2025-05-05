@@ -70,6 +70,16 @@ namespace Univent.Infrastructure.Services
                 throw new InvalidCredentialsException();
             }
 
+            if (user.IsAccountBanned)
+            {
+                throw new ForbiddenAccessException("This account has been banned.");
+            }
+
+            if (!user.IsAccountConfirmed)
+            {
+                throw new ForbiddenAccessException("This account is awaiting approval.");
+            }
+
             return user;
         }
     }

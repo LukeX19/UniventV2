@@ -14,9 +14,7 @@
     <!-- Right side: Avatar or Logout -->
     <div class="w-10 flex justify-end">
       <ng-container *ngIf="isAdmin; else userMobileMenu">
-        <button mat-icon-button color="warn" (click)="logout()">
-          <mat-icon>logout</mat-icon>
-        </button>
+        <button mat-button color="warn" (click)="logout()">Logout</button>
       </ng-container>
 
       <ng-template #userMobileMenu>

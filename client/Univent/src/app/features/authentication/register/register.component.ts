@@ -20,6 +20,8 @@ import { AuthenticationService } from '../../../core/services/authentication.ser
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { RegisterRequest } from '../../../shared/models/authenticationModel';
 import { Router, RouterModule } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { InfoDialogComponent } from '../../../shared/components/info-dialog/info-dialog.component';
 
 @Component({
   selector: 'app-register',
@@ -48,6 +50,7 @@ export class RegisterComponent {
   private authService = inject(AuthenticationService);
   private snackbarService = inject(SnackbarService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   universities$: Observable<UniversityResponse[]> = of([]);
   selectedUniversityId: string | null = null;
@@ -174,8 +177,14 @@ export class RegisterComponent {
   private registerUser(data: RegisterRequest): void {
     this.authService.register(data).subscribe({
       next: () => {
-        this.authService.logout();
         this.router.navigate(['']);
+        this.dialog.open(InfoDialogComponent, {
+          data: {
+            title: 'Registration Submitted',
+            message: 'Your account has been created and is now pending approval by an administrator. You will be able to log in once approved.',
+            buttonText: 'OK'
+          }
+        });
       },
       error: (error) => {
         console.error("Registration failed:", error);

@@ -5,4 +5,4 @@ export interface UniversityResponse {
 
 export interface UniversityRequest {
   name: string;
-}
+};

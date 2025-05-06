@@ -10,7 +10,7 @@ namespace Univent.Infrastructure.Repositories
     {
         public UniversityRepository(AppDbContext context) : base(context) { }
 
-        public async Task<PaginationResponseDto<University>> GetAllUniversitiesAsync(PaginationRequestDto pagination, CancellationToken ct = default)
+        public async Task<PaginationResponseDto<University>> GetAllAsync(PaginationRequestDto pagination, CancellationToken ct = default)
         {
             var query = _context.Universities
                 .AsNoTracking()

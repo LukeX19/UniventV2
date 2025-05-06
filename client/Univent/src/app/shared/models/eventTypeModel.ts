@@ -3,3 +3,7 @@ export interface EventTypeResponse {
   name: string;
   isDeleted: boolean;
 };
+
+export interface EventTypeRequest {
+  name: string;
+};

@@ -21,7 +21,7 @@ namespace Univent.App.Universities.Queries
 
         public async Task<PaginationResponseDto<UniversityResponseDto>> Handle(GetAllUniversitiesQuery request, CancellationToken ct)
         {
-            var paginatedUniversities = await _unitOfWork.UniversityRepository.GetAllUniversitiesAsync(request.Pagination, ct);
+            var paginatedUniversities = await _unitOfWork.UniversityRepository.GetAllAsync(request.Pagination, ct);
 
             var universityDtos = paginatedUniversities.Elements.Select(universityEntity =>
             {

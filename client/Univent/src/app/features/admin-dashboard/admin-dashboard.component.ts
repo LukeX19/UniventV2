@@ -15,6 +15,8 @@ import { UniversityResponse, UniversityRequest } from '../../shared/models/unive
 import { MatDialog } from '@angular/material/dialog';
 import { EditTextDialogComponent } from '../../shared/components/edit-text-dialog/edit-text-dialog.component';
 import { GenericDialogComponent } from '../../shared/components/generic-dialog/generic-dialog.component';
+import { EventTypeService } from '../../core/services/event-type.service';
+import { EventTypeRequest, EventTypeResponse } from '../../shared/models/eventTypeModel';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -34,6 +36,7 @@ import { GenericDialogComponent } from '../../shared/components/generic-dialog/g
 export class AdminDashboardComponent {
   private userService = inject(UserService);
   private universityService = inject(UniversityService);
+  private eventTypeService = inject(EventTypeService);
   private snackbarService = inject(SnackbarService);
   private dialog = inject(MatDialog);
 
@@ -44,12 +47,17 @@ export class AdminDashboardComponent {
   universities: UniversityResponse[] = [];
   universityPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
   totalUniversities = 0;
+
+  eventTypes: EventTypeResponse[] = [];
+  eventTypePagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
+  totalEventTypes = 0;
   
   selectedTab: 'users' | 'eventTypes' | 'universities' = 'users';
 
   ngOnInit() {
     this.fetchUsers();
     this.fetchUniversities();
+    this.fetchEventTypes();
   }
 
   selectTab(tab: 'users' | 'eventTypes' | 'universities') {
@@ -237,6 +245,116 @@ export class AdminDashboardComponent {
             } else {
               console.error('Failed to add university:', error);
               this.snackbarService.error('Something went wrong. Please try again.');
+            }
+          }
+        });
+      }
+    });
+  }
+
+  fetchEventTypes(): void {
+    this.eventTypeService.fetchAllEventTypes(this.eventTypePagination).subscribe({
+      next: (data) => {
+        this.eventTypes = data.elements;
+        this.totalEventTypes = data.resultsCount;
+        this.eventTypePagination.pageIndex = data.pageIndex;
+      },
+      error: (error) => {
+        console.error("Failed to load event types:", error);
+      }
+    });
+  }
+
+  onEventTypePageChange(event: PageEvent) {
+    this.eventTypePagination.pageIndex = event.pageIndex + 1;
+    this.eventTypePagination.pageSize = event.pageSize;
+    this.fetchEventTypes();
+  }
+
+  editEventType(id: string): void {
+    const type = this.eventTypes.find(e => e.id === id);
+    if (!type) return;
+  
+    const dialogRef = this.dialog.open(EditTextDialogComponent, {
+      width: '400px',
+      maxWidth: '90vw',
+      data: {
+        title: 'Edit Event Type',
+        initialValue: type.name,
+        confirmText: 'Update',
+        cancelText: 'Cancel'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(newName => {
+      if (newName && newName !== type.name) {
+        const updateRequest: EventTypeRequest = { name: newName };
+        this.eventTypeService.updateEventType(id, updateRequest).subscribe({
+          next: () => {
+            this.snackbarService.success("Event type updated successfully.");
+            this.fetchEventTypes();
+          },
+          error: (error) => {
+            const message = error.error?.message;
+            if (error.status === 409 && message?.includes("already exists")) {
+              this.snackbarService.error("An event type with that name already exists.");
+            } else {
+              console.error("Failed to update event type:", error);
+              this.snackbarService.error("Something went wrong. Please try again.");
+            }
+          }
+        });
+      }
+    });
+  }
+
+  toggleEventType(type: EventTypeResponse): void {
+    const toggleAction = type.isDeleted
+      ? this.eventTypeService.enableEventType(type.id)
+      : this.eventTypeService.disableEventType(type.id);
+  
+    toggleAction.subscribe({
+      next: () => {
+        const message = type.isDeleted
+          ? 'Event type re-enabled successfully.'
+          : 'Event type disabled successfully.';
+        this.snackbarService.success(message);
+        this.fetchEventTypes();
+      },
+      error: (error) => {
+        console.error('Failed to toggle event type:', error);
+        this.snackbarService.error('Something went wrong. Please try again.');
+      }
+    });
+  }
+
+  addEventType(): void {
+    const dialogRef = this.dialog.open(EditTextDialogComponent, {
+      width: '400px',
+      maxWidth: '90vw',
+      data: {
+        title: 'Add Event Type',
+        initialValue: '',
+        confirmText: 'Submit',
+        cancelText: 'Cancel'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(newName => {
+      if (newName && newName.trim()) {
+        const newType: EventTypeRequest = { name: newName.trim() };
+        this.eventTypeService.createEventType(newType).subscribe({
+          next: () => {
+            this.snackbarService.success("Event type added successfully.");
+            this.fetchEventTypes();
+          },
+          error: (error) => {
+            const message = error.error?.message;
+            if (error.status === 409 && message?.includes("already exists")) {
+              this.snackbarService.error("An event type with that name already exists.");
+            } else {
+              console.error("Failed to add event type:", error);
+              this.snackbarService.error("Something went wrong. Please try again.");
             }
           }
         });

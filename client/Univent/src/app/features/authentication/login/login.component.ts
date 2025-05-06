@@ -88,7 +88,21 @@ export class LoginComponent {
               }
             });
           } else if (error.status === 403 && message === "This account has been banned.") {
-            this.snackbarService.error("This account has been banned from the platform.");
+            this.dialog.open(InfoDialogComponent, {
+              data: {
+                title: 'Account Banned',
+                message: 'Your account has been banned from the platform. Please contact support for more information.',
+                buttonText: 'OK'
+              }
+            });
+          } else if (error.status === 403 && message === "Your university is no longer supported on the platform.") {
+            this.dialog.open(InfoDialogComponent, {
+              data: {
+                title: 'University Not Supported',
+                message: 'Your university has been removed from the platform. You can no longer access your account.',
+                buttonText: 'OK'
+              }
+            });       
           } else if (error.status === 401) {
             this.snackbarService.error("The provided credentials are not valid.");
           } else {

@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
 using Univent.App.Interfaces;
+using Univent.App.Pagination.Dtos;
 using Univent.App.Universities.Dtos;
 
 namespace Univent.App.Universities.Queries
 {
-    public record GetAllUniversitiesQuery() : IRequest<ICollection<UniversityResponseDto>>;
+    public record GetAllUniversitiesQuery(PaginationRequestDto Pagination) : IRequest<PaginationResponseDto<UniversityResponseDto>>;
 
-    public class GetAllUniversitiesHandler : IRequestHandler<GetAllUniversitiesQuery, ICollection<UniversityResponseDto>>
+    public class GetAllUniversitiesHandler : IRequestHandler<GetAllUniversitiesQuery, PaginationResponseDto<UniversityResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -18,11 +19,22 @@ namespace Univent.App.Universities.Queries
             _mapper = mapper;
         }
 
-        public async Task<ICollection<UniversityResponseDto>> Handle(GetAllUniversitiesQuery request, CancellationToken ct)
+        public async Task<PaginationResponseDto<UniversityResponseDto>> Handle(GetAllUniversitiesQuery request, CancellationToken ct)
         {
-            var universities = await _unitOfWork.UniversityRepository.GetAllAsync(ct);
+            var paginatedUniversities = await _unitOfWork.UniversityRepository.GetAllAsync(request.Pagination, ct);
 
-            return _mapper.Map<ICollection<UniversityResponseDto>>(universities);
+            var universityDtos = paginatedUniversities.Elements.Select(universityEntity =>
+            {
+                var dto = _mapper.Map<UniversityResponseDto>(universityEntity);
+
+                return dto;
+            }).ToList();
+
+            return new PaginationResponseDto<UniversityResponseDto>(
+                universityDtos,
+                paginatedUniversities.PageIndex,
+                paginatedUniversities.TotalPages,
+                paginatedUniversities.ResultsCount);
         }
     }
 }

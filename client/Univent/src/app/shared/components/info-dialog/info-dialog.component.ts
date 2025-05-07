@@ -4,17 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
-export interface DialogEventParticipant {
-  firstName: string;
-  lastName: string;
-  pictureUrl?: string | null;
-  rating: number;
-}
-
 export interface InfoDialogData {
   title?: string;
   message?: string;
-  participants?: DialogEventParticipant[];
   buttonText?: string;
 }
 
@@ -39,10 +31,4 @@ export class InfoDialogComponent {
   onClose(): void {
     this.dialogRef.close();
   }
-
-  getInitials(firstName: string, lastName: string): string {
-    const firstNameInitial = firstName?.charAt(0).toUpperCase() || '';
-    const lastNameInitial = lastName?.charAt(0).toUpperCase() || '';
-    return `${firstNameInitial}${lastNameInitial}`;
-  }  
 }

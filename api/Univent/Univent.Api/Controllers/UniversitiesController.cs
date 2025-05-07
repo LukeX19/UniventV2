@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Univent.App.Pagination.Dtos;
 using Univent.App.Universities.Commands;
 using Univent.App.Universities.Dtos;
 using Univent.App.Universities.Queries;
@@ -29,9 +30,10 @@ namespace Univent.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUniversities()
+        [Authorize(Roles = "0")]
+        public async Task<IActionResult> GetAllUniversities([FromQuery] PaginationRequestDto pagination)
         {
-            var query = new GetAllUniversitiesQuery();
+            var query = new GetAllUniversitiesQuery(pagination);
             var response = await _mediator.Send(query);
 
             return Ok(response);

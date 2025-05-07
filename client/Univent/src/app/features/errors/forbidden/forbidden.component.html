@@ -1,0 +1,21 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-white text-center px-4 relative">
+  <!-- Foreground content -->
+  <div class="relative z-10 mt-16">
+    <!-- Big faded 403 centered behind the entire block -->
+    <div class="absolute inset-0 flex items-center justify-center z-[-1] pointer-events-none -mt-28">
+      <span class="text-[15rem] font-extrabold text-gray-300 opacity-30 leading-none select-none">
+        403
+      </span>
+    </div>
+
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+      ACCESS DENIED!
+    </h1>
+    <p class="text-sm sm:text-base text-gray-600 max-w-xl mx-auto mb-12">
+      You don’t have permission to access this page. If you believe this is a mistake, please contact the administrator.
+    </p>
+    <button mat-raised-button color="primary" (click)="handleRedirect()">
+      Back to Website
+    </button>
+  </div>
+</div>

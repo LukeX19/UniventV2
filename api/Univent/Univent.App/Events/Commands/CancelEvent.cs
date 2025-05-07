@@ -22,7 +22,7 @@ namespace Univent.App.Events.Commands
 
             if (eventEntity.IsCancelled == true)
             {
-                throw new StatusConflictException(nameof(Event), request.Id);
+                throw new StatusConflictException(nameof(Event), request.Id, "cancelled");
             }
             eventEntity.IsCancelled = true;
 

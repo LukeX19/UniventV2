@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Univent.App.EventTypes.Commands;
 using Univent.App.EventTypes.Dtos;
 using Univent.App.EventTypes.Queries;
+using Univent.App.Pagination.Dtos;
 
 namespace Univent.Api.Controllers
 {
@@ -34,6 +35,16 @@ namespace Univent.Api.Controllers
         public async Task<IActionResult> GetAllActiveEventTypes()
         {
             var query = new GetAllActiveEventTypesQuery();
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "0")]
+        public async Task<IActionResult> GetAllEventTypes([FromQuery] PaginationRequestDto pagination)
+        {
+            var query = new GetAllEventTypesQuery(pagination);
             var response = await _mediator.Send(query);
 
             return Ok(response);

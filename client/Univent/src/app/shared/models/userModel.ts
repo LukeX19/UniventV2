@@ -3,7 +3,6 @@ export interface UserResponse {
   firstName: string;
   lastName: string;
   pictureUrl?: string | null;
-  role: number;
   isAccountConfirmed: boolean;
 };
 
@@ -13,7 +12,6 @@ export interface UserProfileResponse {
   lastName: string;
   birthday: string;
   pictureUrl?: string | null;
-  role: number;
   createdAt: string;
   year: number;
   universityName: string;
@@ -21,3 +19,15 @@ export interface UserProfileResponse {
   createdEvents: number;
   participations: number;
 };
+
+export interface UserManagementResponse {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: string;
+  year: number;
+  universityName: string;
+  isAccountConfirmed: boolean;
+  isAccountBanned: boolean;
+}

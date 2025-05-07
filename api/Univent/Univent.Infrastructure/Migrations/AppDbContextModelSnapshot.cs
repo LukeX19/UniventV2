@@ -298,6 +298,9 @@ namespace Univent.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAccountBanned")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsAccountConfirmed")
                         .HasColumnType("bit");
 

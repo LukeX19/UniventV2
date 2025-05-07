@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Univent.Api.Extensions;
+using Univent.App.Pagination.Dtos;
+using Univent.App.Users.Commands;
 using Univent.App.Users.Queries;
 
 namespace Univent.Api.Controllers
@@ -38,6 +40,38 @@ namespace Univent.Api.Controllers
             var response = await _mediator.Send(query);
 
             return Ok(response);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "0")]
+        public async Task<IActionResult> GetAllUsers([FromQuery] PaginationRequestDto pagination)
+        {
+            var query = new GetAllUsersQuery(pagination);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
+        [HttpPatch]
+        [Route("{id}/approve")]
+        [Authorize(Roles = "0")]
+        public async Task<IActionResult> ApproveUser(Guid id)
+        {
+            var command = new ApproveUserCommand(id);
+            await _mediator.Send(command);
+
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Route("{id}/ban")]
+        [Authorize(Roles = "0")]
+        public async Task<IActionResult> BanUser(Guid id)
+        {
+            var command = new BanUserCommand(id);
+            await _mediator.Send(command);
+
+            return NoContent();
         }
     }
 }

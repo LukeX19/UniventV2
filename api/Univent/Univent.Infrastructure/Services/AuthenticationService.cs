@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Univent.App.Interfaces;
+using Univent.Domain.Enums;
 using Univent.Domain.Models.Users;
 using Univent.Infrastructure.Exceptions;
 
@@ -68,6 +69,21 @@ namespace Univent.Infrastructure.Services
             if (!loginResult.Succeeded)
             {
                 throw new InvalidCredentialsException();
+            }
+
+            if (user.IsAccountBanned)
+            {
+                throw new ForbiddenAccessException("This account has been banned.");
+            }
+
+            if (!user.IsAccountConfirmed)
+            {
+                throw new ForbiddenAccessException("This account is awaiting approval.");
+            }
+
+            if (user.Role == AppRole.Student && user.UniversityId == null)
+            {
+                throw new ForbiddenAccessException("Your university is no longer supported on the platform.");
             }
 
             return user;

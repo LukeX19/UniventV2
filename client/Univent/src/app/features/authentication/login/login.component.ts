@@ -102,7 +102,7 @@ export class LoginComponent {
                 message: 'Your university has been removed from the platform. You can no longer access your account.',
                 buttonText: 'OK'
               }
-            });       
+            });
           } else if (error.status === 401) {
             this.snackbarService.error("The provided credentials are not valid.");
           } else {

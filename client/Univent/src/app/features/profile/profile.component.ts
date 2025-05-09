@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { UserProfileResponse, UserResponse } from '../../shared/models/userModel';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { EventSummaryResponse } from '../../shared/models/eventModel';
@@ -11,6 +11,7 @@ import { PaginationRequest } from '../../shared/models/paginationModel';
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AuthenticationService } from '../../core/services/authentication.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-profile',
@@ -19,6 +20,7 @@ import { AuthenticationService } from '../../core/services/authentication.servic
     CommonModule,
     NavbarComponent,
     MatIconModule,
+    MatButtonModule,
     EventCardComponent,
     MatPaginatorModule
 ],
@@ -30,6 +32,7 @@ export class ProfileComponent {
   private authService = inject(AuthenticationService);
   private eventService = inject(EventService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   user: UserProfileResponse | null = null;
   isUserLoading = true;
@@ -177,5 +180,9 @@ export class ProfileComponent {
 
   get isOwnProfile(): boolean {
     return this.currentUser?.id === this.user?.id;
-  }  
+  }
+
+  onEditProfile() {
+    this.router.navigate([`/profile/${this.currentUser!.id}/edit`]);
+  }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Univent.Api.Extensions;
 using Univent.App.Pagination.Dtos;
 using Univent.App.Users.Commands;
+using Univent.App.Users.Dtos;
 using Univent.App.Users.Queries;
 
 namespace Univent.Api.Controllers
@@ -69,6 +70,19 @@ namespace Univent.Api.Controllers
         public async Task<IActionResult> BanUser(Guid id)
         {
             var command = new BanUserCommand(id);
+            await _mediator.Send(command);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("profile")]
+        [Authorize(Roles = "1")]
+        public async Task<IActionResult> UpdateUserProfile(UpdateUserProfileRequestDto userProfileDto)
+        {
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var command = new UpdateUserProfileCommand(userId, userProfileDto);
             await _mediator.Send(command);
 
             return NoContent();

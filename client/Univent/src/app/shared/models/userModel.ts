@@ -14,6 +14,7 @@ export interface UserProfileResponse {
   pictureUrl?: string | null;
   createdAt: string;
   year: number;
+  universityId: string;
   universityName: string;
   rating: number;
   createdEvents: number;
@@ -30,4 +31,13 @@ export interface UserManagementResponse {
   universityName: string;
   isAccountConfirmed: boolean;
   isAccountBanned: boolean;
-}
+};
+
+export interface UpdateUserProfileRequest {
+  firstName: string;
+  lastName: string;
+  birthday: string;
+  pictureUrl?: string | null;
+  year: number;
+  universityId: string;
+};

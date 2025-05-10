@@ -11,6 +11,7 @@ namespace Univent.App.Users.Dtos
         public string? PictureUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public UniversityYear Year { get; set; }
+        public Guid UniversityId { get; set; }
         public string UniversityName { get; set; }
         public double Rating { get; set; }
         public int CreatedEvents { get; set; }

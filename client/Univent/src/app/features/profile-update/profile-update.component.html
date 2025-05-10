@@ -1,1 +1,76 @@
-<p>profile-update works!</p>
+<app-navbar></app-navbar>
+
+<div class="max-w-2xl mx-auto px-8 py-2 mt-4">
+  <h2 class="text-2xl font-semibold text-center mb-10">Edit Profile</h2>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <!-- Profile Picture -->
+    <div class="flex justify-center items-center relative mb-10">
+      <div class="relative w-36 h-36 rounded-full shadow-md flex items-center justify-center bg-gray-500">
+        <img *ngIf="selectedImage" [src]="selectedImage" class="w-full h-full rounded-full object-cover" />
+        
+        <img *ngIf="!selectedImage && user?.pictureUrl" [src]="user?.pictureUrl" class="w-full h-full rounded-full object-cover" />
+        
+        <mat-icon *ngIf="!selectedImage && !user?.pictureUrl" class="text-gray-300" style="font-size: 160px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          account_circle
+        </mat-icon>
+      </div>
+
+      <!-- Upload button -->
+      <label *ngIf="!selectedImage && !user?.pictureUrl" class="absolute bottom-1 right-1 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md cursor-pointer">
+        <mat-icon class="text-blue-500">add</mat-icon>
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden" />
+      </label>
+
+      <!-- Delete button -->
+      <div *ngIf="selectedImage || user?.pictureUrl" (click)="removeImage()"
+          class="absolute bottom-1 left-1 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md cursor-pointer">
+        <mat-icon class="text-red-500">delete</mat-icon>
+      </div>
+    </div>
+
+    <!-- Personal Info -->
+    <mat-form-field appearance="outline" class="w-full mb-4">
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstName" />
+      <mat-error *ngIf="profileForm.get('firstName')?.errors as errors">{{ getErrorMessage('firstName', errors) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full mb-4">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName" />
+      <mat-error *ngIf="profileForm.get('lastName')?.errors as errors">{{ getErrorMessage('lastName', errors) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full mb-4">
+      <mat-label>Birthday</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="birthday" [max]="today" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="profileForm.get('birthday')?.errors as errors">{{ getErrorMessage('birthday', errors) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full mb-4">
+      <mat-label>University</mat-label>
+      <input type="text" matInput formControlName="university" [matAutocomplete]="auto" (blur)="onUniversityBlur()" />
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUniversitySelected($event.option.value)">
+        <mat-option *ngFor="let uni of universities$ | async" [value]="uni">{{ uni.name }}</mat-option>
+      </mat-autocomplete>
+      <mat-error *ngIf="profileForm.get('university')?.errors as errors">{{ getErrorMessage('university', errors) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full mb-6">
+      <mat-label>University Year</mat-label>
+      <mat-select formControlName="year">
+        <mat-option *ngFor="let year of years" [value]="year.value">{{ year.label }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="profileForm.get('year')?.errors as errors">{{ getErrorMessage('year', errors) }}</mat-error>
+    </mat-form-field>
+
+    <div class="flex justify-end">
+      <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid || isSubmitting">
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>

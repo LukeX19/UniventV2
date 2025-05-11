@@ -14,6 +14,7 @@ import { ForbiddenComponent } from './features/errors/forbidden/forbidden.compon
 import { NotFoundComponent } from './features/errors/not-found/not-found.component';
 import { LandingComponent } from './features/landing/landing.component';
 import { ProfileUpdateComponent } from './features/profile-update/profile-update.component';
+import { ownerGuard } from './core/guards/owner.guard';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -24,9 +25,9 @@ export const routes: Routes = [
   { path: 'host', component: EventCreateComponent, canActivate: [userGuard] },
   { path: 'browse', component: EventsBrowseComponent, canActivate: [userGuard] },
   { path: 'event/:id', component: EventDetailsComponent, canActivate: [userGuard] },
-  { path: 'profile/:id', component: ProfileComponent, canActivate: [userGuard] },
-  { path: 'profile/:id/edit', component: ProfileUpdateComponent, canActivate: [userGuard] },
   { path: 'event/:id/edit', component: EventUpdateComponent, canActivate: [userGuard] },
+  { path: 'profile/:id', component: ProfileComponent, canActivate: [userGuard] },
+  { path: 'profile/:id/edit', component: ProfileUpdateComponent, canActivate: [userGuard, ownerGuard] },
   
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [adminGuard] },
 

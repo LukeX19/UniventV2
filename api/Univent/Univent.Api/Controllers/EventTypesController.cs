@@ -26,7 +26,7 @@ namespace Univent.Api.Controllers
             var command = new CreateEventTypeCommand(eventTypeDto);
             var response = await _mediator.Send(command);
 
-            return Created($"/api/event-types/{response}", response);
+            return Ok(response);
         }
 
         [HttpGet]

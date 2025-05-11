@@ -28,7 +28,7 @@ namespace Univent.Api.Controllers
             var command = new CreateEventParticipantCommand(eventId, userId);
             var response = await _mediator.Send(command);
 
-            return Created($"/api/event-participants/{response.EventId}/{response.UserId}", response);
+            return Ok(response);
         }
 
         [HttpGet]

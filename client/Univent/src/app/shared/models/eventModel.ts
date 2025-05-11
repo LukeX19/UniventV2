@@ -27,7 +27,7 @@ export interface EventAuthorResponse {
   lastName: string;
   pictureUrl?: string | null;
   rating: number;
-}
+};
 
 export interface EventSummaryResponse {
   id: string;
@@ -42,7 +42,7 @@ export interface EventSummaryResponse {
   isCancelled: boolean;
   typeName: string;
   author: EventAuthorResponse;
-}
+};
 
 export interface EventFullResponse {
   id: string;
@@ -59,4 +59,4 @@ export interface EventFullResponse {
   isCancelled: boolean;
   typeName: string;
   author: EventAuthorResponse;
-}
+};

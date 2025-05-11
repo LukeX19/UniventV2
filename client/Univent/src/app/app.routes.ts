@@ -25,7 +25,7 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [userGuard] },
   { path: 'host', component: EventCreateComponent, canActivate: [userGuard] },
   { path: 'browse', component: EventsBrowseComponent, canActivate: [userGuard] },
-  { path: 'event/:id', component: EventDetailsComponent, canActivate: [userGuard] },
+  { path: 'event/:id', component: EventDetailsComponent, canActivate: [userGuard], resolve: { event: eventResolver } },
   { path: 'event/:id/edit', component: EventUpdateComponent, canActivate: [userGuard], resolve: { event: eventResolver } },
   { path: 'profile/:id', component: ProfileComponent, canActivate: [userGuard] },
   { path: 'profile/:id/edit', component: ProfileUpdateComponent, canActivate: [userGuard, ownerGuard] },

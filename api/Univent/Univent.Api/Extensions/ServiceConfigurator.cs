@@ -23,6 +23,7 @@ namespace Univent.Api.Extensions
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddHttpClient<IAiAssistantService, AiAssistantService>();
         }
 
         public static void AddMediatR(this IServiceCollection services)

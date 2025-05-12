@@ -27,7 +27,11 @@ namespace Univent.App.Events.Queries
             var eventIds = paginatedEvents.Elements.Select(e => e.Id).ToList();
             var participantCounts = await _unitOfWork.EventRepository.GetEventParticipantsCountAsync(eventIds, ct);
 
-            var authorIds = paginatedEvents.Elements.Select(e => e.Author.Id).Distinct().ToList();
+            var authorIds = paginatedEvents.Elements
+                .Where(e => e.Author != null)
+                .Select(e => e.Author.Id)
+                .Distinct()
+                .ToList();
             var authorRatings = await _unitOfWork.UserRepository.GetAverageRatingsAsync(authorIds, ct);
 
             var eventDtos = paginatedEvents.Elements.Select(eventEntity =>
@@ -39,10 +43,29 @@ namespace Univent.App.Events.Queries
                     ? participantCounts[eventEntity.Id]
                     : 0;
 
-                // Set author overall rating
-                dto.Author.Rating = authorRatings.ContainsKey(eventEntity.Author.Id)
-                    ? authorRatings[eventEntity.Author.Id]
-                    : 0.0;
+                // Set author
+                if (eventEntity.Author != null)
+                {
+                    dto.Author.Id = eventEntity.Author.Id;
+                    dto.Author.FirstName = eventEntity.Author.FirstName;
+                    dto.Author.LastName = eventEntity.Author.LastName;
+                    dto.Author.PictureUrl = eventEntity.Author.PictureUrl;
+                    dto.Author.Rating = authorRatings.ContainsKey(eventEntity.Author.Id)
+                        ? authorRatings[eventEntity.Author.Id]
+                        : 0.0;
+
+                }
+                else
+                {
+                    dto.Author = new EventAuthorResponseDto
+                    {
+                        Id = Guid.Empty,
+                        FirstName = "Deleted",
+                        LastName = "User",
+                        PictureUrl = null,
+                        Rating = 0.0
+                    };
+                }
 
                 return dto;
             }).ToList();

@@ -13,8 +13,9 @@ import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { MatIconModule } from '@angular/material/icon';
 import { FileService } from '../../core/services/file.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
-import { UpdateEventRequest } from '../../shared/models/eventModel';
+import { EventFullResponse, UpdateEventRequest } from '../../shared/models/eventModel';
 import { EventService } from '../../core/services/event.service';
+import { TokenService } from '../../core/services/token.service';
 
 @Component({
   selector: 'app-event-update',
@@ -40,6 +41,7 @@ import { EventService } from '../../core/services/event.service';
 })
 export class EventUpdateComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
+  private tokenService = inject(TokenService);
   private fileService = inject(FileService);
   private eventService = inject(EventService);
   private snackbarService = inject(SnackbarService);
@@ -91,44 +93,55 @@ export class EventUpdateComponent implements AfterViewInit {
 
   ngOnInit() {
     this.eventId = this.route.snapshot.paramMap.get('id')!;
-    this.fetchEvent();
+    const resolvedEvent = this.route.snapshot.data['event'] as EventFullResponse | null;
+
+    if (!resolvedEvent) {
+      this.router.navigate(['/not-found']);
+      return;
+    }
+
+    const token = localStorage.getItem('uniapi-token');
+    const currentUserId = this.tokenService.getUserId(token ?? '');
+
+    const isAuthor = resolvedEvent.author.id === currentUserId;
+    const isTooClose = (new Date(resolvedEvent.startTime).getTime() - Date.now()) < 2 * 60 * 60 * 1000;
+    const isCancelled = resolvedEvent.isCancelled;
+
+    if (!isAuthor || isTooClose || isCancelled) {
+      this.router.navigate(['/forbidden']);
+      return;
+    }
+
+    this.populateForm(resolvedEvent);
   }
 
-  fetchEvent() {
-    this.eventService.fetchEventById(this.eventId).subscribe({
-      next: (event) => {
-        this.eventForm.patchValue({
-          name: event.name,
-          description: event.description,
-          maximumParticipants: event.maximumParticipants,
-          startDate: new Date(event.startTime),
-          startTime: this.extractTimeFromISOString(event.startTime),
-          locationAddress: event.locationAddress,
-          locationLat: event.locationLat,
-          locationLong: event.locationLong
-        });
-
-        this.originalImageUrl = event.pictureUrl;
-        this.selectedImage = event.pictureUrl;
-        this.eventTypeName = event.typeName;
-
-        this.eventForm.get('selectedFile')?.setValidators(this.createFileValidator());
-        this.eventForm.get('selectedFile')?.updateValueAndValidity();
-
-        this.selectedLocation = {
-          lat: event.locationLat,
-          lng: event.locationLong
-        };
-        this.mapCenter = this.selectedLocation;
-        this.mapZoom = 15;
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Error fetching event:", error);
-        this.isLoading = false;
-      }
+  populateForm(event: EventFullResponse) {
+    this.eventForm.patchValue({
+      name: event.name,
+      description: event.description,
+      maximumParticipants: event.maximumParticipants,
+      startDate: new Date(event.startTime),
+      startTime: this.extractTimeFromISOString(event.startTime),
+      locationAddress: event.locationAddress,
+      locationLat: event.locationLat,
+      locationLong: event.locationLong
     });
+
+    this.originalImageUrl = event.pictureUrl;
+    this.selectedImage = event.pictureUrl;
+    this.eventTypeName = event.typeName;
+
+    this.eventForm.get('selectedFile')?.setValidators(this.createFileValidator());
+    this.eventForm.get('selectedFile')?.updateValueAndValidity();
+
+    this.selectedLocation = {
+      lat: event.locationLat,
+      lng: event.locationLong
+    };
+    this.mapCenter = this.selectedLocation;
+    this.mapZoom = 15;
+
+    this.isLoading = false;
   }
 
   extractTimeFromISOString(isoString: string): string {

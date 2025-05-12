@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { UserService } from '../../core/services/user.service';
 import { UserProfileResponse, UserResponse } from '../../shared/models/userModel';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { EventSummaryResponse } from '../../shared/models/eventModel';
@@ -11,6 +10,11 @@ import { PaginationRequest } from '../../shared/models/paginationModel';
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AuthenticationService } from '../../core/services/authentication.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from '../../core/services/snackbar.service';
+import { UserService } from '../../core/services/user.service';
+import { GenericDialogComponent } from '../../shared/components/generic-dialog/generic-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -19,6 +23,7 @@ import { AuthenticationService } from '../../core/services/authentication.servic
     CommonModule,
     NavbarComponent,
     MatIconModule,
+    MatButtonModule,
     EventCardComponent,
     MatPaginatorModule
 ],
@@ -29,7 +34,10 @@ export class ProfileComponent {
   private userService = inject(UserService);
   private authService = inject(AuthenticationService);
   private eventService = inject(EventService);
+  private dialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   user: UserProfileResponse | null = null;
   isUserLoading = true;
@@ -53,29 +61,21 @@ export class ProfileComponent {
   participatedTotalPages = 1;
 
   ngOnInit() {
-    this.authService.user$.subscribe((user) => {
-      this.currentUser = user;
+    const resolvedUser = this.route.snapshot.data['user'] as UserProfileResponse | null;
+
+    if (!resolvedUser) {
+      this.router.navigate(['/not-found']);
+      return;
+    }
+
+    this.user = resolvedUser;
+    this.isUserLoading = false;
+
+    this.authService.user$.subscribe((currentUser) => {
+      this.currentUser = currentUser;
     });
 
-    this.fetchUser();
-  }
-
-  fetchUser() {
-    const userId = this.route.snapshot.paramMap.get('id');
-    if (!userId) return;
-
-    this.isUserLoading = true;
-    this.userService.fetchUserProfileById(userId).subscribe({
-      next: (data) => {
-        this.user = data;
-        this.isUserLoading = false;
-        this.fetchCreatedEvents(userId);
-      },
-      error: (error) => {
-        console.error("Error fetching user:", error);
-        this.isUserLoading = false;
-      }
-    });
+    this.fetchCreatedEvents(resolvedUser.id);
   }
 
   fetchCreatedEvents(userId: string) {
@@ -177,5 +177,36 @@ export class ProfileComponent {
 
   get isOwnProfile(): boolean {
     return this.currentUser?.id === this.user?.id;
-  }  
+  }
+
+  onEditProfile() {
+    this.router.navigate([`/profile/${this.currentUser!.id}/edit`]);
+  }
+
+  onDeleteAccount() {
+    const dialogRef = this.dialog.open(GenericDialogComponent, {
+    data: {
+      title: 'Delete Account',
+      message: 'Are you sure you want to delete your account? This action is permanent and cannot be undone.',
+      cancelText: 'Cancel',
+      confirmText: 'Delete'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.userService.deleteUser().subscribe({
+        next: () => {
+          this.snackbar.success('Your account has been deleted.');
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          this.snackbar.error('Something went wrong. Please try again.');
+          console.error("Failed to delete account:", error);
+        }
+      });
+    }
+  });
+  }
 }

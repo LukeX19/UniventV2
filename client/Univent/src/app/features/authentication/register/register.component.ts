@@ -296,16 +296,10 @@ export class RegisterComponent {
   
     switch (field) {
       case 'firstName':
-        if (errors['required']) return `First Name is required`;
-        if (errors['minlength']) return `First Name must have at least 3 characters`;
-        if (errors['maxlength']) return `First Name must have a maximum of 50 characters`;
-        if (errors['invalidName']) return 'Only letters, spaces, and - , . \' are allowed';
-        break;
-
       case 'lastName':
-        if (errors['required']) return `Last Name is required`;
-        if (errors['minlength']) return `Last Name must have at least 3 characters`;
-        if (errors['maxlength']) return `Last Name must have a maximum of 50 characters`;
+        if (errors['required']) return `${field === 'firstName' ? 'First' : 'Last'} Name is required`;
+        if (errors['minlength']) return `${field === 'firstName' ? 'First' : 'Last'} Name must have at least 3 characters`;
+        if (errors['maxlength']) return `${field === 'firstName' ? 'First' : 'Last'} Name must have a maximum of 50 characters`;
         if (errors['invalidName']) return 'Only letters, spaces, and - , . \' are allowed';
         break;
   

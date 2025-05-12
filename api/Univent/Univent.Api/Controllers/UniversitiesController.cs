@@ -26,7 +26,7 @@ namespace Univent.Api.Controllers
             var command = new CreateUniversityCommand(universityDto);
             var response = await _mediator.Send(command);
 
-            return Created($"/api/universities/{response}", response);
+            return Ok(response);
         }
 
         [HttpGet]

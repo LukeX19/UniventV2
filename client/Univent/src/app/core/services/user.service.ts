@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { UserManagementResponse, UserProfileResponse } from '../../shared/models/userModel';
+import { UpdateUserProfileRequest, UserManagementResponse, UserProfileResponse } from '../../shared/models/userModel';
 import { PaginationRequest, PaginationResponse } from '../../shared/models/paginationModel';
 
 @Injectable({
@@ -37,6 +37,18 @@ export class UserService {
 
   banUser(id: string): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/users/${id}/ban`, null, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  updateUserProfile(userProfileData: UpdateUserProfileRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/users/current`, userProfileData, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  deleteUser(): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/users/current`, {
       headers: { 'Requires-Auth': 'true' }
     });
   }

@@ -2,7 +2,7 @@
 {
     public class EventWithdrawalClosedException : Exception
     {
-        private const string MessageTemplate = "Leaving the event with id '{0}' is no longer allowed because the event is about to start.";
+        private const string MessageTemplate = "Leaving the event with id '{0}' is no longer allowed because the event is starting soon or has already ended.";
 
         public EventWithdrawalClosedException()
             : base(MessageTemplate) { }

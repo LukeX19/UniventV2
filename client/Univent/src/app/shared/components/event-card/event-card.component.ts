@@ -82,7 +82,7 @@ export class EventCardComponent {
   }
 
   onUpdate() {
-    this.router.navigate([`/event/${this.event.id}/update`]);
+    this.router.navigate([`/event/${this.event.id}/edit`]);
   }
   
   onCancel() {

@@ -13,6 +13,9 @@ import { adminGuard } from './core/guards/admin.guard';
 import { ForbiddenComponent } from './features/errors/forbidden/forbidden.component';
 import { NotFoundComponent } from './features/errors/not-found/not-found.component';
 import { LandingComponent } from './features/landing/landing.component';
+import { ProfileUpdateComponent } from './features/profile-update/profile-update.component';
+import { eventResolver } from './core/resolvers/event.resolver';
+import { userResolver } from './core/resolvers/user.resolver';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -22,9 +25,10 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [userGuard] },
   { path: 'host', component: EventCreateComponent, canActivate: [userGuard] },
   { path: 'browse', component: EventsBrowseComponent, canActivate: [userGuard] },
-  { path: 'event/:id', component: EventDetailsComponent, canActivate: [userGuard] },
-  { path: 'profile/:id', component: ProfileComponent, canActivate: [userGuard] },
-  { path: 'event/:id/update', component: EventUpdateComponent, canActivate: [userGuard] },
+  { path: 'event/:id', component: EventDetailsComponent, canActivate: [userGuard], resolve: { event: eventResolver } },
+  { path: 'event/:id/edit', component: EventUpdateComponent, canActivate: [userGuard], resolve: { event: eventResolver } },
+  { path: 'profile/:id', component: ProfileComponent, canActivate: [userGuard], resolve: { user: userResolver } },
+  { path: 'profile/:id/edit', component: ProfileUpdateComponent, canActivate: [userGuard], resolve: { user: userResolver } },
   
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [adminGuard] },
 

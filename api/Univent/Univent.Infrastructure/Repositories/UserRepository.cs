@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Univent.App.Interfaces;
 using Univent.App.Pagination.Dtos;
 using Univent.Domain.Enums;
@@ -10,10 +11,12 @@ namespace Univent.Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public UserRepository(AppDbContext context)
+        public UserRepository(AppDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<AppUser> GetUserByIdAsync(Guid id, CancellationToken ct = default)
@@ -72,6 +75,22 @@ namespace Univent.Infrastructure.Repositories
 
             _context.Users.Update(updatedEntity);
             await _context.SaveChangesAsync(ct);
+        }
+
+        public async Task DeleteAsync(Guid userId, CancellationToken ct = default)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new EntityNotFoundException("User", userId);
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                throw new DeleteFailedException("User", userId);
+            }
         }
     }
 }

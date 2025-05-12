@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { EventService } from '../../core/services/event.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EventAuthorResponse, EventFullResponse } from '../../shared/models/eventModel';
 import { MatDividerModule } from '@angular/material/divider';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
@@ -37,6 +37,7 @@ export class EventDetailsComponent {
   private participantService = inject(EventParticipantService);
   private authService = inject(AuthenticationService);
   private snackbarService = inject(SnackbarService);
+  private router = inject(Router);
   
   userId: string = '';
   isAuthor = false;
@@ -53,26 +54,24 @@ export class EventDetailsComponent {
       if (!user) return;
       this.userId = user.id;
     });
-    this.fetchEvent();
+
+    const resolvedEvent = this.route.snapshot.data['event'] as EventFullResponse | null;
+
+    if (!resolvedEvent) {
+      this.router.navigate(['/not-found']);
+      return;
+    }
+
+    if (resolvedEvent.isCancelled) {
+      this.router.navigate(['/forbidden']);
+      return;
+    }
+    
+    this.event = resolvedEvent;
+    this.isAuthor = resolvedEvent.author.id === this.userId;
+    this.isEventLoading = false;
+
     this.fetchParticipants();
-  }
-
-  fetchEvent() {
-    const eventId = this.route.snapshot.paramMap.get('id');
-    if (!eventId) return;
-
-    this.isEventLoading = true;
-    this.eventService.fetchEventById(eventId).subscribe({
-      next: (data) => {
-        this.event = data;
-        this.isAuthor = data.author.id === this.userId;
-        this.isEventLoading = false;
-      },
-      error: (error) => {
-        console.error("Error fetching event:", error);
-        this.isEventLoading = false;
-      }
-    });
   }
 
   fetchParticipants() {

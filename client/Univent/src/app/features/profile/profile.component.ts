@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { UserService } from '../../core/services/user.service';
 import { UserProfileResponse, UserResponse } from '../../shared/models/userModel';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
@@ -12,6 +11,10 @@ import { EventCardComponent } from "../../shared/components/event-card/event-car
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { SnackbarService } from '../../core/services/snackbar.service';
+import { UserService } from '../../core/services/user.service';
+import { GenericDialogComponent } from '../../shared/components/generic-dialog/generic-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -31,6 +34,8 @@ export class ProfileComponent {
   private userService = inject(UserService);
   private authService = inject(AuthenticationService);
   private eventService = inject(EventService);
+  private dialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -176,5 +181,32 @@ export class ProfileComponent {
 
   onEditProfile() {
     this.router.navigate([`/profile/${this.currentUser!.id}/edit`]);
+  }
+
+  onDeleteAccount() {
+    const dialogRef = this.dialog.open(GenericDialogComponent, {
+    data: {
+      title: 'Delete Account',
+      message: 'Are you sure you want to delete your account? This action is permanent and cannot be undone.',
+      cancelText: 'Cancel',
+      confirmText: 'Delete'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.userService.deleteUser().subscribe({
+        next: () => {
+          this.snackbar.success('Your account has been deleted.');
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          this.snackbar.error('Something went wrong. Please try again.');
+          console.error("Failed to delete account:", error);
+        }
+      });
+    }
+  });
   }
 }

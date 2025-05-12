@@ -42,7 +42,13 @@ export class UserService {
   }
 
   updateUserProfile(userProfileData: UpdateUserProfileRequest): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/users/profile`, userProfileData, {
+    return this.http.put<void>(`${this.apiUrl}/users/current`, userProfileData, {
+      headers: { 'Requires-Auth': 'true' }
+    });
+  }
+
+  deleteUser(): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/users/current`, {
       headers: { 'Requires-Auth': 'true' }
     });
   }

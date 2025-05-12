@@ -21,6 +21,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AuthenticationService } from '../../core/services/authentication.service';
+import { TokenService } from '../../core/services/token.service';
 
 @Component({
   selector: 'app-profile-update',
@@ -48,6 +49,7 @@ export class ProfileUpdateComponent {
   private fileService = inject(FileService);
   private snackbarService = inject(SnackbarService);
   private authService = inject(AuthenticationService);
+  private tokenService = inject(TokenService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   
@@ -70,8 +72,23 @@ export class ProfileUpdateComponent {
   ];
   
   ngOnInit() {
+    const resolvedUser = this.route.snapshot.data['user'] as UserProfileResponse | null;
+    const token = localStorage.getItem('uniapi-token');
+    const currentUserId = this.tokenService.getUserId(token ?? '');
+
+    if (!resolvedUser) {
+      this.router.navigate(['/not-found']);
+      return;
+    }
+
+    if (resolvedUser.id !== currentUserId) {
+      this.router.navigate(['/forbidden']);
+      return;
+    }
+
+    this.user = resolvedUser;
     this.initializeForm();
-    this.fetchUser();
+    this.patchFormWithUserData(resolvedUser);
     this.setupUniversitySearch();
   }
 

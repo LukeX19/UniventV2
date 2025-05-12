@@ -56,29 +56,21 @@ export class ProfileComponent {
   participatedTotalPages = 1;
 
   ngOnInit() {
-    this.authService.user$.subscribe((user) => {
-      this.currentUser = user;
+    const resolvedUser = this.route.snapshot.data['user'] as UserProfileResponse | null;
+
+    if (!resolvedUser) {
+      this.router.navigate(['/not-found']);
+      return;
+    }
+
+    this.user = resolvedUser;
+    this.isUserLoading = false;
+
+    this.authService.user$.subscribe((currentUser) => {
+      this.currentUser = currentUser;
     });
 
-    this.fetchUser();
-  }
-
-  fetchUser() {
-    const userId = this.route.snapshot.paramMap.get('id');
-    if (!userId) return;
-
-    this.isUserLoading = true;
-    this.userService.fetchUserProfileById(userId).subscribe({
-      next: (data) => {
-        this.user = data;
-        this.isUserLoading = false;
-        this.fetchCreatedEvents(userId);
-      },
-      error: (error) => {
-        console.error("Error fetching user:", error);
-        this.isUserLoading = false;
-      }
-    });
+    this.fetchCreatedEvents(resolvedUser.id);
   }
 
   fetchCreatedEvents(userId: string) {

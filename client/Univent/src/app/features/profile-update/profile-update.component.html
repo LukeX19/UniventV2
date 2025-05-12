@@ -3,7 +3,7 @@
 <div class="max-w-2xl mx-auto px-8 py-2 mt-4">
   <h2 class="text-2xl font-semibold text-center mb-10">Edit Profile</h2>
 
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+  <form *ngIf="profileForm" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
     <!-- Profile Picture -->
     <div class="flex justify-center items-center relative mb-10">
       <div class="relative w-36 h-36 rounded-full shadow-md flex items-center justify-center bg-gray-500">

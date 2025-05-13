@@ -17,18 +17,27 @@ namespace Univent.Infrastructure.Services
             _configuration = configuration;
         }
 
-        public async Task<string> AskQuestionAboutEventsAsync(string question, ICollection<string> eventNames)
+        public async Task<string> AskForInterestsBasedSuggestionsAsync(string userDescription, ICollection<string> eventSummaries)
         {
-            // Real GPT API call
             var apiKey = _configuration["OpenAI:ApiKey"];
-            var prompt = $"Here are some event names:\n\n{string.Join("\n\n", eventNames)}\n\nBased on these names, answer this question: \n\"{question}\"";
+
+            var prompt = @$"
+                You are a helpful assistant that recommends events to users based on their interests.
+                The user said: ""{userDescription}""
+
+                Here are some upcoming events:
+                {string.Join("\n", eventSummaries)}
+
+                Based on the user's preferences, suggest the most relevant events.
+                Respond in a friendly, human tone and briefly explain why each event might be a good fit.
+                ";
 
             var requestBody = new
             {
-                model = "gpt-3.5-turbo",
+                model = "gpt-4.1",
                 messages = new[]
                 {
-                    new { role = "system", content = "You are a helpful assistant that summarizes customer reviews." },
+                    new { role = "system", content = "You are a helpful event recommendation assistant." },
                     new { role = "user", content = prompt }
                 }
             };
@@ -36,34 +45,66 @@ namespace Univent.Infrastructure.Services
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-            int maxRetries = 3;
-            for (int retry = 0; retry < maxRetries; retry++)
+            var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            using var jsonDoc = JsonDocument.Parse(responseBody);
+
+            return jsonDoc.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString() ?? "No recommendation was generated.";
+        }
+
+        public async Task<string> AskForLocationBasedSuggestionsAsync(string locationInfo, ICollection<string> eventSummaries)
+        {
+            var apiKey = _configuration["OpenAI:ApiKey"];
+
+            var prompt = @$"
+                You are a helpful assistant that recommends events to users based on their location.
+                The user is looking for events that match the following location preference:
+
+                ""{locationInfo}""
+
+                Below is a list of upcoming events with details:
+
+                {string.Join("\n", eventSummaries)}
+
+                Please suggest the most suitable events based on location relevance and briefly explain why. Limit your suggestions to the top 3–5 matches.
+                ";
+
+            var requestBody = new
             {
-                var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
-
-                if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                model = "gpt-4.1",
+                messages = new[]
                 {
-                    await Task.Delay(2000 * (retry + 1)); // exponential backoff
-                    continue;
+                    new { role = "system", content = "You are an assistant that recommends local events to users based on location preferences." },
+                    new { role = "user", content = prompt }
                 }
+            };
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new HttpRequestException($"OpenAI API error: {response.StatusCode} - {errorContent}");
-                }
+            var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-                var responseBody = await response.Content.ReadAsStringAsync();
-                using var jsonDoc = JsonDocument.Parse(responseBody);
+            var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
 
-                return jsonDoc.RootElement
-                    .GetProperty("choices")[0]
-                    .GetProperty("message")
-                    .GetProperty("content")
-                    .GetString();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"OpenAI API error: {response.StatusCode} - {errorContent}");
             }
 
-            throw new Exception("OpenAI API request failed after multiple retries due to rate limiting.");
+            var responseBody = await response.Content.ReadAsStringAsync();
+            using var jsonDoc = JsonDocument.Parse(responseBody);
+
+            return jsonDoc.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString() ?? "No recommendation was generated.";
         }
     }
 }

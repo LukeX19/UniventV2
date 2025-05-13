@@ -132,5 +132,16 @@ namespace Univent.Infrastructure.Repositories
                 .Select(g => new { EventId = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.EventId, x => x.Count, ct);
         }
+
+        public async Task<ICollection<Event>> GetAllUpcomingEventsAsync(CancellationToken ct = default)
+        {
+            return await _context.Events
+                .AsNoTracking()
+                .Include(e => e.Type)
+                .Include(e => e.Author)
+                .Where(e => !e.IsCancelled && e.StartTime > DateTime.UtcNow.AddHours(2))
+                .OrderBy(e => e.StartTime)
+                .ToListAsync(ct);
+        }
     }
 }

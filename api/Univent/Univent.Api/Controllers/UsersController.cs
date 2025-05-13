@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Univent.Api.Extensions;
 using Univent.App.Pagination.Dtos;
-using Univent.App.Universities.Commands;
 using Univent.App.Users.Commands;
 using Univent.App.Users.Dtos;
 using Univent.App.Users.Queries;

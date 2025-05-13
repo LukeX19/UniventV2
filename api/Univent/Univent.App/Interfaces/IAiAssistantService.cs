@@ -2,6 +2,7 @@
 {
     public interface IAiAssistantService
     {
-        Task<string> AskQuestionAboutEventsAsync(string question, ICollection<string> eventNames);
+        Task<string> AskForInterestsBasedSuggestionsAsync(string userDescription, ICollection<string> eventSummaries);
+        Task<string> AskForLocationBasedSuggestionsAsync(string locationInfo, ICollection<string> eventSummaries);
     }
 }

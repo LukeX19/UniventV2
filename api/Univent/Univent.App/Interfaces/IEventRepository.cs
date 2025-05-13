@@ -13,5 +13,6 @@ namespace Univent.App.Interfaces
         Task<int> GetParticipatedEventsCountByUserIdAsync(Guid userId, CancellationToken ct = default);
         Task<Event> GetEventByIdAsync(Guid id, CancellationToken ct = default);
         Task<Dictionary<Guid, int>> GetEventParticipantsCountAsync(ICollection<Guid> eventIds, CancellationToken ct = default);
+        Task<ICollection<Event>> GetAllUpcomingEventsAsync(CancellationToken ct = default);
     }
 }

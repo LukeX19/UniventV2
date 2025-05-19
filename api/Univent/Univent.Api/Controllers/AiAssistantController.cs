@@ -31,9 +31,20 @@ namespace Univent.Api.Controllers
         [HttpPost]
         [Route("events/location/recommend")]
         [Authorize(Roles = "1")]
-        public async Task<IActionResult> AskForLocationBasedRecommendations([FromBody] string userDescription)
+        public async Task<IActionResult> AskForLocationBasedRecommendations([FromBody] string locationDescription)
         {
-            var query = new AskForLocationBasedRecommendationsQuery(userDescription);
+            var query = new AskForLocationBasedRecommendationsQuery(locationDescription);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("events/time/recommend")]
+        [Authorize(Roles = "1")]
+        public async Task<IActionResult> AskForTimeBasedRecommendations([FromBody] string timePreference)
+        {
+            var query = new AskQuestionAboutTimePreferencesQuery(timePreference);
             var response = await _mediator.Send(query);
 
             return Ok(response);

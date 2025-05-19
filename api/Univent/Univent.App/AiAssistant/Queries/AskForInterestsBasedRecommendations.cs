@@ -22,7 +22,7 @@ namespace Univent.App.AiAssistant.Queries
 
             if (!events.Any())
             {
-                return "There are no upcoming events at the moment.";
+                return "There are no upcoming events to suggest.";
             }
 
             // Build summaries

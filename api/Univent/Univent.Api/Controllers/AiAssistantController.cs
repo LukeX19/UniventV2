@@ -53,6 +53,17 @@ namespace Univent.Api.Controllers
             return Ok(response);
         }
 
+        [HttpPost]
+        [Route("events/weather/recommend")]
+        [Authorize(Roles = "1")]
+        public async Task<IActionResult> AskForWeatherBasedRecommendations()
+        {
+            var query = new AskForWeatherBasedRecommendationsQuery();
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
         [HttpGet("timisoara")]
         public async Task<IActionResult> GetWeatherForTimisoara()
         {

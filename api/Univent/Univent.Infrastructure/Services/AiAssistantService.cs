@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
 using Univent.App.Interfaces;
+using Univent.App.Weather.Dtos;
 
 namespace Univent.Infrastructure.Services
 {
@@ -162,5 +163,64 @@ namespace Univent.Infrastructure.Services
                 .GetString() ?? "No recommendation was generated.";
         }
 
+        public async Task<string> AskForWeatherBasedSuggestionsAsync(ICollection<string> eventSummaries, ICollection<DailyWeatherForecastResponseDto> forecast)
+        {
+            var apiKey = _configuration["OpenAI:ApiKey"];
+            var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+            var weatherDetails = string.Join("\n", forecast.Select(f =>
+                $"- Date: {f.Date:yyyy-MM-dd}, Condition: {f.Condition} ({f.Description}), Temp: {f.TempMin}–{f.TempMax}°C, Rain: {(f.RainVolume.HasValue ? $"{f.RainVolume}mm" : "0mm")}, POP: {f.PrecipitationProbability:P0}, UVI: {f.Uvi}, Humidity: {f.Humidity}%, Wind: {f.WindSpeed} m/s"));
+
+            var eventList = string.Join("\n", eventSummaries);
+
+            var prompt = @$"
+                You are a helpful assistant that recommends events from the given list, based on weather conditions for the next 8 days in Timișoara, Romania.
+
+                Today is {today}. Here is the weather forecast:
+                {weatherDetails}
+
+                Here are upcoming events (with their dates and descriptions):
+                {eventList}
+
+                Instructions:
+                - Suggest 3–5 REAL events from this list that best fit the weather forecast.
+                - Match indoor events with rainy days, and outdoor events with sunny/mild days.
+                - Always include the actual event name and date in your recommendation.
+                - Briefly explain *why* each event is a good fit.
+                - Do NOT invent events. Use only what's provided.
+
+                Respond in a clear, helpful, and friendly tone. Suggest 3–5 events at most.
+                ";
+
+            var requestBody = new
+            {
+                model = "gpt-4.1",
+                messages = new[]
+                {
+                    new { role = "system", content = "You are a smart assistant that suggests weather-friendly events." },
+                    new { role = "user", content = prompt }
+                }
+            };
+
+            var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+            var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"OpenAI API error: {response.StatusCode} - {errorContent}");
+            }
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            using var jsonDoc = JsonDocument.Parse(responseBody);
+
+            return jsonDoc.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString() ?? "No recommendation was generated.";
+        }
     }
 }

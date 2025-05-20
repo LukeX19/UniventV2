@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Univent.App.AiAssistant.Queries;
-using Univent.App.Interfaces;
 
 namespace Univent.Api.Controllers
 {
@@ -12,12 +11,10 @@ namespace Univent.Api.Controllers
     public class AiAssistantController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IWeatherService _weatherService;
 
-        public AiAssistantController(IMediator mediator, IWeatherService weatherService)
+        public AiAssistantController(IMediator mediator)
         {
             _mediator = mediator;
-            _weatherService = weatherService;
         }
 
         [HttpPost]
@@ -62,13 +59,6 @@ namespace Univent.Api.Controllers
             var response = await _mediator.Send(query);
 
             return Ok(response);
-        }
-
-        [HttpGet("timisoara")]
-        public async Task<IActionResult> GetWeatherForTimisoara()
-        {
-            var result = await _weatherService.Get8DaysForecastAsync(45.7489, 21.2087);
-            return Ok(result);
         }
     }
 }

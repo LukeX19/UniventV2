@@ -27,8 +27,7 @@ namespace Univent.App.AiAssistant.Queries
             }
 
             var eventSummaries = events
-                .Where(e => !string.IsNullOrWhiteSpace(e.Name))
-                .Select(e => $"{e.Name} — {e.Type?.Name} on {e.StartTime:dddd, MMM dd} at {e.LocationAddress}")
+                .Select(e => $"- Name: {e.Name}, Type: {e.Type?.Name}, Description: {e.Description}, Starts at: {e.StartTime:dddd, MMM dd}, Location: {e.LocationAddress}")
                 .ToList();
 
             // Timișoara, Romania

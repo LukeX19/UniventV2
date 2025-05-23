@@ -48,21 +48,27 @@
       Loading events...
     </div>
 
-    <div *ngIf="!isLoading">
-      <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
-    </div>
+    <ng-container *ngIf="!isLoading">
+      <div *ngIf="events.length > 0; else noEvents">
+        <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
 
-    <!-- Paginator -->
-    <div class="flex justify-center mt-6 mb-6">
-      <mat-paginator 
-        [length]="totalEvents"
-        [pageSize]="pagination.pageSize"
-        [pageSizeOptions]="[5, 10, 15, 20]"
-        [pageIndex]="pagination.pageIndex - 1"
-        (page)="onPageChange($event)"
-        style="background-color: transparent;">
-      </mat-paginator>
-    </div>
+        <!-- Paginator -->
+        <div class="flex justify-center mt-6 mb-6">
+          <mat-paginator 
+            [length]="totalEvents"
+            [pageSize]="pagination.pageSize"
+            [pageSizeOptions]="[5, 10, 15, 20]"
+            [pageIndex]="pagination.pageIndex - 1"
+            (page)="onPageChange($event)"
+            style="background-color: transparent;">
+          </mat-paginator>
+        </div>
+      </div>
+
+      <ng-template #noEvents>
+        <p class="text-center text-gray-500 mt-8">No events found.</p>
+      </ng-template>
+    </ng-container>
   </div>
 </mat-drawer-container>
 

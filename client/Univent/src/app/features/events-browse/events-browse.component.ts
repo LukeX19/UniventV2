@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { EventTypeService } from '../../core/services/event-type.service';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { AiAssistantWidgetComponent } from "../../shared/components/ai-assistant-widget/ai-assistant-widget.component";
 
 @Component({
   selector: 'app-events-browse',
@@ -27,7 +28,8 @@ import { MatListModule } from '@angular/material/list';
     FormsModule,
     MatIconModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    AiAssistantWidgetComponent
 ],
   templateUrl: './events-browse.component.html',
   styleUrl: './events-browse.component.scss'

@@ -3,7 +3,7 @@ using Univent.App.Interfaces;
 
 namespace Univent.App.AiAssistant.Queries
 {
-    public record AskForWeatherBasedRecommendationsQuery() : IRequest<string>;
+    public record AskForWeatherBasedRecommendationsQuery(Guid UserId) : IRequest<string>;
 
     public class AskForWeatherBasedRecommendationsHandler : IRequestHandler<AskForWeatherBasedRecommendationsQuery, string>
     {
@@ -20,7 +20,7 @@ namespace Univent.App.AiAssistant.Queries
 
         public async Task<string> Handle(AskForWeatherBasedRecommendationsQuery request, CancellationToken ct)
         {
-            var events = await _unitOfWork.EventRepository.GetAllUpcomingEventsAsync(ct);
+            var events = await _unitOfWork.EventRepository.GetAllPotentialEventsAsync(request.UserId, ct);
             if (!events.Any())
             {
                 return "There are no upcoming events to suggest.";

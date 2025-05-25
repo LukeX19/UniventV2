@@ -3,7 +3,7 @@ using Univent.App.Interfaces;
 
 namespace Univent.App.AiAssistant.Queries
 {
-    public record AskQuestionAboutTimePreferencesQuery(string TimePreference) : IRequest<string>;
+    public record AskQuestionAboutTimePreferencesQuery(Guid UserId, string TimePreference) : IRequest<string>;
 
     public class AskQuestionAboutTimePreferencesHandler : IRequestHandler<AskQuestionAboutTimePreferencesQuery, string>
     {
@@ -18,7 +18,7 @@ namespace Univent.App.AiAssistant.Queries
 
         public async Task<string> Handle(AskQuestionAboutTimePreferencesQuery request, CancellationToken ct)
         {
-            var events = await _unitOfWork.EventRepository.GetAllUpcomingEventsAsync(ct);
+            var events = await _unitOfWork.EventRepository.GetAllPotentialEventsAsync(request.UserId, ct);
 
             if (!events.Any())
             {

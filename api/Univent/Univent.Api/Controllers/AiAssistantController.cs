@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Univent.Api.Extensions;
 using Univent.App.AiAssistant.Queries;
 
 namespace Univent.Api.Controllers
@@ -22,7 +23,9 @@ namespace Univent.Api.Controllers
         [Authorize(Roles = "1")]
         public async Task<IActionResult> AskForInterestsBasedRecommendations([FromBody] string userDescription)
         {
-            var query = new AskForInterestsBasedRecommendationsQuery(userDescription);
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var query = new AskForInterestsBasedRecommendationsQuery(userId, userDescription);
             var response = await _mediator.Send(query);
 
             return Ok(response);
@@ -33,7 +36,9 @@ namespace Univent.Api.Controllers
         [Authorize(Roles = "1")]
         public async Task<IActionResult> AskForLocationBasedRecommendations([FromBody] string locationDescription)
         {
-            var query = new AskForLocationBasedRecommendationsQuery(locationDescription);
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var query = new AskForLocationBasedRecommendationsQuery(userId, locationDescription);
             var response = await _mediator.Send(query);
 
             return Ok(response);
@@ -44,7 +49,9 @@ namespace Univent.Api.Controllers
         [Authorize(Roles = "1")]
         public async Task<IActionResult> AskForTimeBasedRecommendations([FromBody] string timePreference)
         {
-            var query = new AskQuestionAboutTimePreferencesQuery(timePreference);
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var query = new AskQuestionAboutTimePreferencesQuery(userId, timePreference);
             var response = await _mediator.Send(query);
 
             return Ok(response);
@@ -55,7 +62,9 @@ namespace Univent.Api.Controllers
         [Authorize(Roles = "1")]
         public async Task<IActionResult> AskForWeatherBasedRecommendations()
         {
-            var query = new AskForWeatherBasedRecommendationsQuery();
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var query = new AskForWeatherBasedRecommendationsQuery(userId);
             var response = await _mediator.Send(query);
 
             return Ok(response);

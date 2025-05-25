@@ -3,7 +3,7 @@ using Univent.App.Interfaces;
 
 namespace Univent.App.AiAssistant.Queries
 {
-    public record AskForInterestsBasedRecommendationsQuery(string UserDescription) : IRequest<string>;
+    public record AskForInterestsBasedRecommendationsQuery(Guid UserId, string UserDescription) : IRequest<string>;
 
     public class AskForInterestsBasedRecommendationsHandler : IRequestHandler<AskForInterestsBasedRecommendationsQuery, string>
     {
@@ -18,7 +18,7 @@ namespace Univent.App.AiAssistant.Queries
 
         public async Task<string> Handle(AskForInterestsBasedRecommendationsQuery request, CancellationToken ct)
         {
-            var events = await _unitOfWork.EventRepository.GetAllUpcomingEventsAsync(ct);
+            var events = await _unitOfWork.EventRepository.GetAllPotentialEventsAsync(request.UserId, ct);
 
             if (!events.Any())
             {

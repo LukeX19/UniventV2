@@ -3,7 +3,7 @@ using Univent.App.Interfaces;
 
 namespace Univent.App.AiAssistant.Queries
 {
-    public record AskForLocationBasedRecommendationsQuery(string LocationDescription) : IRequest<string>;
+    public record AskForLocationBasedRecommendationsQuery(Guid UserId, string LocationDescription) : IRequest<string>;
 
     public class AskForLocationBasedRecommendationsHandler : IRequestHandler<AskForLocationBasedRecommendationsQuery, string>
     {
@@ -18,7 +18,7 @@ namespace Univent.App.AiAssistant.Queries
 
         public async Task<string> Handle(AskForLocationBasedRecommendationsQuery request, CancellationToken ct)
         {
-            var events = await _unitOfWork.EventRepository.GetAllUpcomingEventsAsync(ct);
+            var events = await _unitOfWork.EventRepository.GetAllPotentialEventsAsync(request.UserId, ct);
 
             if (!events.Any())
             {

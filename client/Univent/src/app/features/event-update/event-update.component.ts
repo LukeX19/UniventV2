@@ -350,7 +350,7 @@ export class EventUpdateComponent implements AfterViewInit {
       next: () => {
         this.snackbarService.success("Event updated successfully.");
         console.log(eventData);
-        this.router.navigate(['/home']);
+        this.router.navigate(['/browse']);
       },
       error: (error) => {
         console.error("Event update failed:", error);

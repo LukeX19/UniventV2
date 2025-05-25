@@ -273,7 +273,7 @@ export class EventCreateComponent implements AfterViewInit {
     this.eventService.createEvent(eventData).subscribe({
       next: () => {
         this.snackbarService.success("Event created successfully.");
-        this.router.navigate(['/home']);
+        this.router.navigate(['/browse']);
       },
       error: (error) => {
         console.error("Event creation failed:", error);

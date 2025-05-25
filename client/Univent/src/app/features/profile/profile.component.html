@@ -51,7 +51,13 @@
       <div class="mt-6 space-y-2">
         <div class="flex items-center gap-2 text-gray-700">
           <mat-icon>school</mat-icon>
-          <span>{{ user?.universityName }} – Year {{ yearMapper(user?.year) }}</span>
+          <span>
+            {{
+              user?.universityName === 'Unknown University'
+                ? 'Unknown University'
+                : user?.universityName + ' – Year ' + yearMapper(user?.year)
+            }}
+          </span>
         </div>
 
         <div class="flex items-center gap-2 text-gray-700">

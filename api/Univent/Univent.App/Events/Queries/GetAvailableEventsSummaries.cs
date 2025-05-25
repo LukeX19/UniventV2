@@ -60,7 +60,7 @@ namespace Univent.App.Events.Queries
                     dto.Author = new EventAuthorResponseDto
                     {
                         Id = Guid.Empty,
-                        FirstName = "Deleted",
+                        FirstName = "Unknown",
                         LastName = "User",
                         PictureUrl = null,
                         Rating = 0.0

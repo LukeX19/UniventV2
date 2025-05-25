@@ -76,7 +76,11 @@
             <ng-container matColumnDef="university">
               <th mat-header-cell *matHeaderCellDef style="text-align: center;">University</th>
               <td mat-cell *matCellDef="let user" style="text-align: center;">
-                {{ user.universityName }} - {{ getUniversityYearLabel(user.year) }}
+                  {{
+                    user.universityName === 'Unknown University'
+                      ? 'Unknown University'
+                      : user.universityName + ' – Year ' + getUniversityYearLabel(user.year)
+                  }}
               </td>
             </ng-container>
             

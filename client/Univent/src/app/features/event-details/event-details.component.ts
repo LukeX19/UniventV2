@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
-import { EventService } from '../../core/services/event.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventAuthorResponse, EventFullResponse } from '../../shared/models/eventModel';
 import { MatDividerModule } from '@angular/material/divider';
@@ -33,7 +32,6 @@ import { EventParticipantsDialogComponent } from '../../shared/components/event-
 export class EventDetailsComponent {
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
-  private eventService = inject(EventService);
   private participantService = inject(EventParticipantService);
   private authService = inject(AuthenticationService);
   private snackbarService = inject(SnackbarService);
@@ -93,35 +91,51 @@ export class EventDetailsComponent {
   }
 
   get formattedStartTime(): string {
-    return new Date(this.event?.startTime || '').toLocaleString("ro-RO", {
+    if (!this.event) return '';
+
+    const raw = this.event.startTime;
+    const iso = raw.endsWith('Z') ? raw : raw + 'Z';
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    return new Date(iso).toLocaleString("ro-RO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
+      hour12: false,
+      timeZone: userTimeZone
     });
   }
 
   get formattedDate(): string {
-    if (!this.event) return "";
+    if (!this.event) return '';
+
+    const rawCreatedAt = this.event.createdAt;
+    const isoCreatedAt = rawCreatedAt.endsWith('Z') ? rawCreatedAt : rawCreatedAt + 'Z';
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    const createdAt = new Date(this.event.createdAt).toLocaleString("ro-RO", {
+    const createdAt = new Date(isoCreatedAt).toLocaleString("ro-RO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
+      hour12: false,
+      timeZone: userTimeZone
     });
 
-    const updatedAt = new Date(this.event.updatedAt).toLocaleString("ro-RO", {
+    const rawUpdatedAt = this.event.updatedAt;
+    const isoUpdatedAt = rawUpdatedAt.endsWith('Z') ? rawUpdatedAt : rawUpdatedAt + 'Z';
+
+    const updatedAt = new Date(isoUpdatedAt).toLocaleString("ro-RO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
+      hour12: false,
+      timeZone: userTimeZone
     });
 
     return updatedAt > createdAt ? `Last updated on ${updatedAt}` : `Posted on ${createdAt}`;

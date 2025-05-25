@@ -116,12 +116,25 @@ export class EventUpdateComponent implements AfterViewInit {
   }
 
   populateForm(event: EventFullResponse) {
+    const rawStartTime = event.startTime;
+    const isoStartTime = rawStartTime.endsWith('Z') ? rawStartTime : rawStartTime + 'Z';
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const utcStartTime = new Date(isoStartTime);
+
+    const localDate = new Date(
+      utcStartTime.toLocaleString("en-US", { timeZone: userTimeZone })
+    );
+    const localHours = String(localDate.getHours()).padStart(2, '0');
+    const localMinutes = String(localDate.getMinutes()).padStart(2, '0');
+    const localTimeString = `${localHours}:${localMinutes}`;
+
     this.eventForm.patchValue({
       name: event.name,
       description: event.description,
       maximumParticipants: event.maximumParticipants,
-      startDate: new Date(event.startTime),
-      startTime: this.extractTimeFromISOString(event.startTime),
+      startDate: localDate,
+      startTime: localTimeString,
       locationAddress: event.locationAddress,
       locationLat: event.locationLat,
       locationLong: event.locationLong
@@ -336,6 +349,7 @@ export class EventUpdateComponent implements AfterViewInit {
     this.eventService.updateEvent(this.eventId, eventData).subscribe({
       next: () => {
         this.snackbarService.success("Event updated successfully.");
+        console.log(eventData);
         this.router.navigate(['/home']);
       },
       error: (error) => {

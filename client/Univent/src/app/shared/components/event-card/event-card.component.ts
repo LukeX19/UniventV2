@@ -32,35 +32,49 @@ export class EventCardComponent {
   @Input() enableOptions: boolean = false;
 
   getFormattedStartTime(): string {
-    const startTime = new Date(this.event.startTime).toLocaleString("ro-RO", {
+    const raw = this.event.startTime;
+    const iso = raw.endsWith('Z') ? raw : raw + 'Z';
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const startTime = new Date(iso).toLocaleString("ro-RO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
+      hour12: false,
+      timeZone: userTimeZone
     });
   
     return `Starts ${startTime}`;
   }
 
   getFormattedPostedDate(): string {
-    const createdAt = new Date(this.event.createdAt).toLocaleString("ro-RO", {
+    const rawCreatedAt = this.event.createdAt;
+    const isoCreatedAt = rawCreatedAt.endsWith('Z') ? rawCreatedAt : rawCreatedAt + 'Z';
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const createdAt = new Date(isoCreatedAt).toLocaleString("ro-RO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
+      hour12: false,
+      timeZone: userTimeZone
     });
   
-    const updatedAt = new Date(this.event.updatedAt).toLocaleString("ro-RO", {
+    const rawUpdatedAt = this.event.updatedAt;
+    const isoUpdatedAt = rawUpdatedAt.endsWith('Z') ? rawUpdatedAt : rawUpdatedAt + 'Z';
+
+    const updatedAt = new Date(isoUpdatedAt).toLocaleString("ro-RO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false
+      hour12: false,
+      timeZone: userTimeZone
     });
   
     return updatedAt > createdAt ? `Last updated on ${updatedAt}` : `Posted on ${createdAt}`;

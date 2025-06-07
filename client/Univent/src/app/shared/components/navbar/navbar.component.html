@@ -14,7 +14,15 @@
     <!-- Right side: Avatar or Logout -->
     <div class="w-10 flex justify-end">
       <ng-container *ngIf="isAdmin; else userMobileMenu">
-        <button mat-button color="warn" (click)="logout()">Logout</button>
+        <!-- <button mat-button color="warn" (click)="logout()">Logout</button> -->
+        <app-custom-button
+          (click)="logout()"
+          label="Logout"
+          variant="secondary"
+          icon="logout"
+          [textColor]=""
+          [border]="''">
+        </app-custom-button>
       </ng-container>
 
       <ng-template #userMobileMenu>
@@ -81,7 +89,15 @@
     </ng-container>
 
     <ng-template #adminView>
-      <button mat-button color="warn" (click)="logout()">Logout</button>
+      <!-- <button mat-button color="warn" (click)="logout()">Logout</button> -->
+      <app-custom-button
+        (click)="logout()"
+        label="Logout"
+        variant="secondary"
+        icon="logout"
+        [textColor]=""
+        [border]="''">
+      </app-custom-button>
     </ng-template>
   </div>
 

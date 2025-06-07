@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { LoginRequest, LoginResponse, RegisterRequest } from '../../shared/models/authenticationModel';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { UserResponse } from '../../shared/models/userModel';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { UserResponse } from '../../shared/models/userModel';
 export class AuthenticationService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}`;
+  private tokenService = inject(TokenService);
 
   private userSubject = new BehaviorSubject<UserResponse | null>(null);
   user$: Observable<UserResponse | null> = this.userSubject.asObservable();
@@ -36,17 +38,20 @@ export class AuthenticationService {
     const token = localStorage.getItem('uniapi-token');
     if (!token) return;
 
-    this.http.get<UserResponse>(`${this.apiUrl}/users/current`, {
-      headers: { 'Requires-Auth': 'true' }
-    }).subscribe({
-      next: (user) => {
-        this.userSubject.next(user);
-      },
-      error: (error) => {
-        console.error("Failed to fetch user:", error);
-        this.userSubject.next(null);
-      }
-    });
+    const role = this.tokenService.getUserRole(token);
+    if (role === 1) {
+      this.http.get<UserResponse>(`${this.apiUrl}/users/current`, {
+        headers: { 'Requires-Auth': 'true' }
+      }).subscribe({
+        next: (user) => {
+          this.userSubject.next(user);
+        },
+        error: (error) => {
+          console.error("Failed to fetch user:", error);
+          this.userSubject.next(null);
+        }
+      });
+    }
   }
 
   logout(): void {

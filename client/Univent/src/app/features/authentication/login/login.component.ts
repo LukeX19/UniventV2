@@ -13,6 +13,7 @@ import { LoginResponse } from '../../../shared/models/authenticationModel';
 import { TokenService } from '../../../core/services/token.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoDialogComponent } from '../../../shared/components/info-dialog/info-dialog.component';
+import { CustomButtonComponent } from '../../../shared/components/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ import { InfoDialogComponent } from '../../../shared/components/info-dialog/info
     MatButtonModule,
     MatIconModule,
     RouterModule,
-    MatCardModule
+    MatCardModule,
+    CustomButtonComponent
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -44,6 +46,7 @@ export class LoginComponent {
   });
 
   hidePassword = true;
+  isLoading = false;
 
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
@@ -62,6 +65,8 @@ export class LoginComponent {
   }  
 
   onSubmit(): void {  
+    this.isLoading = true;
+    
     if (this.loginForm.valid) {
       const loginData = this.loginForm.value; 
 
@@ -75,6 +80,8 @@ export class LoginComponent {
           else if (role === 1) {
             this.router.navigate(['/browse']);
           }
+
+          this.isLoading = false;
         },
         error: (error) => {
           const message = error.error?.message as string;
@@ -109,6 +116,8 @@ export class LoginComponent {
             console.error("Login failed:", error);
             this.snackbarService.error("An error has occured! Please try again later.");
           }
+
+          this.isLoading = false;
         }
       });
     }

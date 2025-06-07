@@ -27,6 +27,11 @@ namespace Univent.App.Users.Queries
             {
                 var dto = _mapper.Map<UserManagementResponseDto>(userEntity);
 
+                // Handle null university
+                dto.UniversityName = userEntity.University != null
+                    ? userEntity.University.Name
+                    : "Unknown University";
+
                 return dto;
             }).ToList();
 

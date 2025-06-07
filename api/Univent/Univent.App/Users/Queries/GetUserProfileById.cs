@@ -40,6 +40,14 @@ namespace Univent.App.Users.Queries
             // Set events participation counter
             userDto.Participations = participatedEventsCounter;
 
+            // Handle null university
+            userDto.UniversityName = user.University != null
+                ? user.University.Name
+                : "Unknown University";
+
+            // Defensive fallback in case of null
+            userDto.UniversityId = user.University?.Id ?? Guid.Empty;
+
             return userDto;
         }
     }

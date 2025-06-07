@@ -23,7 +23,7 @@ export class ForbiddenComponent {
       const token = localStorage.getItem('uniapi-token');
   
       if (!token) {
-        this.router.navigateByUrl('/');
+        this.router.navigate(['/']);
         return;
       }
   
@@ -32,14 +32,14 @@ export class ForbiddenComponent {
       switch (role) {
         // Admin
         case 0:
-          this.router.navigateByUrl('/admin/dashboard');
+          this.router.navigate(['/admin/dashboard']);
           break;
         // Student
         case 1:
-          this.router.navigateByUrl('/home');
+          this.router.navigate(['/browse']);
           break;
         default:
-          this.router.navigateByUrl('/');
+          this.router.navigate(['/']);
       }
     }
 }

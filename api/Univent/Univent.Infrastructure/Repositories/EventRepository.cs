@@ -132,5 +132,36 @@ namespace Univent.Infrastructure.Repositories
                 .Select(g => new { EventId = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.EventId, x => x.Count, ct);
         }
+
+        public async Task<ICollection<Event>> GetAllPotentialEventsAsync(Guid userId, CancellationToken ct = default)
+        {
+            var currentTime = DateTime.UtcNow;
+
+            var userEnrolledEventIds = await _context.EventParticipants
+                .Where(ep => ep.UserId == userId)
+                .Select(ep => ep.EventId)
+                .ToListAsync(ct);
+
+            var events = await _context.Events
+                .AsNoTracking()
+                .Include(e => e.Type)
+                .Where(e =>
+                    !e.IsCancelled &&
+                    e.StartTime > currentTime.AddHours(2) &&
+                    e.AuthorId != userId &&
+                    !userEnrolledEventIds.Contains(e.Id))
+                .ToListAsync(ct);
+
+            var participantCounts = await _context.EventParticipants
+                .Where(ep => events.Select(e => e.Id).Contains(ep.EventId))
+                .GroupBy(ep => ep.EventId)
+                .Select(g => new { EventId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(g => g.EventId, g => g.Count, ct);
+
+            return events
+                .Where(e => !participantCounts.ContainsKey(e.Id) || participantCounts[e.Id] < e.MaximumParticipants)
+                .OrderBy(e => e.StartTime)
+                .ToList();
+        }
     }
 }

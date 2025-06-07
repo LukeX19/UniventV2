@@ -25,7 +25,7 @@ namespace Univent.Infrastructure.Repositories
                 .AsNoTracking()
                 .AsSplitQuery()
                 .Include(u => u.University)
-                .FirstOrDefaultAsync(u => u.Id == id, ct);
+                .FirstOrDefaultAsync(u => u.Id == id && u.Role == AppRole.Student, ct);
 
             return user ?? throw new EntityNotFoundException("User", id);
         }

@@ -1,0 +1,85 @@
+<!-- Floating Chat Button -->
+<div class="fixed bottom-6 right-6 z-50">
+  <button
+    (click)="toggleWidget()"
+    class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition"
+    aria-label="AI Assistant"
+  >
+    <mat-icon>smart_toy</mat-icon>
+  </button>
+</div>
+
+<!-- Chatbot Panel -->
+<div
+  *ngIf="isOpen"
+  class="fixed bottom-24 right-6 w-80 max-h-[70vh] bg-white rounded-xl shadow-lg p-4 flex flex-col gap-3 z-50 border border-gray-300"
+>
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-lg font-semibold text-gray-800">AI Assistant</h2>
+    <button (click)="toggleWidget()" class="text-gray-400 hover:text-red-500">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Options -->
+  <div class="flex flex-wrap gap-2">
+    <button
+      class="px-3 py-1 rounded-full border text-sm font-medium transition"
+      [ngClass]="selectedOption === 'interests' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      (click)="selectOption('interests')"
+    >
+      Interests
+    </button>
+    <button
+      class="px-3 py-1 rounded-full border text-sm font-medium transition"
+      [ngClass]="selectedOption === 'location' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      (click)="selectOption('location')"
+    >
+      Location
+    </button>
+    <button
+      class="px-3 py-1 rounded-full border text-sm font-medium transition"
+      [ngClass]="selectedOption === 'time' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      (click)="selectOption('time')"
+    >
+      Time
+    </button>
+    <button
+      class="px-3 py-1 rounded-full border text-sm font-medium transition"
+      [ngClass]="selectedOption === 'weather' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      (click)="selectOption('weather')"
+    >
+      Weather
+    </button>
+  </div>
+
+  <!-- Prompt Input -->
+  <div *ngIf="selectedOption && selectedOption !== 'weather'" class="flex flex-col gap-1 mt-2">
+    <textarea
+      [(ngModel)]="prompt"
+      rows="3"
+      class="w-full p-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+      placeholder="Describe your interests, location, or time preferences..."
+    ></textarea>
+  </div>
+
+  <!-- Submit Button -->
+  <button
+    class="mt-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+    [disabled]="isLoading || (selectedOption !== 'weather' && !prompt.trim())"
+    (click)="submitPrompt()"
+  >
+    {{ isLoading ? 'Thinking...' : 'Get Suggestions' }}
+  </button>
+
+  <!-- Error Message -->
+  <p *ngIf="hasError" class="text-sm text-red-600">
+    Something went wrong. Please try again later.
+  </p>
+
+  <!-- Assistant Response -->
+  <div *ngIf="response" class="bg-gray-100 p-2 rounded-lg text-sm overflow-y-auto max-h-80 whitespace-pre-line mt-1">
+    {{ response }}
+  </div>
+</div>

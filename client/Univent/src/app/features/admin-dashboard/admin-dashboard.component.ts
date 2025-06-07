@@ -83,6 +83,23 @@ export class AdminDashboardComponent {
     this.fetchUsers();
   }
 
+  getFormattedCreatedAt(raw: string): string {
+    const iso = raw.endsWith('Z') ? raw : raw + 'Z';
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const createdAt = new Date(iso).toLocaleString("ro-RO", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: userTimeZone
+    });
+  
+    return `${createdAt}`;
+  }
+
   getStatusInfo(user: UserManagementResponse): { label: string, color: string, icon: string } {
     if (user.isAccountBanned) return { label: 'Banned', color: 'text-red-600', icon: 'block' };
     if (!user.isAccountConfirmed) return { label: 'Pending', color: 'text-yellow-600', icon: 'schedule' };

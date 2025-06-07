@@ -93,36 +93,35 @@
   </div>
 
   <div class="w-full flex justify-end mt-10 mb-10">
-    <button
-      mat-raised-button
-      color="primary"
-      class="px-6 py-3 rounded-md font-semibold"
-      (click)="openParticipantsDialog()">
-      View Participants
-    </button>
+    <div class="mr-4">
+      <app-custom-button
+        variant="secondary"
+        label="View Participants"
+        type="button"
+        (customClick)="openParticipantsDialog()">
+      </app-custom-button>
+    </div>
 
     <ng-container *ngIf="!isAuthor">
       <!-- Show Leave button if already a participant -->
-      <button
-        mat-raised-button
-        color="warn"
-        class="ml-4 px-6 py-3 rounded-md font-semibold"
-        *ngIf="isParticipant"
-        [disabled]="!canJoinOrLeave"
-        (click)="leaveEvent()">
-        Leave Event
-      </button>
+        <app-custom-button
+          variant="warning"
+          label="Leave Event"
+          type="button"
+          *ngIf="isParticipant"
+          [disabled]="!canJoinOrLeave"
+          (customClick)="leaveEvent()">
+        </app-custom-button>
   
       <!-- Show Join button if not a participant -->
-      <button
-        mat-raised-button
-        color="primary"
-        class="ml-4 px-6 py-3 rounded-md font-semibold"
-        *ngIf="!isParticipant"
-        [disabled]="isEventFull || !canJoinOrLeave"
-        (click)="joinEvent()">
-        Join Event
-      </button>
+        <app-custom-button
+          variant="primary"
+          label="Join Event"
+          type="button"
+          *ngIf="!isParticipant"
+          [disabled]="isEventFull || !canJoinOrLeave"
+          (customClick)="joinEvent()">
+        </app-custom-button>
     </ng-container>
   </div>
 </div>

@@ -24,7 +24,13 @@
         </mat-error>
       </mat-form-field>
 
-      <app-custom-button variant="primary" label="Login" [width]="'100%'" type="submit" [disabled]="loginForm.invalid || this.isLoading"></app-custom-button>
+      <app-custom-button
+        variant="primary"
+        label="Login"
+        [width]="'100%'"
+        type="submit"
+        [disabled]="loginForm.invalid || this.isLoading">
+      </app-custom-button>
     </form>
 
     <div class="text-center mt-8 text-sm">

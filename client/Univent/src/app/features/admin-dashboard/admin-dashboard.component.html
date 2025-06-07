@@ -56,14 +56,14 @@
               <td mat-cell *matCellDef="let user" style="text-align: center;">
                 <div class="flex flex-col items-center gap-2 my-4">
                   <app-custom-button
-                    (click)="approveUser(user.id)"
+                    (customClick)="approveUser(user.id)"
                     *ngIf="!user.isAccountConfirmed && !user.isAccountBanned"
                     label="Approve"
                     [backgroundColor]="'#16A34A'">
                   </app-custom-button>
 
                   <app-custom-button
-                    (click)="banUser(user.id)"
+                    (customClick)="banUser(user.id)"
                     *ngIf="!user.isAccountBanned"
                     label="Ban"
                     variant="secondary"
@@ -115,7 +115,7 @@
       <div class="mt-8">
         <div class="mb-4">
           <app-custom-button
-            (click)="addUniversity()"
+            (customClick)="addUniversity()"
             label="Add University"
             variant="primary">
           </app-custom-button>
@@ -145,13 +145,13 @@
               <td mat-cell *matCellDef="let uni" style="text-align: center;">
                 <div class="flex flex-col items-center gap-2 my-4">
                  <app-custom-button
-                    (click)="editUniversity(uni.id)"
+                    (customClick)="editUniversity(uni.id)"
                     label="Edit"
                     [backgroundColor]="'#E1A200'">
                   </app-custom-button>
 
                   <app-custom-button
-                    (click)="deleteUniversity(uni.id)"
+                    (customClick)="deleteUniversity(uni.id)"
                     label="Delete"
                     variant="secondary"
                     [textColor]="'#DC2626'"
@@ -187,7 +187,7 @@
       <div class="mt-8">
         <div class="mb-4">
           <app-custom-button
-            (click)="addEventType()"
+            (customClick)="addEventType()"
             label="Add Event Type"
             variant="primary">
           </app-custom-button>
@@ -218,13 +218,13 @@
                 <ng-container *ngIf="!type.isDeleted">
                   <div class="flex flex-col items-center gap-2 my-4">
                     <app-custom-button
-                      (click)="editEventType(type.id)"
+                      (customClick)="editEventType(type.id)"
                       label="Edit"
                       [backgroundColor]="'#E1A200'">
                     </app-custom-button>
 
                     <app-custom-button
-                      (click)="toggleEventType(type)"
+                      (customClick)="toggleEventType(type)"
                       label="Disable"
                       variant="secondary"
                       [textColor]="'#DC2626'"
@@ -235,7 +235,7 @@
                 <ng-container *ngIf="type.isDeleted">
                   <div class="flex flex-col items-center gap-2 my-4">
                     <app-custom-button
-                      (click)="toggleEventType(type)"
+                      (customClick)="toggleEventType(type)"
                       label="Re-Enable"
                       variant="secondary"
                       [textColor]="'#312A8D'"

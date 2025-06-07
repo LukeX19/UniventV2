@@ -28,7 +28,7 @@ export class CustomButtonComponent {
   @Input() disabled: boolean = false;
   @Input() border?: string;
 
-  @Output() click = new EventEmitter<Event>();
+  @Output() customClick = new EventEmitter<Event>();
 
   computedBackgroundColor!: string;
   computedTextColor!: string;
@@ -42,7 +42,7 @@ export class CustomButtonComponent {
         border: 'none'
       },
       secondary: {
-        bg: '#FFFFFFF',
+        bg: '#FFFFFF',
         text: '#393E46',
         border: '1px solid #393E46'
       },
@@ -62,7 +62,7 @@ export class CustomButtonComponent {
 
   handleClick(event: Event): void {
     if (!this.disabled) {
-      this.click.emit(event);
+      this.customClick.emit(event);
     }
   }
 }

@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { UserProfileResponse } from '../../shared/models/userModel';
 import { UserService } from '../../core/services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { UniversityService } from '../../core/services/university.service';
@@ -22,6 +22,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { TokenService } from '../../core/services/token.service';
+import { CustomButtonComponent } from '../../shared/components/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-profile-update',
@@ -37,7 +38,8 @@ import { TokenService } from '../../core/services/token.service';
     MatDatepickerModule,
     MatNativeDateModule,
     MatAutocompleteModule,
-    NavbarComponent
+    NavbarComponent,
+    CustomButtonComponent
   ],
   templateUrl: './profile-update.component.html',
   styleUrl: './profile-update.component.scss'
@@ -52,6 +54,7 @@ export class ProfileUpdateComponent {
   private tokenService = inject(TokenService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private location = inject(Location);
   
   user: UserProfileResponse | null = null;
   isUserLoading = true;
@@ -219,6 +222,10 @@ export class ProfileUpdateComponent {
       updatedProfile.pictureUrl = this.user?.pictureUrl ?? null;
       submitUpdate();
     }
+  }
+
+  cancel() {
+    this.location.back();
   }
 
   // Custom validator for names (only alphabet characters, spaces, and - , . ' allowed)

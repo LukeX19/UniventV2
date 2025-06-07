@@ -29,20 +29,12 @@
 
         <!-- Control Buttons (visible only if it's own profile) -->
         <div *ngIf="isOwnProfile" class="flex gap-2">
-          <button
-            mat-raised-button
-            color="primary"
-            class="h-10"
-            (click)="onEditProfile()">
-            Edit Profile
+          <button mat-icon-button (click)="onEditProfile()" style="display: flex; align-items: center; justify-content: center; padding: 8px; height: 40px; width: 40px; border-radius: 50%;">
+            <mat-icon>edit</mat-icon>
           </button>
 
-          <button
-            mat-raised-button
-            color="warn"
-            class="h-10"
-            (click)="onDeleteAccount()">
-            Delete Account
+          <button mat-icon-button (click)="onDeleteAccount()" style="display: flex; align-items: center; justify-content: center; padding: 8px; height: 40px; width: 40px; border-radius: 50%;">
+            <mat-icon>delete</mat-icon>
           </button>
         </div>
       </div>

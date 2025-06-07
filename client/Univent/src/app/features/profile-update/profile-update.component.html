@@ -67,10 +67,19 @@
       <mat-error *ngIf="profileForm.get('year')?.errors as errors">{{ getErrorMessage('year', errors) }}</mat-error>
     </mat-form-field>
 
-    <div class="flex justify-end">
-      <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid || isSubmitting">
-        Save Changes
-      </button>
+    <div class="flex justify-between">
+      <app-custom-button
+        variant="warning"
+        label="Cancel"
+        (customClick)="cancel()">
+      </app-custom-button>
+
+      <app-custom-button
+        variant="primary"
+        label="Save Changes"
+        type="submit"
+        [disabled]="profileForm.invalid || isSubmitting">
+      </app-custom-button>
     </div>
   </form>
 </div>

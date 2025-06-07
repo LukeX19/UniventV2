@@ -1,0 +1,38 @@
+.calendar-container {
+  display: flex;
+  justify-content: end;
+
+  .calendar-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 0;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    width: 90px;
+
+    .calendar-year {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    .calendar-day {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .calendar-month {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      font-weight: 400;
+      color: #000000;
+    }
+
+    .calendar-time {
+      font-size: 0.85rem;
+      color: #374151;
+      margin-top: 0.5rem;
+    }
+  }
+}

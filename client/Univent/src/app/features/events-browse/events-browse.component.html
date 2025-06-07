@@ -37,7 +37,7 @@
   <!-- MAIN CONTENT -->
   <app-navbar></app-navbar>
 
-  <div class="max-w-7xl mx-auto px-6 mb-4">
+  <div class="w-full max-w-7xl mx-auto px-6 xl:px-0 mb-4">
     <p class="text-3xl font-semibold text-center w-full mt-4 mb-6">Upcoming Events</p>
 
     <!-- Search Bar + Filter Icon -->
@@ -78,20 +78,20 @@
     </div>
 
     <ng-container *ngIf="!isLoading">
-      <div *ngIf="events.length > 0; else noEvents">
+      <div *ngIf="events.length > 0; else noEvents" class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10">
         <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
-
-        <!-- Paginator -->
-        <div class="flex justify-center mt-6">
-          <mat-paginator 
-            [length]="totalEvents"
-            [pageSize]="pagination.pageSize"
-            [pageSizeOptions]="[5, 10, 15, 20]"
-            [pageIndex]="pagination.pageIndex - 1"
-            (page)="onPageChange($event)"
-            style="background-color: transparent;">
-          </mat-paginator>
-        </div>
+      </div>
+      
+      <!-- Paginator -->
+      <div class="flex justify-center mt-6">
+        <mat-paginator 
+          [length]="totalEvents"
+          [pageSize]="pagination.pageSize"
+          [pageSizeOptions]="[5, 10, 15, 20]"
+          [pageIndex]="pagination.pageIndex - 1"
+          (page)="onPageChange($event)"
+          style="background-color: transparent;">
+        </mat-paginator>
       </div>
 
       <ng-template #noEvents>

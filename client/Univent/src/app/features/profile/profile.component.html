@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class="max-w-7xl mx-auto px-6 mt-8">
+<div class="max-w-7xl mx-auto px-6 mt-8 mb-4">
   <!-- Profile Card -->
   <div class="bg-gray-100 rounded-xl p-10 flex items-center gap-6 max-w-3xl mx-auto shadow-sm">
     <!-- Avatar -->
@@ -108,7 +108,7 @@
   </div>
   
   <!-- Events List -->
-  <div class="mt-6 mb-6 space-y-4">
+  <div class="mt-6 space-y-4">
     <!-- Created Events -->
     <ng-container *ngIf="showCreatedSection; else participatedEventsSection">
       <ng-container *ngIf="createdEvents.length > 0; else noCreated">

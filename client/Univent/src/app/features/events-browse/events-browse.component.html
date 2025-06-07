@@ -1,12 +1,37 @@
 <mat-drawer-container style="height: 100vh; background-color: transparent;" autosize>
   <!-- FILTER SIDE DRAWER -->
-  <mat-drawer #drawer mode="side" position="end" style="width: 300px; padding: 20px;">
-    <h3 class="text-lg font-semibold mb-4">Filter by Event Type</h3>
-    <mat-selection-list [(ngModel)]="selectedEventTypeIds" (ngModelChange)="onFilterChange(drawer)">
-      <mat-list-option *ngFor="let type of eventTypes" [value]="type.id">
-        {{ type.name }}
-      </mat-list-option>
-    </mat-selection-list>
+  <mat-drawer #drawer mode="over" position="end" style="width: 350px; padding: 20px;" [autoFocus]="false">
+    <div class="mat-drawer-header">
+      <mat-icon class="close-icon" (click)="drawer.close()">close</mat-icon>
+      <p class="mat-drawer-title">Filter</p>
+    </div>
+    <div class="content">
+      <h3 class="text-md font-semibold">Event Type</h3>
+      <mat-selection-list [(ngModel)]="selectedEventTypeIds" (ngModelChange)="onFilterChange(drawer)">
+        <mat-list-option *ngFor="let type of eventTypes" [value]="type.id">
+          {{ type.name }}
+        </mat-list-option>
+      </mat-selection-list>
+    </div>
+    <div class="mat-drawer-footer" *ngIf="selectedEventTypeIds.length > 0">
+      <div style="flex: 2">
+        <app-custom-button
+          variant="primary"
+          [label]="totalEvents === 0 ? 'No events' : (totalEvents === 1 ? 'Show 1 event' : 'Show ' + totalEvents + ' events')"
+          (customClick)="drawer.close()"
+          [width]="'100%'">
+        </app-custom-button>
+      </div>
+
+      <div style="flex: 1">
+        <app-custom-button
+          variant="secondary"
+          label="Clear"
+          (customClick)="clearFilters(drawer)"
+          [width]="'100%'">
+        </app-custom-button>
+      </div>
+    </div>
   </mat-drawer>
 
   <!-- MAIN CONTENT -->
@@ -38,7 +63,11 @@
       </div>
 
       <!-- Filter Icon Button -->
-      <button mat-icon-button (click)="drawer.toggle()" aria-label="Filter">
+      <button
+        mat-icon-button
+        (click)="drawer.toggle()"
+        aria-label="Filter"
+        style="display: flex; align-items: center; justify-content: center; height: 40px; width: 40px; padding: 8px; border-radius: 50%;">
         <mat-icon>filter_list</mat-icon>
       </button>
     </div>

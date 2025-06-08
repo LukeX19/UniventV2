@@ -27,6 +27,6 @@ body {
   font-family: "Outfit", sans-serif;
 }
 
-* {
-  font-family: 'Outfit', sans-serif;
+*:not(.mat-icon):not(.material-icons):not([class*="material-icons"]) {
+  font-family: 'Outfit', sans-serif !important;
 }

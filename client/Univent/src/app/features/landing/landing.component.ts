@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -8,5 +9,9 @@ import { Component } from '@angular/core';
   styleUrl: './landing.component.scss'
 })
 export class LandingComponent {
-
+  private router = inject(Router);
+  
+  onGetStartedNow() {
+    this.router.navigate(['/login']);
+  }
 }

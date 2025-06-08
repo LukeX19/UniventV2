@@ -31,22 +31,34 @@ export class EventCardComponent {
   @Input() event!: EventSummaryResponse;
   @Input() enableOptions: boolean = false;
 
-  getFormattedStartTime(): string {
-    const raw = this.event.startTime;
-    const iso = raw.endsWith('Z') ? raw : raw + 'Z';
+  getFormattedDateParts(dateString: string) {
+    const iso = dateString.endsWith('Z') ? dateString : dateString + 'Z';
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const startTime = new Date(iso).toLocaleString("ro-RO", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    const date = new Date(iso);
+
+    const options = { timeZone: userTimeZone };
+  
+    const day = date.toLocaleDateString("ro-RO", {
+      day: '2-digit',
+      ...options
+    });
+    const month = date.toLocaleDateString("ro-RO", {
+      month: 'short',
+      ...options
+    });
+    const year = date.toLocaleDateString("ro-RO", {
+      year: 'numeric',
+      ...options
+    });
+    const time = date.toLocaleTimeString("ro-RO", {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
-      timeZone: userTimeZone
+      ...options
     });
   
-    return `Starts ${startTime}`;
+    return { day, month, year, time };
   }
 
   getFormattedPostedDate(): string {
@@ -132,5 +144,9 @@ export class EventCardComponent {
     const diffInHours = diffInMs / (1000 * 60 * 60);
 
     return diffInHours > 2;
+  }
+
+  onUserClick(id: string) {
+    this.router.navigate([`/profile/${id}`]);
   }
 }

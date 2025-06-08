@@ -24,11 +24,13 @@
         </mat-error>
       </mat-form-field>
 
-      <div class="flex justify-center">
-        <button mat-raised-button color="primary" class="w-1/2" type="submit" [disabled]="loginForm.invalid">
-          Login
-        </button>
-      </div>
+      <app-custom-button
+        variant="primary"
+        label="Login"
+        [width]="'100%'"
+        type="submit"
+        [disabled]="loginForm.invalid || this.isLoading">
+      </app-custom-button>
     </form>
 
     <div class="text-center mt-8 text-sm">

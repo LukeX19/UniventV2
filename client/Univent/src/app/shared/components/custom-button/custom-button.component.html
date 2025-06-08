@@ -1,0 +1,23 @@
+<button
+  [attr.type]="type"
+  [ngStyle]="{
+      'background-color': computedBackgroundColor,
+      'color': computedTextColor,
+      'width': width,
+      'min-width': minWidth,
+      'border': computedBorder
+  }"
+  class="custom-button"
+  (click)="handleClick($event)"
+  [disabled]="disabled"
+  >
+  <ng-container *ngIf="icon && iconPosition === 'left'">
+      <mat-icon class="icon">{{ icon }}</mat-icon>
+  </ng-container>
+
+  <span class="label">{{ label }}</span>
+
+  <ng-container *ngIf="icon && iconPosition === 'right'">
+      <mat-icon class="icon">{{ icon }}</mat-icon>
+  </ng-container>
+</button>

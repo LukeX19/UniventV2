@@ -17,12 +17,14 @@
       <div class="flex flex-col items-center justify-center w-3/4 h-full text-center p-4">
         <p class="text-gray-600">Drag & drop an image or</p>
 
-        <button 
-          mat-raised-button 
-          class="text-white px-4 py-2 mt-2 rounded-md font-semibold" 
-          (click)="onChooseImage($event)">
-          Choose Event Image
-        </button>
+        <div class="mt-2">
+          <app-custom-button
+            variant="primary"
+            label="Choose Event Image"
+            type="button"
+            (customClick)="onChooseImage($event)">
+          </app-custom-button>
+        </div>
 
         <input 
           #fileInput 
@@ -43,13 +45,14 @@
         alt="Event Thumbnail" 
         class="max-w-full max-h-96 object-contain rounded-lg shadow-md">
 
-      <button
-        mat-raised-button
-        color="warn"
-        class="mt-4 bg-red-500 text-white font-semibold px-6 py-2 rounded-md hover:bg-red-600 transition"
-        (click)="removeImage()">
-        Remove Image
-      </button>
+      <div class="mt-4">
+        <app-custom-button
+          variant="warning"
+          label="Remove Image"
+          type="button"
+          (customClick)="removeImage()">
+        </app-custom-button>
+      </div>
     </div>
 
     <p class="text-xl font-semibold mb-4 mt-10">Enter Name</p>
@@ -173,13 +176,20 @@
     </div>
 
     <div class="w-full flex justify-between mt-10 mb-10">
-      <button mat-raised-button color="warn" class="px-6 py-3 rounded-md font-semibold" (click)="cancel()">
-        Cancel
-      </button>
+      <app-custom-button
+        variant="warning"
+        label="Cancel"
+        type="button"
+        (customClick)="cancel()">
+      </app-custom-button>
 
-      <button mat-raised-button color="primary" class="px-6 py-3 rounded-md font-semibold" (click)="onSubmit()">
-        Create Event
-      </button>
+      <app-custom-button
+        variant="primary"
+        label="Create Event"
+        type="button"
+        (customClick)="onSubmit()"
+        [disabled]="eventForm.invalid">
+      </app-custom-button>
     </div>
   </form>
 </div>

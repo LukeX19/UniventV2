@@ -14,6 +14,7 @@ import { EventTypeService } from '../../core/services/event-type.service';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { AiAssistantWidgetComponent } from "../../shared/components/ai-assistant-widget/ai-assistant-widget.component";
+import { CustomButtonComponent } from '../../shared/components/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-events-browse',
@@ -29,6 +30,7 @@ import { AiAssistantWidgetComponent } from "../../shared/components/ai-assistant
     MatIconModule,
     MatSidenavModule,
     MatListModule,
+    CustomButtonComponent,
     AiAssistantWidgetComponent
 ],
   templateUrl: './events-browse.component.html',
@@ -110,5 +112,10 @@ export class EventsBrowseComponent {
     }
 
     this.fetchEvents();
+  }
+
+  clearFilters(drawer: MatDrawer) {
+    this.selectedEventTypeIds = [];
+    this.onFilterChange(drawer);
   }
 }

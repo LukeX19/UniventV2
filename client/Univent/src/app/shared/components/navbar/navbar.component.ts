@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { UserResponse } from '../../models/userModel';
 import { Router } from '@angular/router';
 import { TokenService } from '../../../core/services/token.service';
+import { CustomButtonComponent } from '../custom-button/custom-button.component';
 
 @Component({
   selector: 'app-navbar',
@@ -16,7 +17,8 @@ import { TokenService } from '../../../core/services/token.service';
     CommonModule,
     MatToolbarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    CustomButtonComponent
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'

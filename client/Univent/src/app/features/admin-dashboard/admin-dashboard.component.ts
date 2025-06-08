@@ -17,6 +17,8 @@ import { EditTextDialogComponent } from '../../shared/components/edit-text-dialo
 import { GenericDialogComponent } from '../../shared/components/generic-dialog/generic-dialog.component';
 import { EventTypeService } from '../../core/services/event-type.service';
 import { EventTypeRequest, EventTypeResponse } from '../../shared/models/eventTypeModel';
+import { MatTabsModule } from '@angular/material/tabs';
+import { CustomButtonComponent } from '../../shared/components/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -28,7 +30,9 @@ import { EventTypeRequest, EventTypeResponse } from '../../shared/models/eventTy
     MatIconModule,
     MatTableModule,
     MatPaginatorModule,
-    NavbarComponent
+    NavbarComponent,
+    MatTabsModule,
+    CustomButtonComponent
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss'
@@ -39,6 +43,8 @@ export class AdminDashboardComponent {
   private eventTypeService = inject(EventTypeService);
   private snackbarService = inject(SnackbarService);
   private dialog = inject(MatDialog);
+
+  selectedTabIndex: number = 0;
 
   users: UserManagementResponse[] = [];
   usersPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };

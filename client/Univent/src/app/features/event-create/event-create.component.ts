@@ -17,6 +17,7 @@ import { FileService } from '../../core/services/file.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { CreateEventRequest } from '../../shared/models/eventModel';
 import { EventService } from '../../core/services/event.service';
+import { CustomButtonComponent } from '../../shared/components/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-event-create',
@@ -35,7 +36,8 @@ import { EventService } from '../../core/services/event.service';
     MatNativeDateModule,
     NavbarComponent,
     GoogleMap,
-    MapMarker
+    MapMarker,
+    CustomButtonComponent
   ],
   providers: [],
   templateUrl: './event-create.component.html',

@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthenticationService } from '../../core/services/authentication.service';
 import { SnackbarService } from '../../core/services/snackbar.service';
 import { EventParticipantsDialogComponent } from '../../shared/components/event-participants-dialog/event-participants-dialog.component';
+import { CustomButtonComponent } from '../../shared/components/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-event-details',
@@ -24,7 +25,8 @@ import { EventParticipantsDialogComponent } from '../../shared/components/event-
     MatDividerModule,
     GoogleMap,
     MapMarker,
-    MatButtonModule
+    MatButtonModule,
+    CustomButtonComponent
   ],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.scss'
@@ -213,5 +215,11 @@ export class EventDetailsComponent {
         this.snackbarService.error("Something went wrong. Please try again later.");
       }
     });
+  }
+
+  onUserClick(id: string | undefined) {
+    if (id) {
+      this.router.navigate([`/profile/${id}`]);
+    }
   }
 }

@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class="max-w-7xl mx-auto px-6 mt-8">
+<div class="w-full max-w-7xl mx-auto px-6 xl:px-0 mt-8 mb-4">
   <!-- Profile Card -->
   <div class="bg-gray-100 rounded-xl p-10 flex items-center gap-6 max-w-3xl mx-auto shadow-sm">
     <!-- Avatar -->
@@ -29,20 +29,12 @@
 
         <!-- Control Buttons (visible only if it's own profile) -->
         <div *ngIf="isOwnProfile" class="flex gap-2">
-          <button
-            mat-raised-button
-            color="primary"
-            class="h-10"
-            (click)="onEditProfile()">
-            Edit Profile
+          <button mat-icon-button (click)="onEditProfile()" style="display: flex; align-items: center; justify-content: center; padding: 8px; height: 40px; width: 40px; border-radius: 50%;">
+            <mat-icon>edit</mat-icon>
           </button>
 
-          <button
-            mat-raised-button
-            color="warn"
-            class="h-10"
-            (click)="onDeleteAccount()">
-            Delete Account
+          <button mat-icon-button (click)="onDeleteAccount()" style="display: flex; align-items: center; justify-content: center; padding: 8px; height: 40px; width: 40px; border-radius: 50%;">
+            <mat-icon>delete</mat-icon>
           </button>
         </div>
       </div>
@@ -116,12 +108,14 @@
   </div>
   
   <!-- Events List -->
-  <div class="mt-6 mb-6 space-y-4">
+  <div class="mt-6 space-y-4">
     <!-- Created Events -->
     <ng-container *ngIf="showCreatedSection; else participatedEventsSection">
       <ng-container *ngIf="createdEvents.length > 0; else noCreated">
-        <app-event-card *ngFor="let event of createdEvents" [event]="event" [enableOptions]="isOwnProfile" />
-
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-10">
+          <app-event-card *ngFor="let event of createdEvents" [event]="event" [enableOptions]="isOwnProfile"/>
+        </div>
+        
         <div class="flex justify-center mt-6">
           <mat-paginator 
             [length]="createdTotalEvents"
@@ -142,7 +136,9 @@
     <!-- Participated Events -->
     <ng-template #participatedEventsSection>
       <ng-container *ngIf="participatedEvents.length > 0; else noParticipated">
-        <app-event-card *ngFor="let event of participatedEvents" [event]="event"/>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-10">
+          <app-event-card *ngFor="let event of participatedEvents" [event]="event"/>
+        </div>
 
         <div class="flex justify-center mt-6">
           <mat-paginator 

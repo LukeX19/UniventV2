@@ -1,29 +1,11 @@
-<div class="max-w-7xl mx-auto relative">
-  <!-- CANCELLED LABEL (separate from the card, not affected by opacity) -->
+<div class="max-w-7xl mx-auto relative h-full">
   <div 
-    *ngIf="event.isCancelled"
-    class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-    <span class="bg-white text-red-600 border border-red-600 px-5 py-2 rounded-full font-semibold text-base shadow-md">
-      Event Cancelled
-    </span>
-  </div>
-  
-  <div 
-    class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-shadow hover:shadow-lg p-4 mb-4 relative"
+    class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-shadow hover:shadow-lg py-5 px-10 mb-4 relative"
     [ngClass]="{ 'opacity-30 pointer-events-none': event.isCancelled }"
     (click)="navigateToEvent()">
 
-    <!-- CANCELLED LABEL -->
-    <div 
-      *ngIf="event.isCancelled"
-      class="absolute inset-0 flex items-center justify-center z-20">
-      <span class="bg-white text-red-600 border border-red-600 px-5 py-2 rounded-full font-semibold text-base shadow-md">
-        Event Cancelled
-      </span>
-    </div>
-
     <!-- Options Menu -->
-    <div *ngIf="enableOptions && !event.isCancelled && canEditOrCancel" class="absolute top-4 right-4 z-10" (click)="$event.stopPropagation()">
+    <div *ngIf="enableOptions && !event.isCancelled && canEditOrCancel" class="absolute top-4 right-1 z-10" (click)="$event.stopPropagation()">
       <button
         mat-icon-button
         [matMenuTriggerFor]="optionsMenu"
@@ -31,17 +13,27 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #optionsMenu="matMenu">
-        <button mat-menu-item (click)="onUpdate()">Edit</button>
-        <button mat-menu-item (click)="onCancel()">Cancel</button>
+        <button mat-menu-item (click)="onUpdate()">Update Event</button>
+        <button mat-menu-item (click)="onCancel()">Cancel Event</button>
       </mat-menu>
     </div>
 
     <!-- Wrapper: Image + Content -->
-    <div class="flex items-center space-x-4">
+    <div class="flex flex-col">
 
-      <!-- Left Section: Event Image -->
-      <div class="relative w-80 h-50">
-        <img [src]="event.pictureUrl" alt="Event Image" class="w-full h-full object-cover rounded-md" />
+      <!-- Event Image -->
+      <div class="relative w-full h-[250px] lg:h-[350px]">
+        <img [src]="event.pictureUrl" alt="Event Image" class="w-full h-full object-cover rounded-lg" />
+        
+        <!-- CANCELLED LABEL (separate from the card, not affected by opacity) -->
+        <div 
+          *ngIf="event.isCancelled"
+          class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <span class="bg-white text-red-600 border border-red-600 px-5 py-2  font-semibold text-base shadow-md">
+            Event Cancelled
+          </span>
+        </div>
+        
         <span 
           class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded"
           style="font-weight: 500;">
@@ -49,27 +41,68 @@
         </span>
       </div>
 
-      <!-- Right Section: Event Details -->
-      <div class="flex flex-col flex-grow">
-        <p class="text-2xl font-semibold">{{ event.name }}</p>
-        <p class="text-sm text-gray-700">
-          {{ event.enrolledParticipants }} / {{ event.maximumParticipants }} Participants Joined
-        </p>
-        <p class="text-sm text-gray-600">{{ getFormattedStartTime() }}</p>
-        <p class="text-sm text-gray-600">{{ event.locationAddress }}</p>
-        <div class="flex items-center mt-2 mb-1">
+      <!-- Title -->
+      <h2 class="text-[18px] sm:text-[24px] text-2xl font-bold text-center my-4">{{ event.name }}</h2>
+
+      <!-- Where & When -->
+      <div class="grid grid-cols-4 gap-2 mb-3">
+        <!-- Where -->
+        <div class="col-span-3 flex items-center h-full">
+          <div class="flex flex-col">
+            <div style="display: flex; align-items: flex-start; gap: 8px; flex-wrap: nowrap;">
+              <mat-icon style="color: #ef4444; flex-shrink: 0; margin-bottom: 4px;">
+                location_pin
+              </mat-icon>
+              <p style="font-size: 14px; color: #1f2937; line-height: 1.4; word-break: break-word; margin: 0;">
+                {{ event.locationAddress }}
+              </p>
+            </div>
+            
+            <div class="flex flex-row gap-2 mt-2 sm:mt-0">
+              <mat-icon>people</mat-icon>
+              <p class="text-[14px] sm:text-[16px] text-gray-800">
+                {{ event.enrolledParticipants }} / {{ event.maximumParticipants }} Participants Joined
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- When -->
+        <div class="col-span-1">
+          <div class="calendar-container">
+            <div class="calendar-box">
+              <div class="calendar-year">{{ getFormattedDateParts(event.startTime).year }}</div>
+              <div class="calendar-day">{{ getFormattedDateParts(event.startTime).day }}</div>
+              <div class="calendar-month">{{ getFormattedDateParts(event.startTime).month }}</div>
+              <div class="calendar-time">{{ getFormattedDateParts(event.startTime).time }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <!-- Author Info -->
+      <div class="flex items-center justify-between border-t pt-3 text-sm text-gray-600">
+        <div class="flex items-center">
           <img *ngIf="event.author.pictureUrl; else showInitials"
             [src]="event.author.pictureUrl"
             alt="User Avatar"
-            class="w-10 h-10 rounded-full mr-2"/>
+            class="w-10 h-10 rounded-full mr-2 transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+            (click)="onUserClick(event.author.id); $event.stopPropagation()"/>
           <ng-template #showInitials>
-            <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2">
+            <div
+              class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2
+                    transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+              (click)="onUserClick(event.author.id); $event.stopPropagation()">
               {{ getAuthorInitials(event.author) }}
             </div>
           </ng-template>
           <div>
-            <span class="text-sm font-medium">{{ getAuthorFullName() }}</span>
-            <div class="flex items-center bg-gray-200 rounded-full px-1 pr-2 w-fit mb-1">
+            <span
+              class="text-sm font-medium transition duration-200 hover:text-blue-600 hover:underline cursor-pointer"
+              (click)="onUserClick(event.author.id); $event.stopPropagation()">
+              {{ getAuthorFullName() }}
+            </span>
+            <div class="flex items-center bg-gray-100 rounded-full px-1 pr-2 w-fit mb-1">
               <mat-icon style="width: 20px; color: #FFA500; font-size: 18px; vertical-align: middle; padding-top: 3px;">star</mat-icon>
               <span class="text-xs font-medium text-gray-800">{{ event.author.rating.toFixed(2) }}</span>
             </div>

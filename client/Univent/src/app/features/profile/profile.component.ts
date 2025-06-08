@@ -141,13 +141,13 @@ export class ProfileComponent {
   get formattedDate(): string {
     if (!this.user) return "";
     
-    const createdAt = new Date(this.user.createdAt).toLocaleString("ro-RO", {
+    const birthday = new Date(this.user.birthday).toLocaleString("ro-RO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric"
     });
 
-    return `${createdAt}`;
+    return `${birthday}`;
   }
 
   getAccountAge(createdAt?: string): string {

@@ -24,14 +24,20 @@
           <img *ngIf="event?.author?.pictureUrl; else showInitials"
             [src]="event?.author?.pictureUrl"
             alt="User Avatar"
-            class="w-10 h-10 rounded-full mr-2"/>
+            class="w-10 h-10 rounded-full mr-2 transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+            (click)="onUserClick(event?.author?.id)"/>
           <ng-template #showInitials>
-            <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2">
+            <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2
+                        transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+              (click)="onUserClick(event?.author?.id)">
               {{ getAuthorInitials(event?.author || null) }}
             </div>
           </ng-template>
           <div>
-            <span class="text-sm font-medium">{{ getAuthorFullName() }}</span>
+            <span class="text-sm font-medium transition duration-200 hover:text-blue-600 hover:underline cursor-pointer"
+              (click)="onUserClick(event?.author?.id)">
+              {{ getAuthorFullName() }}
+            </span>
             <div class="flex items-center bg-gray-200 rounded-full px-1 pr-2 w-fit mb-1">
               <mat-icon style="width: 20px; color: #FFA500; font-size: 18px; vertical-align: middle; padding-top: 3px;">star</mat-icon>
               <span class="text-xs font-medium text-gray-800">{{ event?.author?.rating?.toFixed(2) }}</span>
@@ -93,36 +99,35 @@
   </div>
 
   <div class="w-full flex justify-end mt-10 mb-10">
-    <button
-      mat-raised-button
-      color="primary"
-      class="px-6 py-3 rounded-md font-semibold"
-      (click)="openParticipantsDialog()">
-      View Participants
-    </button>
+    <div class="mr-4">
+      <app-custom-button
+        variant="secondary"
+        label="View Participants"
+        type="button"
+        (customClick)="openParticipantsDialog()">
+      </app-custom-button>
+    </div>
 
     <ng-container *ngIf="!isAuthor">
       <!-- Show Leave button if already a participant -->
-      <button
-        mat-raised-button
-        color="warn"
-        class="ml-4 px-6 py-3 rounded-md font-semibold"
-        *ngIf="isParticipant"
-        [disabled]="!canJoinOrLeave"
-        (click)="leaveEvent()">
-        Leave Event
-      </button>
+        <app-custom-button
+          variant="warning"
+          label="Leave Event"
+          type="button"
+          *ngIf="isParticipant"
+          [disabled]="!canJoinOrLeave"
+          (customClick)="leaveEvent()">
+        </app-custom-button>
   
       <!-- Show Join button if not a participant -->
-      <button
-        mat-raised-button
-        color="primary"
-        class="ml-4 px-6 py-3 rounded-md font-semibold"
-        *ngIf="!isParticipant"
-        [disabled]="isEventFull || !canJoinOrLeave"
-        (click)="joinEvent()">
-        Join Event
-      </button>
+        <app-custom-button
+          variant="primary"
+          label="Join Event"
+          type="button"
+          *ngIf="!isParticipant"
+          [disabled]="isEventFull || !canJoinOrLeave"
+          (customClick)="joinEvent()">
+        </app-custom-button>
     </ng-container>
   </div>
 </div>

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { TokenService } from '../../../core/services/token.service';
+import { CustomButtonComponent } from '../../../shared/components/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-not-found',
@@ -10,7 +11,8 @@ import { TokenService } from '../../../core/services/token.service';
   imports: [
     CommonModule,
     MatButtonModule,
-    RouterModule
+    RouterModule,
+    CustomButtonComponent
   ],
   templateUrl: './not-found.component.html',
   styleUrl: './not-found.component.scss'

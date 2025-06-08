@@ -29,11 +29,20 @@
         <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
           <!-- Show Profile Picture if available -->
           <ng-container *ngIf="(user$ | async) as user">
-            <img *ngIf="user.pictureUrl; else showInitials" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
+            <img *ngIf="user.pictureUrl; else showInitials"
+              [src]="user.pictureUrl"
+              alt="User Avatar"
+              [class]="
+                'w-10 h-10 rounded-full transition duration-200 cursor-pointer mr-2 ' +
+                (isProfileMenuOpen ? 'ring-2 ring-offset-1 ring-blue-500 scale-105' : 'hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500')
+              "/>
 
             <!-- Show Initials -->
             <ng-template #showInitials>
-              <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
+              <div [class]="
+                  'w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg transition duration-200 cursor-pointer mr-2 ' +
+                  (isProfileMenuOpen ? 'ring-2 ring-offset-1 ring-blue-500 scale-105' : 'hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500')
+                ">
                 {{ getUserInitials(user) }}
               </div>
             </ng-template>
@@ -65,11 +74,20 @@
         <div class="relative flex items-center cursor-pointer" (click)="toggleProfileMenu()">
           <!-- Show Profile Picture if available -->
           <ng-container *ngIf="(user$ | async) as user">
-            <img *ngIf="user.pictureUrl; else showInitialsLarge" [src]="user.pictureUrl" alt="User Avatar" class="w-10 h-10 rounded-full"/>
+            <img *ngIf="user.pictureUrl; else showInitialsLarge"
+              [src]="user.pictureUrl"
+              alt="User Avatar"
+              [class]="
+                'w-10 h-10 rounded-full transition duration-200 cursor-pointer mr-2 ' +
+                (isProfileMenuOpen ? 'ring-2 ring-offset-1 ring-blue-500 scale-105' : 'hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500')
+              "/>
 
             <!-- Show Initials -->
             <ng-template #showInitialsLarge>
-              <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg">
+              <div [class]="
+                  'w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg transition duration-200 cursor-pointer mr-2 ' +
+                  (isProfileMenuOpen ? 'ring-2 ring-offset-1 ring-blue-500 scale-105' : 'hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500')
+                ">
                 {{ getUserInitials(user) }}
               </div>
             </ng-template>

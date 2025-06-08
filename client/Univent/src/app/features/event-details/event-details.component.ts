@@ -216,4 +216,10 @@ export class EventDetailsComponent {
       }
     });
   }
+
+  onUserClick(id: string | undefined) {
+    if (id) {
+      this.router.navigate([`/profile/${id}`]);
+    }
+  }
 }

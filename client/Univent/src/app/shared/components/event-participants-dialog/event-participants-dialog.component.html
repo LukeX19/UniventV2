@@ -9,16 +9,23 @@
       <img *ngIf="p.pictureUrl; else initials" 
            [src]="p.pictureUrl" 
            alt="User Avatar" 
-           class="w-10 h-10 rounded-full mr-3" />
+           class="w-10 h-10 rounded-full mr-2 transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+           (click)="onUserClick(p.userId)"/>
       <ng-template #initials>
-        <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-3">
+        <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2
+                    transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+                    (click)="onUserClick(p.userId)">
           {{ getInitials(p.firstName, p.lastName) }}
         </div>
       </ng-template>
   
       <!-- Name and Rating -->
       <div class="flex flex-col">
-        <span class="text-sm font-medium text-gray-900">{{ p.firstName }} {{ p.lastName }}</span>
+        <span
+          class="text-sm font-medium text-gray-900 transition duration-200 hover:text-blue-600 hover:underline cursor-pointer"
+          (click)="onUserClick(p.userId)">
+          {{ p.firstName }} {{ p.lastName }}
+        </span>
         <div class="flex items-center bg-gray-200 rounded-full px-1 pr-2 w-fit mb-1">
           <mat-icon style="width: 20px; color: #FFA500; font-size: 18px; vertical-align: middle; padding-top: 3px;">star</mat-icon>
           <span class="text-xs font-medium text-gray-800">{{ p.rating.toFixed(2) }}</span>

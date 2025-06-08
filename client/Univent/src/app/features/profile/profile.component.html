@@ -112,7 +112,7 @@
     <!-- Created Events -->
     <ng-container *ngIf="showCreatedSection; else participatedEventsSection">
       <ng-container *ngIf="createdEvents.length > 0; else noCreated">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-10">
           <app-event-card *ngFor="let event of createdEvents" [event]="event" [enableOptions]="isOwnProfile"/>
         </div>
         
@@ -136,7 +136,7 @@
     <!-- Participated Events -->
     <ng-template #participatedEventsSection>
       <ng-container *ngIf="participatedEvents.length > 0; else noParticipated">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-10">
           <app-event-card *ngFor="let event of participatedEvents" [event]="event"/>
         </div>
 

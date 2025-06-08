@@ -78,7 +78,7 @@
     </div>
 
     <ng-container *ngIf="!isLoading">
-      <div *ngIf="events.length > 0; else noEvents" class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10">
+      <div *ngIf="events.length > 0; else noEvents" class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-10">
         <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
       </div>
       

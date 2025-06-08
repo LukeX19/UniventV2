@@ -9,12 +9,12 @@
       <button
         mat-icon-button
         [matMenuTriggerFor]="optionsMenu"
-        class="flex items-center justify-center w-9 h-9 rounded-full transition duration-200 ease-in-out">
+        class="flex items-center justify-center w-9 h-9 rounded-full transition duration-200 ease-in-out hover:bg-gray-200 active:bg-gray-300">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #optionsMenu="matMenu">
-        <button mat-menu-item (click)="onUpdate()">Update</button>
-        <button mat-menu-item (click)="onCancel()">Cancel</button>
+        <button mat-menu-item (click)="onUpdate()">Update Event</button>
+        <button mat-menu-item (click)="onCancel()">Cancel Event</button>
       </mat-menu>
     </div>
 

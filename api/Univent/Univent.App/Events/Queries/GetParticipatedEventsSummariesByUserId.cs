@@ -6,9 +6,9 @@ using Univent.App.Pagination.Dtos;
 
 namespace Univent.App.Events.Queries
 {
-    public record GetParticipatedEventsSummariesByUserIdQuery(Guid UserId, PaginationRequestDto Pagination) : IRequest<PaginationResponseDto<EventSummaryResponseDto>>;
+    public record GetParticipatedEventsSummariesByUserIdQuery(Guid UserId, PaginationRequestDto Pagination) : IRequest<PaginationResponseDto<EventSummaryWithFeedbackStatusResponseDto>>;
 
-    public class GetParticipatedEventsSummariesByUserIdHandler : IRequestHandler<GetParticipatedEventsSummariesByUserIdQuery, PaginationResponseDto<EventSummaryResponseDto>>
+    public class GetParticipatedEventsSummariesByUserIdHandler : IRequestHandler<GetParticipatedEventsSummariesByUserIdQuery, PaginationResponseDto<EventSummaryWithFeedbackStatusResponseDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace Univent.App.Events.Queries
             _mapper = mapper;
         }
 
-        public async Task<PaginationResponseDto<EventSummaryResponseDto>> Handle(GetParticipatedEventsSummariesByUserIdQuery request, CancellationToken ct)
+        public async Task<PaginationResponseDto<EventSummaryWithFeedbackStatusResponseDto>> Handle(GetParticipatedEventsSummariesByUserIdQuery request, CancellationToken ct)
         {
             var paginatedEvents = await _unitOfWork.EventRepository.GetParticipatedEventsSummariesByUserIdAsync(request.UserId, request.Pagination, ct);
 
@@ -29,24 +29,35 @@ namespace Univent.App.Events.Queries
             var authorIds = paginatedEvents.Elements.Select(e => e.Author.Id).Distinct().ToList();
             var authorRatings = await _unitOfWork.UserRepository.GetAverageRatingsAsync(authorIds, ct);
 
+            var feedbackStatuses = await _unitOfWork.EventParticipantRepository.GetFeedbackStatusesAsync(request.UserId, eventIds, ct);
+
             var eventDtos = paginatedEvents.Elements.Select(eventEntity =>
             {
-                var dto = _mapper.Map<EventSummaryResponseDto>(eventEntity);
+                var baseDto = _mapper.Map<EventSummaryResponseDto>(eventEntity);
 
                 // Set number of enrolled participants
-                dto.EnrolledParticipants = participantCounts.ContainsKey(eventEntity.Id)
+                baseDto.EnrolledParticipants = participantCounts.ContainsKey(eventEntity.Id)
                     ? participantCounts[eventEntity.Id]
                     : 0;
 
                 // Set author overall rating
-                dto.Author.Rating = authorRatings.ContainsKey(eventEntity.Author.Id)
+                baseDto.Author.Rating = authorRatings.ContainsKey(eventEntity.Author.Id)
                     ? authorRatings[eventEntity.Author.Id]
                     : 0.0;
 
-                return dto;
+                // Set feedback flag for the current logged user
+                var hasLoggedUserProvidedFeedback = feedbackStatuses.ContainsKey(eventEntity.Id)
+                    ? feedbackStatuses[eventEntity.Id]
+                    : false;
+
+                return new EventSummaryWithFeedbackStatusResponseDto
+                {
+                    Event = baseDto,
+                    HasLoggedUserProvidedFeedback = hasLoggedUserProvidedFeedback
+                };
             }).ToList();
 
-            return new PaginationResponseDto<EventSummaryResponseDto>(
+            return new PaginationResponseDto<EventSummaryWithFeedbackStatusResponseDto>(
                 eventDtos,
                 paginatedEvents.PageIndex,
                 paginatedEvents.TotalPages,

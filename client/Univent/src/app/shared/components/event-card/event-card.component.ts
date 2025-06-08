@@ -30,6 +30,7 @@ export class EventCardComponent {
   
   @Input() event!: EventSummaryResponse;
   @Input() enableOptions: boolean = false;
+  @Input() showFeedbackBanner: boolean = false;
 
   getFormattedDateParts(dateString: string) {
     const iso = dateString.endsWith('Z') ? dateString : dateString + 'Z';

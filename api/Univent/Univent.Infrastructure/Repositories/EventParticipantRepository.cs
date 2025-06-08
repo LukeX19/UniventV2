@@ -46,6 +46,17 @@ namespace Univent.Infrastructure.Repositories
             return participant ?? throw new EntityNotFoundException(typeof(EventParticipant).Name, eventId, userId);
         }
 
+        public async Task<Dictionary<Guid, bool>> GetFeedbackStatusesAsync(Guid userId, List<Guid> eventIds, CancellationToken ct = default)
+        {
+            return await _context.EventParticipants
+                .Where(ep => ep.UserId == userId && eventIds.Contains(ep.EventId))
+                .ToDictionaryAsync(
+                    ep => ep.EventId,
+                    ep => ep.HasCompletedFeedback,
+                    ct
+                );
+        }
+
         public async Task UpdateEventParticipantWithoutSavingAsync(EventParticipant updatedEntity, CancellationToken ct = default)
         {
             var entityExists = await _context.EventParticipants.AnyAsync(ep => ep.EventId == updatedEntity.EventId && ep.UserId == updatedEntity.UserId, ct);

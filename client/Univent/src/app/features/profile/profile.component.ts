@@ -4,7 +4,7 @@ import { UserProfileResponse, UserResponse } from '../../shared/models/userModel
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { MatIconModule } from '@angular/material/icon';
-import { EventSummaryResponse } from '../../shared/models/eventModel';
+import { EventSummaryResponse, EventSummaryWithFeedbackStatusResponse } from '../../shared/models/eventModel';
 import { EventService } from '../../core/services/event.service';
 import { PaginationRequest } from '../../shared/models/paginationModel';
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
@@ -49,7 +49,7 @@ export class ProfileComponent {
   createdEvents: EventSummaryResponse[] = [];
   areCreatedEventsLoading = true;
 
-  participatedEvents: EventSummaryResponse[] = [];
+  participatedEvents: EventSummaryWithFeedbackStatusResponse[] = [];
   areParticipatedEventsLoading = true;
 
   createdPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };

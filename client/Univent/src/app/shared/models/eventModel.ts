@@ -44,6 +44,11 @@ export interface EventSummaryResponse {
   author: EventAuthorResponse;
 };
 
+export interface EventSummaryWithFeedbackStatusResponse {
+  event: EventSummaryResponse;
+  hasLoggedUserProvidedFeedback: boolean;
+};
+
 export interface EventFullResponse {
   id: string;
   name: string;

@@ -21,7 +21,7 @@ namespace Univent.Api.Controllers
 
         [HttpPost]
         [Route("event/{eventId}/submit")]
-        [Authorize(Roles = "Student")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> CreateMultipleFeedbacks(Guid eventId, [FromBody] CreateMultipleFeedbacksDto feedbacksDto)
         {
             var senderUserId = HttpContext.GetUserIdClaimValue();

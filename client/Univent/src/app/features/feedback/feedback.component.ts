@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventFullResponse } from '../../shared/models/eventModel';
 import { AuthenticationService } from '../../core/services/authentication.service';
-import { EventService } from '../../core/services/event.service';
 import { FeedbackService } from '../../core/services/feedback.service';
 import { EventParticipantService } from '../../core/services/event-participant.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +11,8 @@ import { EventParticipantFullResponse } from '../../shared/models/eventParticipa
 import { TokenService } from '../../core/services/token.service';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { CustomButtonComponent } from '../../shared/components/custom-button/custom-button.component';
+import { SnackbarService } from '../../core/services/snackbar.service';
 
 @Component({
   selector: 'app-feedback',
@@ -21,7 +22,8 @@ import { MatSelectModule } from '@angular/material/select';
     NavbarComponent,
     MatIconModule,
     FormsModule,
-    MatSelectModule
+    MatSelectModule,
+    CustomButtonComponent
   ],
   templateUrl: './feedback.component.html',
   styleUrl: './feedback.component.scss'
@@ -29,11 +31,12 @@ import { MatSelectModule } from '@angular/material/select';
 export class FeedbackComponent {
   private authService = inject(AuthenticationService);
   private tokenService = inject(TokenService);
-  private eventService = inject(EventService);
   private eventParticipantService = inject(EventParticipantService);
   private feedbackService = inject(FeedbackService);
+  private snackbarService = inject(SnackbarService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private location = inject(Location);
 
   event: EventFullResponse | null = null;
   isEventLoading = true;
@@ -42,6 +45,8 @@ export class FeedbackComponent {
   areParticipantsLoading = true;
 
   ratings: { [userId: string]: number | null } = {};
+
+  isSubmitting = false;
 
   ngOnInit() {
     const resolvedEvent = this.route.snapshot.data['event'] as EventFullResponse | null;
@@ -139,7 +144,49 @@ export class FeedbackComponent {
     return `${firstNameInitial}${lastNameInitial}`;
   }
 
+  onRatingChange(userId: string, value: number | null) {
+    if (value === null) {
+      delete this.ratings[userId];
+    } else {
+      this.ratings[userId] = value;
+    }
+  }
+
+  isRatingsEmpty(): boolean {
+    return Object.keys(this.ratings).length === 0;
+  }
+
   onUserClick(id: string) {
     this.router.navigate([`/profile/${id}`]);
+  }
+
+  cancel() {
+    this.location.back();
+  }
+
+  submitFeedback() {
+    if (!this.event || this.isSubmitting) return;
+
+    this.isSubmitting = true;
+
+    const recipients = Object.entries(this.ratings).map(([userId, rating]) => ({
+      userId,
+      rating: rating!
+    }));
+
+    const feedbackData = { recipients };
+
+    this.feedbackService.submitMultipleFeedbacks(this.event.id, feedbackData).subscribe({
+      next: () => {
+        this.snackbarService.success('Feedback sent successfully.');
+        this.authService.fetchUser();
+        this.router.navigate([`/browse`]);
+      },
+      error: (error) => {
+        console.error('Failed to submit feedback:', error);
+        this.snackbarService.error("Something went wrong. Please try again later.");
+        this.isSubmitting = false;
+      }
+    });
   }
 }

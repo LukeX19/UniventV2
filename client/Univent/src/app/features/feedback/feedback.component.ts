@@ -10,6 +10,8 @@ import { EventParticipantService } from '../../core/services/event-participant.s
 import { MatIconModule } from '@angular/material/icon';
 import { EventParticipantFullResponse } from '../../shared/models/eventParticipantModel';
 import { TokenService } from '../../core/services/token.service';
+import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-feedback',
@@ -17,7 +19,9 @@ import { TokenService } from '../../core/services/token.service';
   imports: [
     CommonModule,
     NavbarComponent,
-    MatIconModule
+    MatIconModule,
+    FormsModule,
+    MatSelectModule
   ],
   templateUrl: './feedback.component.html',
   styleUrl: './feedback.component.scss'
@@ -36,6 +40,8 @@ export class FeedbackComponent {
 
   participants: EventParticipantFullResponse[] = [];
   areParticipantsLoading = true;
+
+  ratings: { [userId: string]: number | null } = {};
 
   ngOnInit() {
     const resolvedEvent = this.route.snapshot.data['event'] as EventFullResponse | null;

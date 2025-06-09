@@ -32,6 +32,21 @@ export class EventCardComponent {
   @Input() enableOptions: boolean = false;
   @Input() showFeedbackBanner: boolean = false;
 
+  get shouldShowFeedbackBanner(): boolean {
+    if (!this.event || this.event.isCancelled || this.event.startTime === undefined) {
+      return false;
+    }
+
+    const now = new Date();
+    const eventStart = new Date(this.event.startTime);
+
+    return (
+      this.showFeedbackBanner &&
+      eventStart < now &&
+      !this.event.isCancelled
+    );
+  }
+
   getFormattedDateParts(dateString: string) {
     const iso = dateString.endsWith('Z') ? dateString : dateString + 'Z';
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -40,19 +55,19 @@ export class EventCardComponent {
 
     const options = { timeZone: userTimeZone };
   
-    const day = date.toLocaleDateString("ro-RO", {
+    const day = date.toLocaleDateString("en-US", {
       day: '2-digit',
       ...options
     });
-    const month = date.toLocaleDateString("ro-RO", {
+    const month = date.toLocaleDateString("en-US", {
       month: 'short',
       ...options
     });
-    const year = date.toLocaleDateString("ro-RO", {
+    const year = date.toLocaleDateString("en-US", {
       year: 'numeric',
       ...options
     });
-    const time = date.toLocaleTimeString("ro-RO", {
+    const time = date.toLocaleTimeString("en-US", {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
@@ -147,7 +162,11 @@ export class EventCardComponent {
     return diffInHours > 2;
   }
 
-  onUserClick(id: string) {
-    this.router.navigate([`/profile/${id}`]);
+  onUserClick(userId: string) {
+    this.router.navigate([`/profile/${userId}`]);
+  }
+
+  onFeedbackClick(eventId: string) {
+    this.router.navigate([`/event/${eventId}/feedback`]);
   }
 }

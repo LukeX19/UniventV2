@@ -61,21 +61,32 @@ export class ProfileComponent {
   participatedTotalPages = 1;
 
   ngOnInit() {
-    const resolvedUser = this.route.snapshot.data['user'] as UserProfileResponse | null;
-
-    if (!resolvedUser) {
-      this.router.navigate(['/not-found']);
-      return;
-    }
-
-    this.user = resolvedUser;
-    this.isUserLoading = false;
-
     this.authService.user$.subscribe((currentUser) => {
       this.currentUser = currentUser;
     });
 
-    this.fetchCreatedEvents(resolvedUser.id);
+    this.route.paramMap.subscribe(() => {
+      const resolvedUser = this.route.snapshot.data['user'] as UserProfileResponse | null;
+
+      if (!resolvedUser) {
+        this.router.navigate(['/not-found']);
+        return;
+      }
+
+      this.user = resolvedUser;
+      this.isUserLoading = false;
+
+      this.createdPagination.pageIndex = 1;
+      this.participatedPagination.pageIndex = 1;
+
+      this.fetchCreatedEvents(resolvedUser.id);
+      if (!this.showCreatedSection) {
+        this.fetchParticipatedEvents(resolvedUser.id);
+      }
+
+      this.showCreatedSection = true;
+      this.fetchCreatedEvents(resolvedUser.id);
+    });
   }
 
   fetchCreatedEvents(userId: string) {

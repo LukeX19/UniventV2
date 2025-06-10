@@ -27,7 +27,7 @@ namespace Univent.App.AiAssistant.Queries
             }
 
             var eventSummaries = events
-                .Select(e => $"- Name: {e.Name}, Type: {e.Type?.Name}, Description: {e.Description}, Starts at: {e.StartTime:dddd, MMM dd}, Location: {e.LocationAddress}")
+                .Select(e => $"- Name: {e.Name}, Type: {e.Type?.Name}, Description: {e.Description}, Starts at: {e.StartTime.AddHours(3):dddd, MMM dd}, Location: {e.LocationAddress}")
                 .ToList();
 
             // Timișoara, Romania

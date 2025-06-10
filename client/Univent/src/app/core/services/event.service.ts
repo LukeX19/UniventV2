@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { EventFullResponse, CreateEventRequest, EventSummaryResponse, UpdateEventRequest } from '../../shared/models/eventModel';
+import { EventFullResponse, CreateEventRequest, EventSummaryResponse, UpdateEventRequest, EventSummaryWithFeedbackStatusResponse } from '../../shared/models/eventModel';
 import { Observable } from 'rxjs';
 import { PaginationRequest, PaginationResponse } from '../../shared/models/paginationModel';
 
@@ -53,12 +53,12 @@ export class EventService {
     });
   }
 
-  fetchParticipatedEventsSummariesByUserId(userId: string, pagination: PaginationRequest): Observable<PaginationResponse<EventSummaryResponse>> {
+  fetchParticipatedEventsSummariesByUserId(userId: string, pagination: PaginationRequest): Observable<PaginationResponse<EventSummaryWithFeedbackStatusResponse>> {
     const params = new HttpParams()
       .set('pageIndex', pagination.pageIndex.toString())
       .set('pageSize', pagination.pageSize.toString());
     
-    return this.http.get<PaginationResponse<EventSummaryResponse>>(`${this.apiUrl}/events/participated-by/${userId}`, {
+    return this.http.get<PaginationResponse<EventSummaryWithFeedbackStatusResponse>>(`${this.apiUrl}/events/participated-by/${userId}`, {
       params,
       headers: { 'Requires-Auth': 'true' }
     });

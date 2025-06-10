@@ -36,7 +36,28 @@ namespace Univent.Infrastructure.Repositories
                 .ToListAsync(ct);
         }
 
-        public async Task UpdateEventParticipantAsync(EventParticipant updatedEntity, CancellationToken ct = default)
+        public async Task<EventParticipant> GetEventParticipantByIdPairAsync(Guid eventId, Guid userId, CancellationToken ct = default)
+        {
+            var participant = await _context.EventParticipants
+                .AsNoTracking()
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(ep => ep.EventId == eventId && ep.UserId == userId, ct);
+
+            return participant ?? throw new EntityNotFoundException(typeof(EventParticipant).Name, eventId, userId);
+        }
+
+        public async Task<Dictionary<Guid, bool>> GetFeedbackStatusesAsync(Guid userId, List<Guid> eventIds, CancellationToken ct = default)
+        {
+            return await _context.EventParticipants
+                .Where(ep => ep.UserId == userId && eventIds.Contains(ep.EventId))
+                .ToDictionaryAsync(
+                    ep => ep.EventId,
+                    ep => ep.HasCompletedFeedback,
+                    ct
+                );
+        }
+
+        public async Task UpdateEventParticipantWithoutSavingAsync(EventParticipant updatedEntity, CancellationToken ct = default)
         {
             var entityExists = await _context.EventParticipants.AnyAsync(ep => ep.EventId == updatedEntity.EventId && ep.UserId == updatedEntity.UserId, ct);
             if (!entityExists)
@@ -45,7 +66,6 @@ namespace Univent.Infrastructure.Repositories
             }
 
             _context.EventParticipants.Update(updatedEntity);
-            await _context.SaveChangesAsync(ct);
         }
 
         public async Task DeleteEventParticipantAsync(Guid eventId, Guid userId, CancellationToken ct = default)

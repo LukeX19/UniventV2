@@ -174,7 +174,6 @@ export class EventDetailsComponent {
   
     return diffInHours > 2;
   }
-  
 
   openParticipantsDialog(): void {
     this.dialog.open(EventParticipantsDialogComponent, {

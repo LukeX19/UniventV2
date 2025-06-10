@@ -4,7 +4,7 @@ import { UserProfileResponse, UserResponse } from '../../shared/models/userModel
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { MatIconModule } from '@angular/material/icon';
-import { EventSummaryResponse } from '../../shared/models/eventModel';
+import { EventSummaryResponse, EventSummaryWithFeedbackStatusResponse } from '../../shared/models/eventModel';
 import { EventService } from '../../core/services/event.service';
 import { PaginationRequest } from '../../shared/models/paginationModel';
 import { EventCardComponent } from "../../shared/components/event-card/event-card.component";
@@ -49,7 +49,7 @@ export class ProfileComponent {
   createdEvents: EventSummaryResponse[] = [];
   areCreatedEventsLoading = true;
 
-  participatedEvents: EventSummaryResponse[] = [];
+  participatedEvents: EventSummaryWithFeedbackStatusResponse[] = [];
   areParticipatedEventsLoading = true;
 
   createdPagination: PaginationRequest = { pageIndex: 1, pageSize: 10 };
@@ -61,21 +61,32 @@ export class ProfileComponent {
   participatedTotalPages = 1;
 
   ngOnInit() {
-    const resolvedUser = this.route.snapshot.data['user'] as UserProfileResponse | null;
-
-    if (!resolvedUser) {
-      this.router.navigate(['/not-found']);
-      return;
-    }
-
-    this.user = resolvedUser;
-    this.isUserLoading = false;
-
     this.authService.user$.subscribe((currentUser) => {
       this.currentUser = currentUser;
     });
 
-    this.fetchCreatedEvents(resolvedUser.id);
+    this.route.paramMap.subscribe(() => {
+      const resolvedUser = this.route.snapshot.data['user'] as UserProfileResponse | null;
+
+      if (!resolvedUser) {
+        this.router.navigate(['/not-found']);
+        return;
+      }
+
+      this.user = resolvedUser;
+      this.isUserLoading = false;
+
+      this.createdPagination.pageIndex = 1;
+      this.participatedPagination.pageIndex = 1;
+
+      this.fetchCreatedEvents(resolvedUser.id);
+      if (!this.showCreatedSection) {
+        this.fetchParticipatedEvents(resolvedUser.id);
+      }
+
+      this.showCreatedSection = true;
+      this.fetchCreatedEvents(resolvedUser.id);
+    });
   }
 
   fetchCreatedEvents(userId: string) {

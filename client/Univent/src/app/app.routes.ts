@@ -15,6 +15,7 @@ import { LandingComponent } from './features/landing/landing.component';
 import { ProfileUpdateComponent } from './features/profile-update/profile-update.component';
 import { eventResolver } from './core/resolvers/event.resolver';
 import { userResolver } from './core/resolvers/user.resolver';
+import { FeedbackComponent } from './features/feedback/feedback.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'browse', component: EventsBrowseComponent, canActivate: [userGuard] },
   { path: 'event/:id', component: EventDetailsComponent, canActivate: [userGuard], resolve: { event: eventResolver } },
   { path: 'event/:id/edit', component: EventUpdateComponent, canActivate: [userGuard], resolve: { event: eventResolver } },
+  { path: 'event/:id/feedback', component: FeedbackComponent, canActivate: [userGuard], resolve: { event: eventResolver } },
   { path: 'profile/:id', component: ProfileComponent, canActivate: [userGuard], resolve: { user: userResolver } },
   { path: 'profile/:id/edit', component: ProfileUpdateComponent, canActivate: [userGuard], resolve: { user: userResolver } },
   

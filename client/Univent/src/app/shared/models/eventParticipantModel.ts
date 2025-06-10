@@ -7,3 +7,7 @@ export interface EventParticipantFullResponse {
   rating: number;
   hasCompletedFeedback: boolean;
 };
+
+export interface EventParticipantFeedbackStatus {
+  hasCompletedFeedback: boolean;
+}

@@ -137,7 +137,7 @@
     <ng-template #participatedEventsSection>
       <ng-container *ngIf="participatedEvents.length > 0; else noParticipated">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-10">
-          <app-event-card *ngFor="let event of participatedEvents" [event]="event"/>
+          <app-event-card *ngFor="let item of participatedEvents" [event]="item.event" [showFeedbackBanner]="isOwnProfile && !item.hasLoggedUserProvidedFeedback"/>
         </div>
 
         <div class="flex justify-center mt-6">

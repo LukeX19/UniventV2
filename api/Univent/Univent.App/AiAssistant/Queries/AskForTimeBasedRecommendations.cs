@@ -27,7 +27,7 @@ namespace Univent.App.AiAssistant.Queries
 
             // Build summaries
             var summaries = events
-                .Select(e =>$"- Name: {e.Name}, Starts at: {e.StartTime.ToString("f")}, Location: {e.LocationAddress}")
+                .Select(e =>$"- Name: {e.Name}, Starts at: {e.StartTime.AddHours(3).ToString("f")}, Location: {e.LocationAddress}")
                 .ToList();
 
             return await _aiAssistantService.AskForTimeBasedSuggestionsAsync(request.TimePreference, summaries);

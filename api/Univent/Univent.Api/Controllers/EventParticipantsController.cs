@@ -41,6 +41,18 @@ namespace Univent.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("{eventId}/participant/feedback-status")]
+        public async Task<IActionResult> GetEventParticipantFeedbackStatus(Guid eventId)
+        {
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var query = new GetEventParticipantFeedbackStatusQuery(eventId, userId);
+            var response = await _mediator.Send(query);
+
+            return Ok(response);
+        }
+
         [HttpDelete]
         [Route("{eventId}")]
         public async Task<IActionResult> DeleteEventParticipant(Guid eventId)

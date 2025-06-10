@@ -1,0 +1,75 @@
+<app-navbar></app-navbar>
+
+<div class="max-w-2xl mx-auto px-8 py-2 mt-4">
+  <p class="text-3xl font-semibold text-center w-full mt-4 mb-4">Feedback Form</p>
+  <p class="text-2xl text-center mb-20">{{ event?.name }} ({{ formattedStartTime }})</p>
+
+  <div *ngIf="participants?.length; else noParticipants">
+    <div class="space-y-8">
+      <div *ngFor="let p of participants" class="max-w-lg w-full mx-auto flex items-center justify-between mb-4">
+        <!-- LEFT: Avatar + Name + Rating -->
+        <div class="flex items-center space-x-3">
+          <!-- Avatar or Initials -->
+          <img *ngIf="p.pictureUrl; else initials" 
+              [src]="p.pictureUrl" 
+              alt="User Avatar" 
+              class="w-10 h-10 rounded-full mr-2 transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+              (click)="onUserClick(p.userId)"/>
+          <ng-template #initials>
+            <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg mr-2
+                        transition duration-200 hover:scale-105 hover:ring-2 hover:ring-offset-1 hover:ring-blue-500 cursor-pointer"
+                        (click)="onUserClick(p.userId)">
+              {{ getInitials(p.firstName, p.lastName) }}
+            </div>
+          </ng-template>
+      
+          <!-- Name and Rating -->
+          <div class="flex flex-col">
+            <span
+              class="text-sm font-medium text-gray-900 transition duration-200 hover:text-blue-600 hover:underline cursor-pointer"
+              (click)="onUserClick(p.userId)">
+              {{ p.firstName }} {{ p.lastName }}
+            </span>
+            <div class="flex items-center bg-gray-200 rounded-full px-1 pr-2 w-fit mb-1">
+              <mat-icon style="width: 20px; color: #FFA500; font-size: 18px; vertical-align: middle; padding-top: 3px;">star</mat-icon>
+              <span class="text-xs font-medium text-gray-800">{{ p.rating.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Rating Dropdown -->
+        <mat-form-field appearance="outline" class="w-40 mt-5">
+          <mat-label>Rating</mat-label>
+          <mat-select [ngModel]="ratings[p.userId]" (ngModelChange)="onRatingChange(p.userId, $event)">
+            <mat-option [value]="null">None</mat-option>
+            <mat-option [value]="5">★★★★★ (5)</mat-option>
+            <mat-option [value]="4">★★★★☆ (4)</mat-option>
+            <mat-option [value]="3">★★★☆☆ (3)</mat-option>
+            <mat-option [value]="2">★★☆☆☆ (2)</mat-option>
+            <mat-option [value]="1">★☆☆☆☆ (1)</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="flex justify-between mt-24 mb-8">
+      <app-custom-button
+        variant="warning"
+        label="Cancel"
+        (customClick)="cancel()">
+      </app-custom-button>
+
+      <app-custom-button
+        variant="primary"
+        label="Send"
+        (customClick)="submitFeedback()"
+        [disabled]="isRatingsEmpty()">
+      </app-custom-button>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <ng-template #noParticipants>
+    <p class="text-gray-500 text-sm mt-4">No participants have enrolled in this event yet.</p>
+  </ng-template>
+</div>

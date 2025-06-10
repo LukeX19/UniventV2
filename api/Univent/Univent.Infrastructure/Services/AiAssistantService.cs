@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 using System.Net.Http.Headers;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 using Univent.App.Interfaces;
 using Univent.App.Weather.Dtos;
 
@@ -20,7 +21,11 @@ namespace Univent.Infrastructure.Services
 
         public async Task<string> AskForInterestsBasedSuggestionsAsync(string userDescription, ICollection<string> eventSummaries)
         {
-            var apiKey = _configuration["OpenAI:ApiKey"];
+            var stopwatch = Stopwatch.StartNew();
+
+            var _endpoint = _configuration["OpenAI:Endpoint"];
+            var _apiKey = _configuration["OpenAI:ApiKey"];
+            var _model = _configuration["OpenAI:Model"];
 
             var prompt = @$"
                 You are a helpful assistant that recommends events to users based on their interests.
@@ -35,7 +40,7 @@ namespace Univent.Infrastructure.Services
 
             var requestBody = new
             {
-                model = "gpt-4.1",
+                model = _model,
                 messages = new[]
                 {
                     new { role = "system", content = "You are a helpful event recommendation assistant." },
@@ -44,14 +49,18 @@ namespace Univent.Infrastructure.Services
             };
 
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
-            var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+            var response = await _httpClient.PostAsync(_endpoint, content);
 
             response.EnsureSuccessStatusCode();
 
             var responseBody = await response.Content.ReadAsStringAsync();
             using var jsonDoc = JsonDocument.Parse(responseBody);
+
+            stopwatch.Stop();
+
+            Console.WriteLine($"Execution time: {stopwatch.ElapsedMilliseconds} ms");
 
             return jsonDoc.RootElement
                 .GetProperty("choices")[0]
@@ -62,7 +71,11 @@ namespace Univent.Infrastructure.Services
 
         public async Task<string> AskForLocationBasedSuggestionsAsync(string locationInfo, ICollection<string> eventSummaries)
         {
-            var apiKey = _configuration["OpenAI:ApiKey"];
+            var stopwatch = Stopwatch.StartNew();
+
+            var _endpoint = _configuration["OpenAI:Endpoint"];
+            var _apiKey = _configuration["OpenAI:ApiKey"];
+            var _model = _configuration["OpenAI:Model"];
 
             var prompt = @$"
                 You are a helpful assistant that recommends events to users based on their location.
@@ -79,7 +92,7 @@ namespace Univent.Infrastructure.Services
 
             var requestBody = new
             {
-                model = "gpt-4.1",
+                model = _model,
                 messages = new[]
                 {
                     new { role = "system", content = "You are an assistant that recommends local events to users based on location preferences." },
@@ -88,18 +101,22 @@ namespace Univent.Infrastructure.Services
             };
 
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
-            var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+            var response = await _httpClient.PostAsync(_endpoint, content);
 
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"OpenAI API error: {response.StatusCode} - {errorContent}");
+                throw new HttpRequestException($"AI API error: {response.StatusCode} - {errorContent}");
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
             using var jsonDoc = JsonDocument.Parse(responseBody);
+
+            stopwatch.Stop();
+
+            Console.WriteLine($"Execution time: {stopwatch.ElapsedMilliseconds} ms");
 
             return jsonDoc.RootElement
                 .GetProperty("choices")[0]
@@ -110,7 +127,11 @@ namespace Univent.Infrastructure.Services
 
         public async Task<string> AskForTimeBasedSuggestionsAsync(string timePreference, ICollection<string> eventSummaries)
         {
-            var apiKey = _configuration["OpenAI:ApiKey"];
+            var stopwatch = Stopwatch.StartNew();
+
+            var _endpoint = _configuration["OpenAI:Endpoint"];
+            var _apiKey = _configuration["OpenAI:ApiKey"];
+            var _model = _configuration["OpenAI:Model"];
 
             var currentDate = DateTime.UtcNow.AddHours(3).ToString("f");
 
@@ -134,7 +155,7 @@ namespace Univent.Infrastructure.Services
 
             var requestBody = new
             {
-                model = "gpt-4.1",
+                model = _model,
                 messages = new[]
                 {
                     new { role = "system", content = "You are a smart event assistant that matches user availability with upcoming events." },
@@ -143,18 +164,22 @@ namespace Univent.Infrastructure.Services
             };
 
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
-            var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+            var response = await _httpClient.PostAsync(_endpoint, content);
 
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"OpenAI API error: {response.StatusCode} - {errorContent}");
+                throw new HttpRequestException($"AI API error: {response.StatusCode} - {errorContent}");
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
             using var jsonDoc = JsonDocument.Parse(responseBody);
+
+            stopwatch.Stop();
+
+            Console.WriteLine($"Execution time: {stopwatch.ElapsedMilliseconds} ms");
 
             return jsonDoc.RootElement
                 .GetProperty("choices")[0]
@@ -165,7 +190,12 @@ namespace Univent.Infrastructure.Services
 
         public async Task<string> AskForWeatherBasedSuggestionsAsync(ICollection<string> eventSummaries, ICollection<DailyWeatherForecastResponseDto> forecast)
         {
-            var apiKey = _configuration["OpenAI:ApiKey"];
+            var stopwatch = Stopwatch.StartNew();
+
+            var _endpoint = _configuration["OpenAI:Endpoint"];
+            var _apiKey = _configuration["OpenAI:ApiKey"];
+            var _model = _configuration["OpenAI:Model"];
+
             var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
             var weatherDetails = string.Join("\n", forecast.Select(f =>
@@ -194,7 +224,7 @@ namespace Univent.Infrastructure.Services
 
             var requestBody = new
             {
-                model = "gpt-4.1",
+                model = _model,
                 messages = new[]
                 {
                     new { role = "system", content = "You are a smart assistant that suggests weather-friendly events." },
@@ -203,18 +233,22 @@ namespace Univent.Infrastructure.Services
             };
 
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
-            var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+            var response = await _httpClient.PostAsync(_endpoint, content);
 
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"OpenAI API error: {response.StatusCode} - {errorContent}");
+                throw new HttpRequestException($"AI API error: {response.StatusCode} - {errorContent}");
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
             using var jsonDoc = JsonDocument.Parse(responseBody);
+
+            stopwatch.Stop();
+
+            Console.WriteLine($"Execution time: {stopwatch.ElapsedMilliseconds} ms");
 
             return jsonDoc.RootElement
                 .GetProperty("choices")[0]

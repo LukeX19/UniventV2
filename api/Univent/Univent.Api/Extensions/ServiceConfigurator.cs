@@ -24,7 +24,7 @@ namespace Univent.Api.Extensions
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IFileService, FileService>();
             services.AddHttpClient<IWeatherService, WeatherService>();
-            services.AddHttpClient<IAiAssistantService, AiAssistantService>();
+            services.AddScoped<IAiAssistantService, GitHubInferenceAiAssistantService>();
         }
 
         public static void AddMediatR(this IServiceCollection services)

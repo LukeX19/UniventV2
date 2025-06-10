@@ -2,7 +2,7 @@
 <div class="fixed bottom-6 right-6 z-50">
   <button
     (click)="toggleWidget()"
-    class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition"
+    class="w-14 h-14 bg-[#312A8D] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#3D36A6] transition"
     aria-label="AI Assistant"
   >
     <mat-icon>smart_toy</mat-icon>
@@ -26,28 +26,28 @@
   <div class="flex flex-wrap gap-2">
     <button
       class="px-3 py-1 rounded-full border text-sm font-medium transition"
-      [ngClass]="selectedOption === 'interests' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      [ngClass]="selectedOption === 'interests' ? 'bg-[#312A8D] text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
       (click)="selectOption('interests')"
     >
       Interests
     </button>
     <button
       class="px-3 py-1 rounded-full border text-sm font-medium transition"
-      [ngClass]="selectedOption === 'location' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      [ngClass]="selectedOption === 'location' ? 'bg-[#312A8D] text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
       (click)="selectOption('location')"
     >
       Location
     </button>
     <button
       class="px-3 py-1 rounded-full border text-sm font-medium transition"
-      [ngClass]="selectedOption === 'time' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      [ngClass]="selectedOption === 'time' ? 'bg-[#312A8D] text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
       (click)="selectOption('time')"
     >
       Time
     </button>
     <button
       class="px-3 py-1 rounded-full border text-sm font-medium transition"
-      [ngClass]="selectedOption === 'weather' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
+      [ngClass]="selectedOption === 'weather' ? 'bg-[#312A8D] text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'"
       (click)="selectOption('weather')"
     >
       Weather
@@ -59,14 +59,14 @@
     <textarea
       [(ngModel)]="prompt"
       rows="3"
-      class="w-full p-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+      class="w-full p-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#312A8D] resize-none"
       placeholder="Describe your interests, location, or time preferences..."
     ></textarea>
   </div>
 
   <!-- Submit Button -->
   <button
-    class="mt-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+    class="mt-1 bg-[#312A8D] text-white px-4 py-2 rounded-lg hover:bg-[#3D36A6] transition disabled:opacity-50"
     [disabled]="isLoading || (selectedOption !== 'weather' && !prompt.trim())"
     (click)="submitPrompt()"
   >

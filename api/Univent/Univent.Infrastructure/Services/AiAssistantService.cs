@@ -112,7 +112,7 @@ namespace Univent.Infrastructure.Services
         {
             var apiKey = _configuration["OpenAI:ApiKey"];
 
-            var currentDate = DateTime.UtcNow.ToString("f");
+            var currentDate = DateTime.UtcNow.AddHours(3).ToString("f");
 
             var prompt = @$"
                 You are an assistant that helps users find events based on their availability.

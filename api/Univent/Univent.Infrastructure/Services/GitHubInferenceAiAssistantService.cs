@@ -31,7 +31,7 @@ namespace Univent.Infrastructure.Services
             var requestOptions = new ChatCompletionsOptions()
             {
                 Model = _model,
-                MaxTokens = 1000,
+                MaxTokens = 2000,
                 Temperature = 0.7f,
                 Messages = { new ChatRequestUserMessage(prompt) }
             };
@@ -39,7 +39,7 @@ namespace Univent.Infrastructure.Services
             Response<ChatCompletions> response = await _client.CompleteAsync(requestOptions);
 
             stopwatch.Stop();
-            Console.WriteLine($"GitHubInference Execution time: {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($"{_model} Execution time: {stopwatch.ElapsedMilliseconds} ms");
 
             return response.Value.Content ?? "No recommendation was generated.";
         }
@@ -53,7 +53,7 @@ namespace Univent.Infrastructure.Services
                 Here are some upcoming events:
                 {string.Join("\n", eventSummaries)}
 
-                Based on the user's preferences, suggest the most relevant events.
+                Based on the user's preferences, suggest the most relevant events. Limit suggestions to 1-3 events.
                 Respond in a friendly, human tone and briefly explain why each event might be a good fit.";
             return await SendAsync(prompt);
         }
@@ -68,7 +68,7 @@ namespace Univent.Infrastructure.Services
                 Here is a list of upcoming events:
                 {string.Join("\n", eventSummaries)}
 
-                Please suggest the most suitable events based on location relevance. Limit suggestions to 3–5 and explain briefly.";
+                Please suggest the most suitable events based on location relevance. Limit suggestions to 1-3 and explain briefly.";
             return await SendAsync(prompt);
         }
 
@@ -85,7 +85,7 @@ namespace Univent.Infrastructure.Services
                 Here are upcoming events:
                 {string.Join("\n", eventSummaries)}
 
-                Suggest 3–5 events that best fit their schedule and explain why.";
+                Suggest 1-3 events that best fit their schedule and explain why.";
             return await SendAsync(prompt);
         }
 
@@ -108,7 +108,8 @@ namespace Univent.Infrastructure.Services
                 Here are upcoming events:
                 {eventList}
 
-                Suggest 3–5 real events that fit the weather. Prefer outdoor events on sunny days, and indoor ones on rainy days.
+                Suggest 1-3 events that fit the weather.
+                Prefer indoor events if it’s expected to rain, be stormy, extremely hot, or very cold. Favor outdoor events when the weather is clear and mild. Avoid suggesting events that wouldn't feel good to attend due to the weather.
                 Explain briefly why each event is a good fit.";
             return await SendAsync(prompt);
         }

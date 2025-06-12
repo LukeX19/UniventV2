@@ -24,7 +24,7 @@ namespace Univent.Infrastructure.Services
                 new AzureAIInferenceClientOptions());
         }
 
-        private async Task<string> SendAsync(string prompt)
+        private async Task<string> SendAsync(string prompt, int timeoutInSeconds = 30)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -36,12 +36,25 @@ namespace Univent.Infrastructure.Services
                 Messages = { new ChatRequestUserMessage(prompt) }
             };
 
-            Response<ChatCompletions> response = await _client.CompleteAsync(requestOptions);
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds));
 
-            stopwatch.Stop();
-            Console.WriteLine($"{_model} Execution time: {stopwatch.ElapsedMilliseconds} ms");
+            try
+            {
+                Response<ChatCompletions> response = await _client.CompleteAsync(requestOptions, cts.Token);
 
-            return response.Value.Content ?? "No recommendation was generated.";
+                stopwatch.Stop();
+                Console.WriteLine($"{_model} Execution time: {stopwatch.ElapsedMilliseconds} ms");
+
+                return response.Value.Content ?? "No recommendation was generated.";
+            }
+            catch (OperationCanceledException)
+            {
+                throw new OperationCanceledException($"Request timed out after {timeoutInSeconds} seconds.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error during model inference: {ex.Message}");
+            }
         }
 
         public async Task<string> AskForInterestsBasedSuggestionsAsync(string userDescription, ICollection<string> eventSummaries)
@@ -61,14 +74,24 @@ namespace Univent.Infrastructure.Services
         public async Task<string> AskForLocationBasedSuggestionsAsync(string locationInfo, ICollection<string> eventSummaries)
         {
             var prompt = @$"
-                You are a helpful assistant that recommends events to users based on their location.
-                The user is looking for events that match the following location preference:
+                You are a helpful assistant that recommends events to users based on their preffered location.
+
+                The user provided the following location preference:
                 ""{locationInfo}""
 
                 Here is a list of upcoming events:
                 {string.Join("\n", eventSummaries)}
 
-                Please suggest the most suitable events based on location relevance. Limit suggestions to 1-3 and explain briefly.";
+                Select the 1–3 events that are the *best overall match* for the user's location preference, regardless of how soon they are happening.
+    
+                **Instructions:**
+                - Focus only on how well each event's location aligns with the user's stated preference.
+                - If the user describes a location using landmarks, neighborhoods, or vague terms (e.g., 'near the student campus', 'downtown', 'close to the dorms'), use your knowledge of Timișoara to infer where those areas are.
+                - Use the coordinates of each event to help estimate which ones are likely close to the described area.
+                - Do not prioritize events just because they occur sooner — only proximity matters here.
+                - Briefly explain why each recommended event is a good match in terms of location.
+
+                Respond with your top 1–3 location-matched event suggestions.";
             return await SendAsync(prompt);
         }
 
@@ -102,15 +125,22 @@ namespace Univent.Infrastructure.Services
                 You are a helpful assistant that recommends events based on weather conditions in Timișoara, Romania.
 
                 Today is {today}.
-                Here is the weather forecast:
+                Here is the 8-day weather forecast:
                 {weatherDetails}
 
-                Here are upcoming events:
+                Here are the upcoming events:
                 {eventList}
 
-                Suggest 1-3 events that fit the weather.
-                Prefer indoor events if it’s expected to rain, be stormy, extremely hot, or very cold. Favor outdoor events when the weather is clear and mild. Avoid suggesting events that wouldn't feel good to attend due to the weather.
-                Explain briefly why each event is a good fit.";
+                Select the 1–3 events that are the *best overall match* for the forecasted weather, regardless of how close they are to today. Consider the date of the event and the weather on that specific day.
+
+                **Instructions:**
+                - Favor indoor events if the event date has high rain chance, storms, extreme heat, or cold.
+                - Favor outdoor events when the forecast is clear, mild, and comfortable.
+                - Base your suggestions only on the quality of the weather match, *not on how soon the event happens*.
+                - Briefly explain why each event is a good match for the weather conditions on its specific date.
+
+                Respond with your top 1–3 weather-aligned event suggestions.";
+
             return await SendAsync(prompt);
         }
     }

@@ -20,6 +20,8 @@ namespace Univent.Infrastructure.Repositories
             return await _context.EventTypes
                 .Where(et => !et.IsDeleted)
                 .AsNoTracking()
+                .AsSplitQuery()
+                .OrderBy(et => et.Name)
                 .ToListAsync(ct);
         }
 

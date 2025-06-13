@@ -114,7 +114,7 @@ namespace Univent.Infrastructure.Services
 
         public async Task<string> AskForWeatherBasedSuggestionsAsync(ICollection<string> eventSummaries, ICollection<DailyWeatherForecastResponseDto> forecast)
         {
-            var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            var today = DateTime.UtcNow.AddHours(3).ToString("yyyy-MM-dd");
 
             var weatherDetails = string.Join("\n", forecast.Select(f =>
                 $"- Date: {f.Date:yyyy-MM-dd}, Condition: {f.Condition} ({f.Description}), Temp: {f.TempMin}–{f.TempMax}°C, Rain: {(f.RainVolume.HasValue ? $"{f.RainVolume}mm" : "0mm")}, POP: {f.PrecipitationProbability:P0}, UVI: {f.Uvi}, Humidity: {f.Humidity}%, Wind: {f.WindSpeed} m/s"));
@@ -140,7 +140,6 @@ namespace Univent.Infrastructure.Services
                 - Briefly explain why each event is a good match for the weather conditions on its specific date.
 
                 Respond with your top 1–3 weather-aligned event suggestions.";
-
             return await SendAsync(prompt);
         }
     }

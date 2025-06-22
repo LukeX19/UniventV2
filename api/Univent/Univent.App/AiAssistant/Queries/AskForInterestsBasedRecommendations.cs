@@ -33,5 +33,4 @@ namespace Univent.App.AiAssistant.Queries
             return await _aiAssistantService.AskForInterestsBasedSuggestionsAsync(request.UserDescription, summaries);
         }
     }
-
 }

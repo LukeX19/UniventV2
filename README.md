@@ -28,7 +28,7 @@
 - Entity Framework Core (SQL Server)
 - MediatR (CQRS pattern)
 - AWS S3 Integration
-- GitHub Marketplace Models & OpenWeatherMap APIs
+- GitHub Marketplace Models & OpenWeatherMap API
 - JWT Authentication
 
 ### Frontend (Angular)

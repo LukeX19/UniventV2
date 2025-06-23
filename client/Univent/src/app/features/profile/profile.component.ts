@@ -174,7 +174,7 @@ export class ProfileComponent {
 
   yearMapper(year?: number): string {
     if (!year) return '';
-    const map: { [key: number]: string } = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'I Master', 8: 'II Master' };
+    const map: { [key: number]: string } = { 1: 'Year I', 2: 'Year II', 3: 'Year III', 4: 'Year IV', 5: 'Year V', 6: 'Year VI', 7: 'Master Year I', 8: 'Master Year II' };
     return map[year] || `${year}`;
   }
 

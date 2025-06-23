@@ -19,7 +19,7 @@
 - Authentication & Authorization: JWT-based Security with Role Guards
 - Media Upload: Store Event and Profile Images via AWS S3
 - AI Event Suggestions: Powered by GitHub Marketplace AI Models
-- Weather Integration: OpenWeatherMap Used in Event Suggestions
+- Weather Integration: OpenWeatherMap API Used in Event Suggestions
 - Responsive UI: Built with Angular, Tailwind CSS, and Angular Material
 
 ## Technologies

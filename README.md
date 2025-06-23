@@ -123,7 +123,7 @@ The files should look like this:
 // environment.prod.ts
 export const environment = {
   production: true,
-  apiUrl: 'api/',
+  apiUrl: 'https://localhost:7019/api',
   googleMapsApiKey: 'YOUR_GOOGLE_MAPS_KEY'
 };
 
